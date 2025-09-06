@@ -1,0 +1,47 @@
+
+
+services:
+  app:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      - BLUEPRINT_DB_URL=/data/app.db
+      - PORT=8080
+      - GIN_MODE=release
+    volumes:
+      - app_data:/data
+    restart: unless-stopped
+    profiles:
+      - prod
+    healthcheck:
+      test: ["CMD", "/bin/sh", "-c", "wget --no-verbose --tries=1 --spider http://localhost:8080/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Development mode with hot reload
+  app-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    ports:
+      - "8080:8080"
+      - "3000:3000"  # Frontend dev server
+    environment:
+      - BLUEPRINT_DB_URL=/data/app.db
+      - PORT=8080
+      - GIN_MODE=debug
+    volumes:
+      - .:/app
+      - app_data:/data
+      - /app/node_modules
+    profiles:
+      - dev
+
+volumes:
+  app_data:
+    driver: local

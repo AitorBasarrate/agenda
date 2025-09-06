@@ -1,0 +1,73 @@
+# Git
+.git/
+.gitignore
+
+# Documentation (keep essential ones)
+DEPLOYMENT.md
+*.md
+!README.md
+
+# Development files
+.env*
+!.env.example
+
+# Dependencies (will be installed in container)
+frontend/node_modules/
+vendor/
+
+# Build artifacts
+main
+*.exe
+frontend/dist/
+build/
+tmp/
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Test files and coverage
+*_test.go
+coverage.out
+test.db
+verify_test.db
+*.test
+
+# CI/CD (not needed in container)
+.github/
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+*.temp
+
+# Database files (will be mounted as volume)
+*.db
+*.sqlite
+*.sqlite3
+
+# Development Docker files
+Dockerfile.dev
+docker-compose.override.yml
+.air.toml
+
+# Scripts (not needed in production container)
+scripts/
+verify_schema.go

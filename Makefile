@@ -14,23 +14,30 @@ run:
 	@go run cmd/api/main.go &
 	@npm install --prefer-offline --no-fund --prefix ./frontend
 	@npm run dev --prefix ./frontend
-# Create DB container
-docker-run:
-	@if docker compose up --build 2>/dev/null; then \
-		: ; \
-	else \
-		echo "Falling back to Docker Compose V1"; \
-		docker-compose up --build; \
-	fi
+# Docker operations
+docker-build:
+	@echo "Building Docker image..."
+	@docker build -t task-calendar-manager .
 
-# Shutdown DB container
+docker-run:
+	@echo "Starting application with Docker Compose..."
+	@docker compose --profile prod up --build -d
+
+docker-dev:
+	@echo "Starting development environment..."
+	@docker compose --profile dev up --build -d
+
 docker-down:
-	@if docker compose down 2>/dev/null; then \
-		: ; \
-	else \
-		echo "Falling back to Docker Compose V1"; \
-		docker-compose down; \
-	fi
+	@echo "Stopping Docker containers..."
+	@docker compose down
+
+docker-logs:
+	@docker compose logs -f
+
+docker-clean:
+	@echo "Cleaning up Docker resources..."
+	@docker compose down -v
+	@docker system prune -f
 
 # Test the application
 test:
