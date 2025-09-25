@@ -9,22 +9,22 @@ import (
 type BaseRepository interface {
 	// Create inserts a new record and returns the generated ID
 	Create(ctx context.Context, query string, args ...interface{}) (int64, error)
-	
+
 	// GetByID retrieves a single record by its ID
 	GetByID(ctx context.Context, dest interface{}, query string, id interface{}) error
-	
+
 	// Update modifies an existing record
 	Update(ctx context.Context, query string, args ...interface{}) error
-	
+
 	// Delete removes a record by ID
 	Delete(ctx context.Context, query string, id interface{}) error
-	
+
 	// List retrieves multiple records with optional filtering
 	List(ctx context.Context, dest interface{}, query string, args ...interface{}) error
-	
+
 	// Count returns the total number of records matching the criteria
 	Count(ctx context.Context, query string, args ...interface{}) (int64, error)
-	
+
 	// Exists checks if a record exists
 	Exists(ctx context.Context, query string, args ...interface{}) (bool, error)
 }
@@ -32,10 +32,10 @@ type BaseRepository interface {
 // TransactionRepository extends BaseRepository with transaction support
 type TransactionRepository interface {
 	BaseRepository
-	
+
 	// WithTransaction executes a function within a database transaction
 	WithTransaction(ctx context.Context, fn func(tx *sql.Tx) error) error
-	
+
 	// BeginTx starts a new transaction
 	BeginTx(ctx context.Context) (*sql.Tx, error)
 }
@@ -58,12 +58,12 @@ func (r *Repository) Create(ctx context.Context, query string, args ...interface
 	if err != nil {
 		return 0, err
 	}
-	
+
 	id, err := result.LastInsertId()
 	if err != nil {
 		return 0, err
 	}
-	
+
 	return id, nil
 }
 
@@ -92,7 +92,7 @@ func (r *Repository) List(ctx context.Context, dest interface{}, query string, a
 		return err
 	}
 	defer rows.Close()
-	
+
 	return scanRows(rows, dest)
 }
 
@@ -121,7 +121,7 @@ func (r *Repository) WithTransaction(ctx context.Context, fn func(tx *sql.Tx) er
 	if err != nil {
 		return err
 	}
-	
+
 	defer func() {
 		if p := recover(); p != nil {
 			tx.Rollback()
@@ -132,7 +132,7 @@ func (r *Repository) WithTransaction(ctx context.Context, fn func(tx *sql.Tx) er
 			err = tx.Commit()
 		}
 	}()
-	
+
 	err = fn(tx)
 	return err
 }
