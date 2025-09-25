@@ -11,8 +11,8 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 )
 
-// setupTestDB creates an in-memory SQLite database for testing
-func setupTestDB(t *testing.T) *sql.DB {
+// setupTaskTestDB creates an in-memory SQLite database for testing tasks
+func setupTaskTestDB(t *testing.T) *sql.DB {
 	db, err := sql.Open("sqlite3", ":memory:")
 	if err != nil {
 		t.Fatalf("Failed to open test database: %v", err)
@@ -51,7 +51,7 @@ func createTestTask(title string) *models.Task {
 }
 
 func TestTaskRepository_CreateTask(t *testing.T) {
-	db := setupTestDB(t)
+	db := setupTaskTestDB(t)
 	defer db.Close()
 
 	repo := NewTaskRepository(db)
@@ -124,7 +124,7 @@ func TestTaskRepository_CreateTask(t *testing.T) {
 }
 
 func TestTaskRepository_GetTaskByID(t *testing.T) {
-	db := setupTestDB(t)
+	db := setupTaskTestDB(t)
 	defer db.Close()
 
 	repo := NewTaskRepository(db)
@@ -182,7 +182,7 @@ func TestTaskRepository_GetTaskByID(t *testing.T) {
 }
 
 func TestTaskRepository_UpdateTask(t *testing.T) {
-	db := setupTestDB(t)
+	db := setupTaskTestDB(t)
 	defer db.Close()
 
 	repo := NewTaskRepository(db)
@@ -257,7 +257,7 @@ func TestTaskRepository_UpdateTask(t *testing.T) {
 }
 
 func TestTaskRepository_DeleteTask(t *testing.T) {
-	db := setupTestDB(t)
+	db := setupTaskTestDB(t)
 	defer db.Close()
 
 	repo := NewTaskRepository(db)
@@ -284,7 +284,7 @@ func TestTaskRepository_DeleteTask(t *testing.T) {
 }
 
 func TestTaskRepository_ListTasks(t *testing.T) {
-	db := setupTestDB(t)
+	db := setupTaskTestDB(t)
 	defer db.Close()
 
 	repo := NewTaskRepository(db)
@@ -372,7 +372,7 @@ func TestTaskRepository_ListTasks(t *testing.T) {
 }
 
 func TestTaskRepository_GetTasksByStatus(t *testing.T) {
-	db := setupTestDB(t)
+	db := setupTaskTestDB(t)
 	defer db.Close()
 
 	repo := NewTaskRepository(db)
@@ -413,7 +413,7 @@ func TestTaskRepository_GetTasksByStatus(t *testing.T) {
 }
 
 func TestTaskRepository_GetTasksByDueDateRange(t *testing.T) {
-	db := setupTestDB(t)
+	db := setupTaskTestDB(t)
 	defer db.Close()
 
 	repo := NewTaskRepository(db)
@@ -464,7 +464,7 @@ func TestTaskRepository_GetTasksByDueDateRange(t *testing.T) {
 }
 
 func TestTaskRepository_GetOverdueTasks(t *testing.T) {
-	db := setupTestDB(t)
+	db := setupTaskTestDB(t)
 	defer db.Close()
 
 	repo := NewTaskRepository(db)
@@ -517,7 +517,7 @@ func TestTaskRepository_GetOverdueTasks(t *testing.T) {
 }
 
 func TestTaskRepository_CountTasks(t *testing.T) {
-	db := setupTestDB(t)
+	db := setupTaskTestDB(t)
 	defer db.Close()
 
 	repo := NewTaskRepository(db)

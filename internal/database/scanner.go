@@ -46,11 +46,19 @@ func scanRows(rows *sql.Rows, dest interface{}) error {
 	results := reflect.MakeSlice(destValue.Type(), 0, 0)
 	
 	for rows.Next() {
-		// Create a new instance of the element type
-		elem := reflect.New(elemType).Elem()
+		var elem reflect.Value
+		var fields []interface{}
 		
-		// Get field pointers for scanning
-		fields := getStructFields(elem)
+		// Handle pointer types vs value types
+		if elemType.Kind() == reflect.Ptr {
+			// For pointer types, create a new instance and get its fields
+			elem = reflect.New(elemType.Elem())
+			fields = getStructFields(elem.Elem())
+		} else {
+			// For value types, create a new instance directly
+			elem = reflect.New(elemType).Elem()
+			fields = getStructFields(elem)
+		}
 		
 		// Scan the row
 		if err := rows.Scan(fields...); err != nil {

@@ -13,7 +13,7 @@
     - Create database transaction utilities for atomic operations
     - _Requirements: 5.1, 5.3, 5.4_
 
-  - [ ] 2.2 Implement TaskRepository with CRUD operations
+  - [x] 2.2 Implement TaskRepository with CRUD operations
     - Code TaskRepository struct with Create, Read, Update, Delete methods
     - Implement task filtering by status and due date queries
     - Write unit tests for all repository operations
