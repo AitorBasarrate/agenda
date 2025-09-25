@@ -19,7 +19,7 @@
     - Write unit tests for all repository operations
     - _Requirements: 1.2, 1.4, 1.5, 1.6_
 
-  - [ ] 2.3 Implement EventRepository with calendar-specific queries
+  - [x] 2.3 Implement EventRepository with calendar-specific queries
     - Code EventRepository with CRUD operations for calendar events
     - Implement date range queries for calendar month views
     - Write unit tests for event repository operations
