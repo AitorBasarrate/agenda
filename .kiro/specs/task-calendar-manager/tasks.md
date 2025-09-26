@@ -26,13 +26,13 @@
     - _Requirements: 2.2, 2.3, 2.5, 2.6_
 
 - [ ] 3. Create business logic services
-  - [ ] 3.1 Implement TaskService with business rules
+  - [x] 3.1 Implement TaskService with business rules
     - Write TaskService with task creation, update, and status management logic
     - Implement task validation rules and due date handling
     - Create unit tests for task business logic
     - _Requirements: 1.1, 1.2, 1.4, 1.5_
 
-  - [ ] 3.2 Implement EventService with calendar logic
+  - [x] 3.2 Implement EventService with calendar logic
     - Code EventService with event creation and time conflict validation
     - Implement calendar-specific business rules and date handling
     - Write unit tests for event service operations
