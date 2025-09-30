@@ -158,7 +158,8 @@ func (ds *DashboardService) GetDashboardData(ctx context.Context, filters Dashbo
 		dashboardData.UpcomingEvents = upcomingEvents
 
 		// Get today's events
-		today := time.Now().Truncate(24 * time.Hour)
+		nowLocal := time.Now()
+		today := time.Date(nowLocal.Year(), nowLocal.Month(), nowLocal.Day(), 0, 0, 0, 0, nowLocal.Location())
 		todayEvents, err := ds.eventService.GetEventsByDay(ctx, today)
 		if err != nil {
 			return nil, fmt.Errorf("failed to get today's events: %w", err)
@@ -235,24 +236,36 @@ func (ds *DashboardService) GetUpcomingItems(ctx context.Context, days int, limi
 func (ds *DashboardService) GetDashboardStats(ctx context.Context) (*DashboardStats, error) {
 	stats := &DashboardStats{}
 
-	// Get task statistics
-	allTasks, totalTasks, err := ds.taskService.ListTasks(ctx, TaskListFilters{PageSize: 1000})
+	// Get task statistics (user totals; avoid sampling)
+	_, totalTasks, err := ds.taskService.ListTasks(ctx, TaskListFilters{PageSize: 1})
 	if err != nil {
 		return nil, fmt.Errorf("failed to get task statistics: %w", err)
 	}
 	stats.TotalTasks = totalTasks
 
-	// Count completed and pending tasks
-	var completedCount, pendingCount int64
-	for _, task := range allTasks {
-		if task.Status == models.TaskStatusCompleted {
-			completedCount++
-		} else {
-			pendingCount++
-		}
+	// Total per status
+ 	if _, completedTotal, err := ds.taskService.ListTasks(ctx, TaskListFilters{Status: models.TaskStatusCompleted, PageSize: 1}); err == nil {
+	    stats.CompletedTasks = completedTotal
+	} else {
+	    return nil, fmt.Errorf("failed to count completed tasks: %w", err)
 	}
-	stats.CompletedTasks = completedCount
-	stats.PendingTasks = pendingCount
+	if _, pendingTotal, err := ds.taskService.ListTasks(ctx, TaskListFilters{Status: models.TaskStatusPending, PageSize: 1}); err == nil {
+    	stats.PendingTasks = pendingTotal
+	} else {
+    	return nil, fmt.Errorf("failed to count pending tasks: %w", err)
+	}
+
+	// var completedCount, pendingCount int64
+	// for _, task := range allTasks {
+	// 	if task.Status == models.TaskStatusCompleted {
+	// 		completedCount++
+	// 	} else {
+	// 		pendingCount++
+	// 	}
+	// }
+
+	// stats.CompletedTasks = completedCount
+	// stats.PendingTasks = pendingCount
 
 	// Calculate completion rate
 	if stats.TotalTasks > 0 {
@@ -283,7 +296,7 @@ func (ds *DashboardService) GetDashboardStats(ctx context.Context) (*DashboardSt
 	tomorrow := today.AddDate(0, 0, 1)
 	var todayCount, upcomingCount int64
 	for _, event := range allEvents {
-		if event.StartTime.After(today) && event.StartTime.Before(tomorrow) {
+		if !event.StartTime.Before(today) && event.StartTime.Before(tomorrow) {
 			todayCount++
 		} else if event.StartTime.After(now) {
 			upcomingCount++

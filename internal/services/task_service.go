@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"strings"
 	"time"
+	"database/sql"
 
 	"agenda/internal/database"
 	"agenda/internal/models"
@@ -111,6 +112,9 @@ func (ts *TaskService) GetTaskByID(ctx context.Context, id int) (*models.Task, e
 
 	task, err := ts.taskRepo.GetTaskByID(ctx, id)
 	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, ErrTaskNotFound
+		}
 		return nil, fmt.Errorf("failed to get task: %w", err)
 	}
 
@@ -126,6 +130,9 @@ func (ts *TaskService) UpdateTask(ctx context.Context, id int, req UpdateTaskReq
 	// Get existing task
 	existingTask, err := ts.taskRepo.GetTaskByID(ctx, id)
 	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, ErrTaskNotFound
+		}
 		return nil, fmt.Errorf("failed to get existing task: %w", err)
 	}
 
@@ -166,6 +173,9 @@ func (ts *TaskService) DeleteTask(ctx context.Context, id int) error {
 	// Check if task exists
 	_, err := ts.taskRepo.GetTaskByID(ctx, id)
 	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return ErrTaskNotFound
+		}
 		return fmt.Errorf("failed to verify task exists: %w", err)
 	}
 
@@ -186,6 +196,9 @@ func (ts *TaskService) CompleteTask(ctx context.Context, id int) (*models.Task, 
 	// Get existing task
 	task, err := ts.taskRepo.GetTaskByID(ctx, id)
 	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, ErrTaskNotFound
+		}
 		return nil, fmt.Errorf("failed to get task: %w", err)
 	}
 
@@ -212,6 +225,9 @@ func (ts *TaskService) ReopenTask(ctx context.Context, id int) (*models.Task, er
 	// Get existing task
 	task, err := ts.taskRepo.GetTaskByID(ctx, id)
 	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, ErrTaskNotFound
+		}
 		return nil, fmt.Errorf("failed to get task: %w", err)
 	}
 

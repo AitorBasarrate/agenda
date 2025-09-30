@@ -287,11 +287,6 @@ func TestDashboardService_GetDashboardStats(t *testing.T) {
 	ctx := context.Background()
 	now := time.Now()
 	
-	allTasks := []*models.Task{
-		{ID: 1, Status: models.TaskStatusPending},
-		{ID: 2, Status: models.TaskStatusCompleted},
-		{ID: 3, Status: models.TaskStatusCompleted},
-	}
 	overdueTasks := []*models.Task{
 		{ID: 4, Status: models.TaskStatusPending},
 	}
@@ -300,7 +295,10 @@ func TestDashboardService_GetDashboardStats(t *testing.T) {
 		{ID: 2, StartTime: now.Add(-time.Hour)},
 	}
 
-	mockTaskService.On("ListTasks", ctx, mock.AnythingOfType("TaskListFilters")).Return(allTasks, int64(3), nil)
+	// Mock the new behavior: separate calls for total, completed, and pending counts
+	mockTaskService.On("ListTasks", ctx, TaskListFilters{PageSize: 1}).Return([]*models.Task{}, int64(3), nil)
+	mockTaskService.On("ListTasks", ctx, TaskListFilters{Status: models.TaskStatusCompleted, PageSize: 1}).Return([]*models.Task{}, int64(2), nil)
+	mockTaskService.On("ListTasks", ctx, TaskListFilters{Status: models.TaskStatusPending, PageSize: 1}).Return([]*models.Task{}, int64(1), nil)
 	mockTaskService.On("GetOverdueTasks", ctx).Return(overdueTasks, nil)
 	mockEventService.On("ListEvents", ctx, mock.AnythingOfType("EventListFilters")).Return(allEvents, int64(2), nil)
 
@@ -314,6 +312,44 @@ func TestDashboardService_GetDashboardStats(t *testing.T) {
 	assert.Equal(t, int64(1), result.OverdueTasks)
 	assert.Equal(t, int64(2), result.TotalEvents)
 	assert.InDelta(t, 66.67, result.CompletionRate, 0.01) // 2/3 * 100
+
+	mockTaskService.AssertExpectations(t)
+	mockEventService.AssertExpectations(t)
+}
+
+func TestDashboardService_GetDashboardStats_LargeDataset(t *testing.T) {
+	mockTaskService := &MockTaskService{}
+	mockEventService := &MockEventService{}
+	service := NewDashboardService(mockTaskService, mockEventService)
+
+	ctx := context.Background()
+	now := time.Now()
+	
+	overdueTasks := []*models.Task{
+		{ID: 1, Status: models.TaskStatusPending},
+		{ID: 2, Status: models.TaskStatusPending},
+	}
+	allEvents := []*models.Event{
+		{ID: 1, StartTime: now.Add(time.Hour)},
+	}
+
+	// Mock large dataset: 1000 total tasks, 750 completed, 250 pending
+	mockTaskService.On("ListTasks", ctx, TaskListFilters{PageSize: 1}).Return([]*models.Task{}, int64(1000), nil)
+	mockTaskService.On("ListTasks", ctx, TaskListFilters{Status: models.TaskStatusCompleted, PageSize: 1}).Return([]*models.Task{}, int64(750), nil)
+	mockTaskService.On("ListTasks", ctx, TaskListFilters{Status: models.TaskStatusPending, PageSize: 1}).Return([]*models.Task{}, int64(250), nil)
+	mockTaskService.On("GetOverdueTasks", ctx).Return(overdueTasks, nil)
+	mockEventService.On("ListEvents", ctx, mock.AnythingOfType("EventListFilters")).Return(allEvents, int64(1), nil)
+
+	result, err := service.GetDashboardStats(ctx)
+
+	assert.NoError(t, err)
+	assert.NotNil(t, result)
+	assert.Equal(t, int64(1000), result.TotalTasks)
+	assert.Equal(t, int64(750), result.CompletedTasks)
+	assert.Equal(t, int64(250), result.PendingTasks)
+	assert.Equal(t, int64(2), result.OverdueTasks)
+	assert.Equal(t, int64(1), result.TotalEvents)
+	assert.InDelta(t, 75.0, result.CompletionRate, 0.01) // 750/1000 * 100
 
 	mockTaskService.AssertExpectations(t)
 	mockEventService.AssertExpectations(t)
