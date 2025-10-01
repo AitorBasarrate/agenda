@@ -57,7 +57,7 @@
     - Write integration tests for event API endpoints
     - _Requirements: 2.1, 2.2, 2.3, 2.5, 2.6_
 
-  - [ ] 4.3 Implement dashboard API endpoint
+  - [x] 4.3 Implement dashboard API endpoint
     - Create handler for combined tasks and events dashboard view
     - Implement filtering and aggregation logic in API layer
     - Write integration tests for dashboard endpoint

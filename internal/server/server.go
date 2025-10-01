@@ -32,10 +32,12 @@ func NewServer(db *sql.DB) *http.Server {
 	// Initialize services
 	taskService := services.NewTaskService(taskRepo)
 	eventService := services.NewEventService(eventRepo)
+	dashboardService := services.NewDashboardService(taskService, eventService)
 
 	// Initialize handlers
 	taskHandler := handlers.NewTaskHandler(taskService)
 	eventHandler := handlers.NewEventHandler(eventService)
+	dashboardHandler := handlers.NewDashboardHandler(dashboardService)
 
 	// API routes
 	api := router.Group("/api")
@@ -61,6 +63,16 @@ func NewServer(db *sql.DB) *http.Server {
 			events.GET("/:id", eventHandler.GetEvent)
 			events.PUT("/:id", eventHandler.UpdateEvent)
 			events.DELETE("/:id", eventHandler.DeleteEvent)
+		}
+
+		// Dashboard routes
+		dashboard := api.Group("/dashboard")
+		{
+			dashboard.GET("", dashboardHandler.GetDashboard)
+			dashboard.GET("/stats", dashboardHandler.GetDashboardStats)
+			dashboard.GET("/upcoming", dashboardHandler.GetUpcomingItems)
+			dashboard.GET("/calendar", dashboardHandler.GetCalendarView)
+			dashboard.GET("/daterange", dashboardHandler.GetDateRange)
 		}
 	}
 
