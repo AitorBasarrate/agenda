@@ -6,7 +6,7 @@
   - Create database migration system for schema versioning
   - _Requirements: 5.1, 5.2_
 
-- [ ] 2. Implement data access layer (repositories)
+- [x] 2. Implement data access layer (repositories)
   - [x] 2.1 Create base repository interface and SQLite connection utilities
     - Write database connection management code with proper error handling
     - Implement base repository interface with common CRUD operations
@@ -25,7 +25,7 @@
     - Write unit tests for event repository operations
     - _Requirements: 2.2, 2.3, 2.5, 2.6_
 
-- [ ] 3. Create business logic services
+- [x] 3. Create business logic services
   - [x] 3.1 Implement TaskService with business rules
     - Write TaskService with task creation, update, and status management logic
     - Implement task validation rules and due date handling
@@ -51,7 +51,7 @@
     - Write integration tests for task API endpoints
     - _Requirements: 1.1, 1.2, 1.4, 1.5, 1.6_
 
-  - [ ] 4.2 Create event API handlers
+  - [x] 4.2 Create event API handlers
     - Implement HTTP handlers for event CRUD operations
     - Add date range filtering for calendar month queries
     - Write integration tests for event API endpoints

@@ -27,12 +27,15 @@ func NewServer(db *sql.DB) *http.Server {
 
 	// Initialize repositories
 	taskRepo := database.NewTaskRepository(db)
+	eventRepo := database.NewEventRepository(db)
 
 	// Initialize services
 	taskService := services.NewTaskService(taskRepo)
+	eventService := services.NewEventService(eventRepo)
 
 	// Initialize handlers
 	taskHandler := handlers.NewTaskHandler(taskService)
+	eventHandler := handlers.NewEventHandler(eventService)
 
 	// API routes
 	api := router.Group("/api")
@@ -47,6 +50,17 @@ func NewServer(db *sql.DB) *http.Server {
 			tasks.DELETE("/:id", taskHandler.DeleteTask)
 			tasks.POST("/:id/complete", taskHandler.CompleteTask)
 			tasks.POST("/:id/reopen", taskHandler.ReopenTask)
+		}
+
+		// Event routes
+		events := api.Group("/events")
+		{
+			events.GET("", eventHandler.ListEvents)
+			events.POST("", eventHandler.CreateEvent)
+			events.GET("/upcoming", eventHandler.GetUpcomingEvents)
+			events.GET("/:id", eventHandler.GetEvent)
+			events.PUT("/:id", eventHandler.UpdateEvent)
+			events.DELETE("/:id", eventHandler.DeleteEvent)
 		}
 	}
 
