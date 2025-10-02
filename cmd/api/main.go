@@ -9,6 +9,7 @@ import (
 	"syscall"
 	"time"
 
+	"agenda/internal/database"
 	"agenda/internal/server"
 )
 
@@ -38,8 +39,16 @@ func gracefulShutdown(apiServer *http.Server, done chan bool) {
 }
 
 func main() {
+	// Initialize database service
+	dbService := database.New()
+	defer dbService.Close()
 
-	server := server.NewServer()
+	// Initialize database schema
+	if err := dbService.Initialize(); err != nil {
+		log.Fatalf("Failed to initialize database: %v", err)
+	}
+
+	server := server.NewServer(dbService.GetDB())
 
 	// Create a done channel to signal when the shutdown is complete
 	done := make(chan bool, 1)
@@ -47,6 +56,7 @@ func main() {
 	// Run graceful shutdown in a separate goroutine
 	go gracefulShutdown(server, done)
 
+	log.Println("Starting server on port 8080...")
 	err := server.ListenAndServe()
 	if err != nil && err != http.ErrServerClosed {
 		panic(fmt.Sprintf("http server error: %s", err))

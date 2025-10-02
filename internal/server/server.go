@@ -1,13 +1,18 @@
 package server
 
 import (
+	"database/sql"
 	"net/http"
 	"os"
 
+	"agenda/internal/database"
+	"agenda/internal/handlers"
+	"agenda/internal/middleware"
+	"agenda/internal/services"
 	"github.com/gin-gonic/gin"
 )
 
-func NewServer() *http.Server {
+func NewServer(db *sql.DB) *http.Server {
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8080"
@@ -15,6 +20,62 @@ func NewServer() *http.Server {
 
 	router := gin.Default()
 	
+	// Add middleware
+	router.Use(middleware.CORS())
+	router.Use(middleware.ErrorHandler())
+	router.Use(middleware.RequestLogger())
+
+	// Initialize repositories
+	taskRepo := database.NewTaskRepository(db)
+	eventRepo := database.NewEventRepository(db)
+
+	// Initialize services
+	taskService := services.NewTaskService(taskRepo)
+	eventService := services.NewEventService(eventRepo)
+	dashboardService := services.NewDashboardService(taskService, eventService)
+
+	// Initialize handlers
+	taskHandler := handlers.NewTaskHandler(taskService)
+	eventHandler := handlers.NewEventHandler(eventService)
+	dashboardHandler := handlers.NewDashboardHandler(dashboardService)
+
+	// API routes
+	api := router.Group("/api")
+	{
+		// Task routes
+		tasks := api.Group("/tasks")
+		{
+			tasks.GET("", taskHandler.ListTasks)
+			tasks.POST("", taskHandler.CreateTask)
+			tasks.GET("/:id", taskHandler.GetTask)
+			tasks.PUT("/:id", taskHandler.UpdateTask)
+			tasks.DELETE("/:id", taskHandler.DeleteTask)
+			tasks.POST("/:id/complete", taskHandler.CompleteTask)
+			tasks.POST("/:id/reopen", taskHandler.ReopenTask)
+		}
+
+		// Event routes
+		events := api.Group("/events")
+		{
+			events.GET("", eventHandler.ListEvents)
+			events.POST("", eventHandler.CreateEvent)
+			events.GET("/upcoming", eventHandler.GetUpcomingEvents)
+			events.GET("/:id", eventHandler.GetEvent)
+			events.PUT("/:id", eventHandler.UpdateEvent)
+			events.DELETE("/:id", eventHandler.DeleteEvent)
+		}
+
+		// Dashboard routes
+		dashboard := api.Group("/dashboard")
+		{
+			dashboard.GET("", dashboardHandler.GetDashboard)
+			dashboard.GET("/stats", dashboardHandler.GetDashboardStats)
+			dashboard.GET("/upcoming", dashboardHandler.GetUpcomingItems)
+			dashboard.GET("/calendar", dashboardHandler.GetCalendarView)
+			dashboard.GET("/daterange", dashboardHandler.GetDateRange)
+		}
+	}
+
 	// Basic health check endpoint
 	router.GET("/health", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{"status": "ok"})

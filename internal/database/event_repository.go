@@ -92,7 +92,7 @@ func (er *EventRepository) GetEventByID(ctx context.Context, id int) (*models.Ev
 	err := er.GetByID(ctx, &event, query, id)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return nil, fmt.Errorf("event with id %d not found", id)
+			return nil, sql.ErrNoRows
 		}
 		return nil, fmt.Errorf("failed to get event: %w", err)
 	}
