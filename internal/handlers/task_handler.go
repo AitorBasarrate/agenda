@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"errors"
 	"net/http"
 	"strconv"
 	"time"
@@ -153,7 +154,7 @@ func (th *TaskHandler) DeleteTask(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusNoContent, nil)
+	c.Status(http.StatusNoContent)
 }
 
 // ListTasks handles GET /api/tasks
@@ -261,8 +262,11 @@ func (th *TaskHandler) ReopenTask(c *gin.Context) {
 func (th *TaskHandler) parseTaskID(c *gin.Context) (int, error) {
 	idStr := c.Param("id")
 	id, err := strconv.Atoi(idStr)
-	if err != nil || id <= 0 {
+	if err != nil {
 		return 0, err
+	}
+	if id < 0 {
+		return 0, errors.New("task ID must be positive")
 	}
 	return id, nil
 }
@@ -319,3 +323,4 @@ func (th *TaskHandler) handleError(c *gin.Context, statusCode int, code, message
 	}
 	c.JSON(statusCode, response)
 }
+

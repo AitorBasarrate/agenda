@@ -5,20 +5,9 @@ import (
 	"log"
 	"net/http"
 
+	"agenda/internal/api"
 	"github.com/gin-gonic/gin"
 )
-
-// ErrorResponse represents a standardized error response
-type ErrorResponse struct {
-	Error ErrorDetail `json:"error"`
-}
-
-// ErrorDetail contains error information
-type ErrorDetail struct {
-	Code    string                 `json:"code"`
-	Message string                 `json:"message"`
-	Details map[string]interface{} `json:"details,omitempty"`
-}
 
 // ErrorHandler middleware handles panics and provides consistent error responses
 func ErrorHandler() gin.HandlerFunc {
@@ -29,8 +18,8 @@ func ErrorHandler() gin.HandlerFunc {
 			log.Printf("Panic recovered: %v", recovered)
 		}
 
-		response := ErrorResponse{
-			Error: ErrorDetail{
+		response := api.ErrorResponse{
+			Error: api.ErrorDetail{
 				Code:    "INTERNAL_ERROR",
 				Message: "Internal server error",
 			},
@@ -57,3 +46,4 @@ func RequestLogger() gin.HandlerFunc {
 		)
 	})
 }
+

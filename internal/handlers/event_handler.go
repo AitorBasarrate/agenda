@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"errors"
 	"net/http"
 	"strconv"
 	"time"
@@ -139,7 +140,7 @@ func (eh *EventHandler) DeleteEvent(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusNoContent, nil)
+	c.Status(http.StatusNoContent)
 }
 
 // ListEvents handles GET /api/events with various filtering options
@@ -310,8 +311,11 @@ func (eh *EventHandler) GetUpcomingEvents(c *gin.Context) {
 func (eh *EventHandler) parseEventID(c *gin.Context) (int, error) {
 	idStr := c.Param("id")
 	id, err := strconv.Atoi(idStr)
-	if err != nil || id <= 0 {
+	if err != nil {
 		return 0, err
+	}
+	if id <= 0 {
+		return 0, errors.New("event ID must be positive")
 	}
 	return id, nil
 }
@@ -370,3 +374,4 @@ func (eh *EventHandler) handleError(c *gin.Context, statusCode int, code, messag
 	}
 	c.JSON(statusCode, response)
 }
+
