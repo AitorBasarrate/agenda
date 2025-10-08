@@ -2,6 +2,7 @@ package services
 
 import (
 	"context"
+	"database/sql"
 	"errors"
 	"fmt"
 	"strings"
@@ -129,6 +130,9 @@ func (es *EventService) GetEventByID(ctx context.Context, id int) (*models.Event
 
 	event, err := es.eventRepo.GetEventByID(ctx, id)
 	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, ErrEventNotFound
+		}
 		return nil, fmt.Errorf("failed to get event: %w", err)
 	}
 
@@ -144,6 +148,9 @@ func (es *EventService) UpdateEvent(ctx context.Context, id int, req UpdateEvent
 	// Get existing event
 	existingEvent, err := es.eventRepo.GetEventByID(ctx, id)
 	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, ErrEventNotFound
+		}
 		return nil, fmt.Errorf("failed to get existing event: %w", err)
 	}
 
@@ -198,6 +205,9 @@ func (es *EventService) DeleteEvent(ctx context.Context, id int) error {
 	// Check if event exists
 	_, err := es.eventRepo.GetEventByID(ctx, id)
 	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return ErrEventNotFound
+		}
 		return fmt.Errorf("failed to verify event exists: %w", err)
 	}
 

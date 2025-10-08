@@ -92,7 +92,7 @@ func (tr *TaskRepository) GetTaskByID(ctx context.Context, id int) (*models.Task
 	err := tr.GetByID(ctx, &task, query, id)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return nil, fmt.Errorf("task with id %d not found", id)
+			return nil, sql.ErrNoRows
 		}
 		return nil, fmt.Errorf("failed to get task: %w", err)
 	}
