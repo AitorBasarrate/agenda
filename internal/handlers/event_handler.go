@@ -2,11 +2,14 @@ package handlers
 
 import (
 	"errors"
+	"math"
 	"net/http"
 	"strconv"
 	"time"
 
+	"agenda/internal/api"
 	"agenda/internal/services"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -174,7 +177,7 @@ func (eh *EventHandler) ListEvents(c *gin.Context) {
 	if query.StartAfter != "" {
 		startAfter, err := time.Parse(time.RFC3339, query.StartAfter)
 		if err != nil {
-			eh.handleError(c, http.StatusBadRequest, "INVALID_DATE", "Invalid start_after date format", map[string]interface{}{
+			eh.handleError(c, http.StatusBadRequest, "INVALID_DATE", "Invalid start_after date format", map[string]any{
 				"start_after": "Date must be in RFC3339 format (e.g., 2023-01-01T00:00:00Z)",
 			})
 			return
@@ -185,7 +188,7 @@ func (eh *EventHandler) ListEvents(c *gin.Context) {
 	if query.StartBefore != "" {
 		startBefore, err := time.Parse(time.RFC3339, query.StartBefore)
 		if err != nil {
-			eh.handleError(c, http.StatusBadRequest, "INVALID_DATE", "Invalid start_before date format", map[string]interface{}{
+			eh.handleError(c, http.StatusBadRequest, "INVALID_DATE", "Invalid start_before date format", map[string]any{
 				"start_before": "Date must be in RFC3339 format (e.g., 2023-01-01T00:00:00Z)",
 			})
 			return
@@ -196,7 +199,7 @@ func (eh *EventHandler) ListEvents(c *gin.Context) {
 	if query.EndAfter != "" {
 		endAfter, err := time.Parse(time.RFC3339, query.EndAfter)
 		if err != nil {
-			eh.handleError(c, http.StatusBadRequest, "INVALID_DATE", "Invalid end_after date format", map[string]interface{}{
+			eh.handleError(c, http.StatusBadRequest, "INVALID_DATE", "Invalid end_after date format", map[string]any{
 				"end_after": "Date must be in RFC3339 format (e.g., 2023-01-01T00:00:00Z)",
 			})
 			return
@@ -207,7 +210,7 @@ func (eh *EventHandler) ListEvents(c *gin.Context) {
 	if query.EndBefore != "" {
 		endBefore, err := time.Parse(time.RFC3339, query.EndBefore)
 		if err != nil {
-			eh.handleError(c, http.StatusBadRequest, "INVALID_DATE", "Invalid end_before date format", map[string]interface{}{
+			eh.handleError(c, http.StatusBadRequest, "INVALID_DATE", "Invalid end_before date format", map[string]any{
 				"end_before": "Date must be in RFC3339 format (e.g., 2023-01-01T00:00:00Z)",
 			})
 			return
@@ -223,9 +226,7 @@ func (eh *EventHandler) ListEvents(c *gin.Context) {
 
 	// Calculate pagination info
 	page := filters.Page
-	if page < 1 {
-		page = 1
-	}
+	page = int(math.Max(1.0, float64(page)))
 	pageSize := filters.PageSize
 	if pageSize <= 0 {
 		pageSize = 20
@@ -252,7 +253,7 @@ func (eh *EventHandler) getEventsByMonth(c *gin.Context, year int, month time.Mo
 		return
 	}
 
-	c.JSON(http.StatusOK, map[string]interface{}{
+	c.JSON(http.StatusOK, map[string]any{
 		"events": events,
 		"year":   year,
 		"month":  int(month),
@@ -264,7 +265,7 @@ func (eh *EventHandler) getEventsByMonth(c *gin.Context, year int, month time.Mo
 func (eh *EventHandler) getEventsByDay(c *gin.Context, dayStr string) {
 	day, err := time.Parse("2006-01-02", dayStr)
 	if err != nil {
-		eh.handleError(c, http.StatusBadRequest, "INVALID_DATE", "Invalid day format", map[string]interface{}{
+		eh.handleError(c, http.StatusBadRequest, "INVALID_DATE", "Invalid day format", map[string]any{
 			"day": "Date must be in YYYY-MM-DD format (e.g., 2023-01-01)",
 		})
 		return
@@ -276,7 +277,7 @@ func (eh *EventHandler) getEventsByDay(c *gin.Context, dayStr string) {
 		return
 	}
 
-	c.JSON(http.StatusOK, map[string]interface{}{
+	c.JSON(http.StatusOK, map[string]any{
 		"events": events,
 		"date":   dayStr,
 		"total":  len(events),
@@ -300,7 +301,7 @@ func (eh *EventHandler) GetUpcomingEvents(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, map[string]interface{}{
+	c.JSON(http.StatusOK, map[string]any{
 		"events": events,
 		"limit":  limit,
 		"total":  len(events),
@@ -322,7 +323,7 @@ func (eh *EventHandler) parseEventID(c *gin.Context) (int, error) {
 
 // handleValidationError handles validation errors from request binding
 func (eh *EventHandler) handleValidationError(c *gin.Context, err error) {
-	eh.handleError(c, http.StatusBadRequest, "VALIDATION_ERROR", "Invalid request data", map[string]interface{}{
+	eh.handleError(c, http.StatusBadRequest, "VALIDATION_ERROR", "Invalid request data", map[string]any{
 		"validation_error": err.Error(),
 	})
 }
@@ -333,27 +334,27 @@ func (eh *EventHandler) handleServiceError(c *gin.Context, err error) {
 	case services.ErrEventNotFound:
 		eh.handleError(c, http.StatusNotFound, "EVENT_NOT_FOUND", "Event not found", nil)
 	case services.ErrEventTitleRequired:
-		eh.handleError(c, http.StatusBadRequest, "VALIDATION_ERROR", "Event title is required", map[string]interface{}{
+		eh.handleError(c, http.StatusBadRequest, "VALIDATION_ERROR", "Event title is required", map[string]any{
 			"title": "Title is required",
 		})
 	case services.ErrEventTitleTooLong:
-		eh.handleError(c, http.StatusBadRequest, "VALIDATION_ERROR", "Event title too long", map[string]interface{}{
+		eh.handleError(c, http.StatusBadRequest, "VALIDATION_ERROR", "Event title too long", map[string]any{
 			"title": "Title cannot exceed 255 characters",
 		})
 	case services.ErrEventDescriptionTooLong:
-		eh.handleError(c, http.StatusBadRequest, "VALIDATION_ERROR", "Event description too long", map[string]interface{}{
+		eh.handleError(c, http.StatusBadRequest, "VALIDATION_ERROR", "Event description too long", map[string]any{
 			"description": "Description cannot exceed 1000 characters",
 		})
 	case services.ErrInvalidTimeRange:
-		eh.handleError(c, http.StatusBadRequest, "VALIDATION_ERROR", "Invalid time range", map[string]interface{}{
+		eh.handleError(c, http.StatusBadRequest, "VALIDATION_ERROR", "Invalid time range", map[string]any{
 			"time_range": "End time must be after start time",
 		})
 	case services.ErrEventInPast:
-		eh.handleError(c, http.StatusBadRequest, "VALIDATION_ERROR", "Event cannot be in the past", map[string]interface{}{
+		eh.handleError(c, http.StatusBadRequest, "VALIDATION_ERROR", "Event cannot be in the past", map[string]any{
 			"start_time": "Event start time cannot be in the past",
 		})
 	case services.ErrEventTooLong:
-		eh.handleError(c, http.StatusBadRequest, "VALIDATION_ERROR", "Event duration too long", map[string]interface{}{
+		eh.handleError(c, http.StatusBadRequest, "VALIDATION_ERROR", "Event duration too long", map[string]any{
 			"duration": "Event duration cannot exceed 24 hours",
 		})
 	case services.ErrTimeConflict:
@@ -364,9 +365,9 @@ func (eh *EventHandler) handleServiceError(c *gin.Context, err error) {
 }
 
 // handleError creates a standardized error response
-func (eh *EventHandler) handleError(c *gin.Context, statusCode int, code, message string, details map[string]interface{}) {
-	response := ErrorResponse{
-		Error: ErrorDetail{
+func (eh *EventHandler) handleError(c *gin.Context, statusCode int, code, message string, details map[string]any) {
+	response := api.ErrorResponse{
+		Error: api.ErrorDetail{
 			Code:    code,
 			Message: message,
 			Details: details,
@@ -374,4 +375,3 @@ func (eh *EventHandler) handleError(c *gin.Context, statusCode int, code, messag
 	}
 	c.JSON(statusCode, response)
 }
-
