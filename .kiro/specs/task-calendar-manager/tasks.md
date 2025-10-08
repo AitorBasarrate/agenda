@@ -44,7 +44,7 @@
     - Write unit tests for dashboard data aggregation
     - _Requirements: 3.1, 3.2, 3.3_
 
-- [ ] 4. Build REST API endpoints
+- [x] 4. Build REST API endpoints
   - [x] 4.1 Create task API handlers
     - Implement HTTP handlers for task CRUD operations (GET, POST, PUT, DELETE)
     - Add request validation and error handling middleware
@@ -63,7 +63,7 @@
     - Write integration tests for dashboard endpoint
     - _Requirements: 3.1, 3.2, 3.3, 3.4_
 
-- [ ] 5. Set up API routing and middleware
+- [x] 5. Set up API routing and middleware
   - Configure Gin router with all API endpoints and proper HTTP methods
   - Implement CORS middleware for frontend integration
   - Add request logging and error handling middleware

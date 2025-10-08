@@ -9,6 +9,7 @@ import (
 	"agenda/internal/handlers"
 	"agenda/internal/middleware"
 	"agenda/internal/services"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -18,12 +19,15 @@ func NewServer(db *sql.DB) *http.Server {
 		port = "8080"
 	}
 
-	router := gin.Default()
-	
-	// Add middleware
-	router.Use(middleware.CORS())
-	router.Use(middleware.ErrorHandler())
-	router.Use(middleware.RequestLogger())
+	// Create router without default middleware to have full control
+	router := gin.New()
+
+	// Add middleware in order of execution
+	router.Use(middleware.RequestLogger()) // Log requests first
+	router.Use(middleware.ErrorHandler())  // Handle panics and errors
+	router.Use(middleware.Security())      // Add security headers
+	router.Use(middleware.CORS())          // Handle CORS for frontend integration
+	router.Use(middleware.RateLimitInfo()) // Add rate limiting info headers
 
 	// Initialize repositories
 	taskRepo := database.NewTaskRepository(db)
@@ -39,8 +43,10 @@ func NewServer(db *sql.DB) *http.Server {
 	eventHandler := handlers.NewEventHandler(eventService)
 	dashboardHandler := handlers.NewDashboardHandler(dashboardService)
 
-	// API routes
+	// API routes with additional middleware
 	api := router.Group("/api")
+	api.Use(middleware.APIVersioning())         // Add API versioning
+	api.Use(middleware.ContentTypeValidation()) // Validate content-type for POST/PUT
 	{
 		// Task routes
 		tasks := api.Group("/tasks")
