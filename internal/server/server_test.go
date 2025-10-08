@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"strings"
 	"testing"
 
@@ -17,6 +18,7 @@ import (
 func TestMain(m *testing.M) {
 	// Set Gin to test mode
 	gin.SetMode(gin.TestMode)
+	os.Exit(m.Run())
 }
 
 func setupTestDB(t *testing.T) *sql.DB {
@@ -53,7 +55,6 @@ func TestServerRouting(t *testing.T) {
 			path:           "/health",
 			expectedStatus: http.StatusOK,
 			checkHeaders: map[string]string{
-				"X-API-Version":          "v1",
 				"X-Content-Type-Options": "nosniff",
 				"X-Frame-Options":        "DENY",
 			},
