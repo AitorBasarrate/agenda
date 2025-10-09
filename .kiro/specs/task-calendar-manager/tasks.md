@@ -70,13 +70,13 @@
   - _Requirements: 4.2, 5.3_
 
 - [ ] 6. Create frontend API client and state management
-  - [ ] 6.1 Implement API client utilities
+  - [x] 6.1 Implement API client utilities
     - Write TypeScript API client with methods for all backend endpoints
     - Implement request/response interceptors for error handling
     - Create type definitions for API request/response models
     - _Requirements: 4.2, 5.3_
 
-  - [ ] 6.2 Set up React state management
+  - [x] 6.2 Set up React state management
     - Implement custom hooks for task and event state management
     - Create context providers for global application state
     - Write unit tests for state management logic

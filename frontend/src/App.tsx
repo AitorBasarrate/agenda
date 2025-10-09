@@ -1,11 +1,14 @@
-import { ApiDemo } from './components/ApiDemo'
+import { AppProvider } from './contexts'
+import { StateDemo } from './components/StateDemo'
 import './App.css'
 
 function App() {
   return (
-    <div className="min-h-screen bg-gray-50">
-      <ApiDemo />
-    </div>
+    <AppProvider>
+      <div className="min-h-screen bg-gray-50">
+        <StateDemo />
+      </div>
+    </AppProvider>
   )
 }
 
