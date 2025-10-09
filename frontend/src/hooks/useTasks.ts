@@ -89,11 +89,11 @@ export function useTasks() {
     try {
       const newTask = await apiClient.createTask(taskData);
       
-      // Add the new task to the current list
-      updateState({
-        tasks: [newTask, ...state.tasks],
+      setState(prev => ({
+        ...prev,
+        tasks: [newTask, ...prev.tasks],
         loading: false,
-      });
+      }))
       
       return newTask;
     } catch (error) {
@@ -115,12 +115,13 @@ export function useTasks() {
       const updatedTask = await apiClient.updateTask(id, taskData);
       
       // Update the task in the current list
-      updateState({
-        tasks: state.tasks.map(task => 
+      setState(prev => ({
+        ...prev,
+        tasks: prev.tasks.map(task =>
           task.id === id ? updatedTask : task
         ),
         loading: false,
-      });
+      }));
       
       return updatedTask;
     } catch (error) {
@@ -142,10 +143,11 @@ export function useTasks() {
       await apiClient.deleteTask(id);
       
       // Remove the task from the current list
-      updateState({
-        tasks: state.tasks.filter(task => task.id !== id),
+      setState(prev => ({
+        ...prev,
+        tasks: prev.tasks.filter(task => task.id !== id),
         loading: false,
-      });
+      }))
       
       return true;
     } catch (error) {
