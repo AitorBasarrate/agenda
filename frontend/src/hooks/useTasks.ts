@@ -1,6 +1,7 @@
 import { useState, useCallback } from 'react';
 import { apiClient, ApiError } from '../api/client';
 import type { Task, CreateTaskRequest, UpdateTaskRequest, TaskListQuery } from '../types/api';
+import { TaskService } from '../api';
 
 export interface TaskFilters {
   status?: 'pending' | 'completed';
@@ -89,11 +90,11 @@ export function useTasks() {
     try {
       const newTask = await apiClient.createTask(taskData);
       
-      // Add the new task to the current list
-      updateState({
-        tasks: [newTask, ...state.tasks],
+      setState(prev => ({
+        ...prev,
+        tasks: [newTask, ...prev.tasks],
         loading: false,
-      });
+      }))
       
       return newTask;
     } catch (error) {
@@ -115,12 +116,13 @@ export function useTasks() {
       const updatedTask = await apiClient.updateTask(id, taskData);
       
       // Update the task in the current list
-      updateState({
-        tasks: state.tasks.map(task => 
+      setState(prev => ({
+        ...prev,
+        tasks: prev.tasks.map(task =>
           task.id === id ? updatedTask : task
         ),
         loading: false,
-      });
+      }));
       
       return updatedTask;
     } catch (error) {
@@ -142,10 +144,11 @@ export function useTasks() {
       await apiClient.deleteTask(id);
       
       // Remove the task from the current list
-      updateState({
-        tasks: state.tasks.filter(task => task.id !== id),
+      setState(prev => ({
+        ...prev,
+        tasks: prev.tasks.filter(task => task.id !== id),
         loading: false,
-      });
+      }))
       
       return true;
     } catch (error) {
@@ -162,10 +165,19 @@ export function useTasks() {
   const toggleTaskStatus = useCallback(async (id: number): Promise<Task | null> => {
     const task = state.tasks.find(t => t.id === id);
     if (!task) return null;
-
-    const newStatus = task.status === 'completed' ? 'pending' : 'completed';
-    return updateTask(id, { status: newStatus });
-  }, [state.tasks, updateTask]);
+    try {
+      const updated = await TaskService.toggleTaskStatus(task);
+      setState(prev => ({
+        ...prev,
+        tasks: prev.tasks.map(t => (t.id === id ? updated : t)),
+      }));
+      return updated;
+    } catch (error) {
+      const message = error instanceof ApiError ? error.message : 'Failed to toggle task status';
+      setError(message);
+      return null
+    }
+  }, [state.tasks, setError]);
 
   // Update filters
   const setFilters = useCallback((filters: TaskFilters) => {

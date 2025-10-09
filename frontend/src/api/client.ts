@@ -113,12 +113,12 @@ class ApiClient {
 
     // Handle error responses
     if (!response.ok) {
-      const errorResponse = data as ErrorResponse;
+      const errorResponse = (data as Partial<ErrorResponse> | undefined)?.error;
       throw new ApiError(
         response.status,
-        errorResponse.error.code,
-        errorResponse.error.message,
-        errorResponse.error.details
+        errorResponse?.code ?? 'UNKNOWN_ERROR',
+        errorResponse?.message ?? response.statusText ?? 'Request failed',
+        errorResponse?.details
       );
     }
 

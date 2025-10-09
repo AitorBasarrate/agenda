@@ -327,8 +327,10 @@ export class DashboardService {
   static async getCurrentWeekData(): Promise<DateRangeData> {
     try {
       const now = new Date();
-      const startOfWeek = new Date(now.setDate(now.getDate() - now.getDay()));
-      const endOfWeek = new Date(now.setDate(startOfWeek.getDate() + 6));
+      const startOfWeek = new Date(now);
+      startOfWeek.setDate(startOfWeek.getDate() -startOfWeek.getDay());
+      const endOfWeek = new Date(startOfWeek);
+      endOfWeek.setDate(endOfWeek.getDate() + 6)
 
       return await this.getDateRangeData(
         startOfWeek.toISOString(),

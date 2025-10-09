@@ -117,10 +117,12 @@ export function useEvents() {
 
     try {
       const response = await apiClient.getEventsByDay(day);
-      
+      const [y, m, d] = day.split('-').map(Number);
+      const selected = new Date(y, m-1, d);
+
       updateState({
         events: response.events,
-        selectedDate: new Date(day),
+        selectedDate: selected,
         loading: false,
       });
     } catch (error) {
@@ -141,10 +143,11 @@ export function useEvents() {
       const newEvent = await apiClient.createEvent(eventData);
       
       // Add the new event to the current list
-      updateState({
+      setState(prev => ({
+        ...prev,
         events: [newEvent, ...state.events],
         loading: false,
-      });
+      }));
       
       return newEvent;
     } catch (error) {
@@ -166,12 +169,13 @@ export function useEvents() {
       const updatedEvent = await apiClient.updateEvent(id, eventData);
       
       // Update the event in the current list
-      updateState({
+      setState(prev => ({
+        ...prev,
         events: state.events.map(event => 
           event.id === id ? updatedEvent : event
         ),
         loading: false,
-      });
+      }));
       
       return updatedEvent;
     } catch (error) {
@@ -193,10 +197,11 @@ export function useEvents() {
       await apiClient.deleteEvent(id);
       
       // Remove the event from the current list
-      updateState({
+      setState(prev => ({
+        ...prev,
         events: state.events.filter(event => event.id !== id),
         loading: false,
-      });
+      }));
       
       return true;
     } catch (error) {

@@ -116,8 +116,9 @@ describe('useTasks', () => {
     const { result } = renderHook(() => useTasks());
 
     // Set initial tasks
+    mockApiClient.listTasks.mockResolvedValue(mockPaginatedResponse)
     await act(async () => {
-      result.current.loadTasks();
+      await result.current.loadTasks();
     });
 
     let createdTaskResult: Task | null = null;
