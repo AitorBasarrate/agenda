@@ -1,6 +1,7 @@
 import { useState, useCallback } from 'react';
 import { apiClient, ApiError } from '../api/client';
 import type { Task, CreateTaskRequest, UpdateTaskRequest, TaskListQuery } from '../types/api';
+import { TaskService } from '../api';
 
 export interface TaskFilters {
   status?: 'pending' | 'completed';
@@ -166,6 +167,7 @@ export function useTasks() {
     if (!task) return null;
 
     const newStatus = task.status === 'completed' ? 'pending' : 'completed';
+    return TaskService.toggleTaskStatus(task)
     return updateTask(id, { status: newStatus });
   }, [state.tasks, updateTask]);
 
