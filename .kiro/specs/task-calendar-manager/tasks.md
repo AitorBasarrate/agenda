@@ -69,7 +69,11 @@
   - Add request logging and error handling middleware
   - _Requirements: 4.2, 5.3_
 
+<<<<<<< HEAD
 - [ ] 6. Create frontend API client and state management
+=======
+- [x] 6. Create frontend API client and state management
+>>>>>>> 0a2f0cd (Task management components)
   - [x] 6.1 Implement API client utilities
     - Write TypeScript API client with methods for all backend endpoints
     - Implement request/response interceptors for error handling
@@ -83,7 +87,7 @@
     - _Requirements: 3.4, 4.2_
 
 - [ ] 7. Build core React components
-  - [ ] 7.1 Create task management components
+  - [x] 7.1 Create task management components
     - Implement TaskList component with filtering and sorting
     - Create TaskForm component for task creation and editing
     - Build TaskCard component for individual task display
