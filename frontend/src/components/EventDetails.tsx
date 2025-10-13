@@ -37,6 +37,12 @@ export function EventDetails({ event, onEdit, onClose, className = '' }: EventDe
     const start = new Date(event.start_time);
     const end = new Date(event.end_time);
     const diffMs = end.getTime() - start.getTime();
+
+    // Handle very shoert events (less than 1 minute)
+    if (diffMs < 60000) {
+      return 'less than a minute';
+    }
+    
     const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
     const diffMinutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
     

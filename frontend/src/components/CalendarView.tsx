@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useEventContext } from '../contexts/EventContext';
 import type { Event } from '../types/api';
 
@@ -109,9 +109,14 @@ export function CalendarView({ onDateSelect, onEventSelect, className = '' }: Ca
   const weekDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
   if (error) {
+    // Normalize error into a safe message before rendering.
+    const message = error instanceof Error ? error.message : String(error);
+    // Avoid rendering "[object Object]" for generic objects.
+    const safeMessage = message === '[object Object]' ? 'Unknown error' : message;
+
     return (
       <div className={`bg-red-50 border border-red-200 rounded-lg p-4 ${className}`}>
-        <p className="text-red-600">Error loading calendar: {error}</p>
+        <p className="text-red-600">Error loading calendar: {safeMessage}</p>
       </div>
     );
   }
@@ -124,6 +129,7 @@ export function CalendarView({ onDateSelect, onEventSelect, className = '' }: Ca
           onClick={previousMonth}
           className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
           disabled={loading}
+          aria-label="Previous month"
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -138,6 +144,7 @@ export function CalendarView({ onDateSelect, onEventSelect, className = '' }: Ca
           onClick={nextMonth}
           className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
           disabled={loading}
+          aria-label="Next month"
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -168,14 +175,19 @@ export function CalendarView({ onDateSelect, onEventSelect, className = '' }: Ca
 
         {/* Calendar days */}
         <div className="grid grid-cols-7 gap-1">
-          {calendarDays.map((day, index) => {
+          {calendarDays.map((day) => {
             const isSelected = selectedDate && 
               day.date.getTime() === selectedDate.getTime();
             
             return (
               <div
-                key={index}
+                key={day.date.getTime()}
                 onClick={() => handleDateClick(day)}
+                onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && handleDateClick(day)}
+                role="button"
+                tabIndex={0}
+                aria-selected={!!isSelected}
+                aria-current={day.isToday ? 'date' : undefined}
                 className={`
                   min-h-[80px] p-1 border rounded-lg cursor-pointer transition-colors
                   ${day.isCurrentMonth 
