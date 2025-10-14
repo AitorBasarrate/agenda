@@ -1,3 +1,7 @@
+// Layout Components
+export { Header } from './Header';
+export { Layout } from './Layout';
+
 // Calendar Components
 export { CalendarView } from './CalendarView';
 export { EventForm } from './EventForm';

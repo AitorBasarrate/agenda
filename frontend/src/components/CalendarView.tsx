@@ -110,7 +110,7 @@ export function CalendarView({ onDateSelect, onEventSelect, className = '' }: Ca
 
   if (error) {
     // Normalize error into a safe message before rendering.
-    const message = error instanceof Error ? error.message : String(error);
+    const message = (error as any) instanceof Error ? (error as any).message : String(error);
     // Avoid rendering "[object Object]" for generic objects.
     const safeMessage = message === '[object Object]' ? 'Unknown error' : message;
 

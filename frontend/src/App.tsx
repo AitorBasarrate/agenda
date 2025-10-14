@@ -1,15 +1,23 @@
-import { AppProvider } from './contexts'
-import { StateDemo } from './components/StateDemo'
-import './App.css'
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { AppProvider } from './contexts';
+import { Layout } from './components';
+import { DashboardPage, TasksPage, CalendarPage } from './pages';
+import './App.css';
 
 function App() {
   return (
     <AppProvider>
-      <div className="min-h-screen bg-gray-50">
-        <StateDemo />
-      </div>
+      <Router>
+        <Layout>
+          <Routes>
+            <Route path="/" element={<DashboardPage />} />
+            <Route path="/tasks" element={<TasksPage />} />
+            <Route path="/calendar" element={<CalendarPage />} />
+          </Routes>
+        </Layout>
+      </Router>
     </AppProvider>
-  )
+  );
 }
 
-export default App
+export default App;
