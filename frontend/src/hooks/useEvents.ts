@@ -98,7 +98,6 @@ export function useEvents() {
       
       updateState({
         events: response.events,
-        currentMonth: new Date(year, month - 1), // month is 1-based in API, 0-based in Date
         loading: false,
       });
     } catch (error) {
