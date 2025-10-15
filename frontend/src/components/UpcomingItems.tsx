@@ -105,8 +105,8 @@ export function UpcomingItems() {
 
   // Combine and sort items by date
   const allItems = [
-    ...upcomingTasks.map(task => ({ item: task, type: 'task' as const, sortDate: task.due_date })),
-    ...upcomingEvents.map(event => ({ item: event, type: 'event' as const, sortDate: event.start_time }))
+    ...(upcomingTasks || []).map(task => ({ item: task, type: 'task' as const, sortDate: task.due_date })),
+    ...(upcomingEvents || []).map(event => ({ item: event, type: 'event' as const, sortDate: event.start_time }))
   ]
     .filter(({ sortDate }) => sortDate) // Only include items with dates
     .sort((a, b) => new Date(a.sortDate!).getTime() - new Date(b.sortDate!).getTime())

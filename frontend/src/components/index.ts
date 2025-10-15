@@ -1,5 +1,4 @@
 // Layout Components
-export { Header } from './Header';
 export { Layout } from './Layout';
 
 // Calendar Components

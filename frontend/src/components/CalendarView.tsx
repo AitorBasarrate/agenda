@@ -122,7 +122,8 @@ export function CalendarView({ onDateSelect, onEventSelect, className = '' }: Ca
   }
 
   return (
-    <div className={`bg-white rounded-lg shadow-sm border ${className}`}>
+    <div className='p-2'>
+    <div className={`bg-soft-white rounded-lg shadow-lg border-deep-violet ${className}`}>
       {/* Calendar Header */}
       <div className="flex items-center justify-between p-4 border-b">
         <button
@@ -191,11 +192,11 @@ export function CalendarView({ onDateSelect, onEventSelect, className = '' }: Ca
                 className={`
                   min-h-[80px] p-1 border rounded-lg cursor-pointer transition-colors
                   ${day.isCurrentMonth 
-                    ? 'bg-white hover:bg-gray-50' 
-                    : 'bg-gray-50 text-gray-400'
+                    ? 'bg-soft-white hover:bg-sage-mist/50' 
+                    : 'bg-truffle-gray/25'
                   }
-                  ${day.isToday ? 'ring-2 ring-blue-500' : ''}
-                  ${isSelected ? 'bg-blue-50 border-blue-300' : 'border-gray-200'}
+                  ${day.isToday ? 'ring-2 ring-emerald-mint' : ''}
+                  ${isSelected ? 'border-canyon-sunset' : 'border-deep-violet/25'}
                 `}
               >
                 {/* Day number */}
@@ -232,6 +233,7 @@ export function CalendarView({ onDateSelect, onEventSelect, className = '' }: Ca
           })}
         </div>
       </div>
+    </div>
     </div>
   );
 }

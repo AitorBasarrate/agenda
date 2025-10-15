@@ -1,12 +1,13 @@
+import { PageHeader } from '../components/PageHeader';
+
 export function TasksPage() {
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-gray-900">Tasks</h1>
-        <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors">
+    <div>
+      <PageHeader title="Tasks">
+        <button className="flex items-center space-x-3 px-4 py-3 bg-emerald-mint/50 rounded-lg text-lg font-medium shadow-md transition-all duration-200 ease-in-out text-truffle-gray hover:bg-emerald-mint hover:text-forest-noir transform hover:scale-[1.02] hover:shadow-truffle-gray/20">
           Add Task
         </button>
-      </div>
+      </PageHeader>
       
       <div className="bg-white shadow rounded-lg p-6">
         <div className="text-center py-12">
