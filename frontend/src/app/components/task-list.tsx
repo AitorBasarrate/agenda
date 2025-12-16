@@ -33,19 +33,23 @@ export function TaskList({ tasks, onAddTask, onToggleTask, onDeleteTask }: TaskL
   const completedTasks = tasks.filter((t) => t.completed);
 
   return (
-    <div className="bg-white rounded-lg shadow-lg p-6">
-      <h2 className="text-2xl mb-6">Tareas</h2>
+    <div>
+      <h2 className="text-2xl font-medium text-gray-800 mb-6">Tareas</h2>
 
       {/* Formulario para agregar tarea */}
       <form onSubmit={handleSubmit} className="mb-6">
-        <div className="flex gap-2">
+        <div className="flex gap-3">
           <Input
             value={newTaskTitle}
             onChange={(e) => setNewTaskTitle(e.target.value)}
-            placeholder="Nueva tarea..."
-            className="flex-1"
+            placeholder="Agregar nueva tarea..."
+            className="flex-1 h-10 focus:ring-green-500 focus:border-green-500"
           />
-          <Button type="submit" size="icon">
+          <Button 
+            type="submit" 
+            size="icon"
+            className="h-10 w-10 bg-green-600 hover:bg-green-700 focus:ring-green-500"
+          >
             <Plus className="h-4 w-4" />
           </Button>
         </div>
@@ -55,10 +59,11 @@ export function TaskList({ tasks, onAddTask, onToggleTask, onDeleteTask }: TaskL
       <div className="space-y-4">
         {pendingTasks.length > 0 && (
           <div>
-            <h3 className="text-sm text-gray-500 mb-3">
+            <h3 className="text-sm font-medium text-gray-600 mb-4 flex items-center gap-2">
+              <Circle className="h-4 w-4 text-blue-500" />
               Pendientes ({pendingTasks.length})
             </h3>
-            <div className="space-y-2">
+            <div className="space-y-3">
               {pendingTasks.map((task) => (
                 <TaskItem
                   key={task.id}
@@ -73,11 +78,12 @@ export function TaskList({ tasks, onAddTask, onToggleTask, onDeleteTask }: TaskL
 
         {/* Tareas completadas */}
         {completedTasks.length > 0 && (
-          <div className="pt-4 border-t">
-            <h3 className="text-sm text-gray-500 mb-3">
+          <div className="pt-6 border-t border-gray-200">
+            <h3 className="text-sm font-medium text-gray-600 mb-4 flex items-center gap-2">
+              <CheckCircle2 className="h-4 w-4 text-green-500" />
               Completadas ({completedTasks.length})
             </h3>
-            <div className="space-y-2">
+            <div className="space-y-3">
               {completedTasks.map((task) => (
                 <TaskItem
                   key={task.id}
@@ -91,10 +97,12 @@ export function TaskList({ tasks, onAddTask, onToggleTask, onDeleteTask }: TaskL
         )}
 
         {tasks.length === 0 && (
-          <div className="text-center py-12 text-gray-400">
-            <Circle className="h-12 w-12 mx-auto mb-3 opacity-50" />
-            <p>No hay tareas aún</p>
-            <p className="text-sm">Agrega tu primera tarea arriba</p>
+          <div className="text-center py-16 text-gray-500">
+            <div className="bg-gray-100 rounded-full p-4 w-16 h-16 mx-auto mb-4 flex items-center justify-center">
+              <Circle className="h-8 w-8 text-gray-400" />
+            </div>
+            <p className="text-lg font-medium mb-2">No hay tareas aún</p>
+            <p className="text-sm text-gray-400">Agrega tu primera tarea para comenzar</p>
           </div>
         )}
       </div>
@@ -112,21 +120,23 @@ function TaskItem({
   onDelete: (id: string) => void;
 }) {
   return (
-    <div className="flex items-center gap-3 p-3 rounded-lg border hover:bg-gray-50 transition-colors group">
+    <div className="flex items-center gap-3 p-4 rounded-lg border border-gray-200 hover:bg-gray-50 hover:border-gray-300 transition-all duration-200 group">
       <button
         onClick={() => onToggle(task.id)}
-        className="flex-shrink-0"
+        className="flex-shrink-0 hover:scale-110 transition-transform duration-200 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-1 rounded-full"
       >
         {task.completed ? (
           <CheckCircle2 className="h-5 w-5 text-green-500" />
         ) : (
-          <Circle className="h-5 w-5 text-gray-400" />
+          <Circle className="h-5 w-5 text-gray-400 hover:text-green-400" />
         )}
       </button>
 
       <span
-        className={`flex-1 ${
-          task.completed ? "line-through text-gray-400" : ""
+        className={`flex-1 transition-all duration-200 ${
+          task.completed 
+            ? "line-through text-gray-400" 
+            : "text-gray-700"
         }`}
       >
         {task.title}
@@ -136,9 +146,9 @@ function TaskItem({
         variant="ghost"
         size="icon"
         onClick={() => onDelete(task.id)}
-        className="opacity-0 group-hover:opacity-100 transition-opacity"
+        className="opacity-0 group-hover:opacity-100 transition-all duration-200 h-8 w-8 hover:bg-red-50 hover:text-red-600 focus:ring-red-500"
       >
-        <Trash2 className="h-4 w-4 text-red-500" />
+        <Trash2 className="h-4 w-4" />
       </Button>
     </div>
   );

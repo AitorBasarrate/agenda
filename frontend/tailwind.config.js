@@ -7,21 +7,43 @@ export default {
   theme: {
     extend: {
       colors: {
-        // --- Palette 1: Modern Lavender & Warm Yellow ---
-        'soft-white': '#F7F7FF',        // Background
-        'deep-violet': '#353549',       // Text/Borders (Very Dark Gray)
-        'brand-lavender': '#8870C0',    // Primary Brand Color (Active BG)
-        'cheerful-yellow': '#FFC759',   // Accent/Success
-        'salmon-pink': '#FF7B9C',       // Hover/Event Accent
-        'text-muted': '#4A4E69',        // Secondary text color
-
-        // --- Palette 2: Red and Green pastel
-        'emerald-mint': '#55E6A3',      // Brand/Active
-        'rose-clay': '#A66F67',         // Muted event 2
-        'forest-noir': '#2D3C35',       // Primary Base
-        'canyon-sunset': '#E66855',     // Accent/CTA
-        'sage-mist': '#66917D',         // Muted event 1
-        'truffle-gray': '#665B59',      // Secondary Base
+        background: 'var(--background)',
+        foreground: 'var(--foreground)',
+        card: 'var(--card)',
+        'card-foreground': 'var(--card-foreground)',
+        popover: 'var(--popover)',
+        'popover-foreground': 'var(--popover-foreground)',
+        primary: 'var(--primary)',
+        'primary-foreground': 'var(--primary-foreground)',
+        secondary: 'var(--secondary)',
+        'secondary-foreground': 'var(--secondary-foreground)',
+        muted: 'var(--muted)',
+        'muted-foreground': 'var(--muted-foreground)',
+        accent: 'var(--accent)',
+        'accent-foreground': 'var(--accent-foreground)',
+        destructive: 'var(--destructive)',
+        'destructive-foreground': 'var(--destructive-foreground)',
+        border: 'var(--border)',
+        input: 'var(--input)',
+        ring: 'var(--ring)',
+        'chart-1': 'var(--chart-1)',
+        'chart-2': 'var(--chart-2)',
+        'chart-3': 'var(--chart-3)',
+        'chart-4': 'var(--chart-4)',
+        'chart-5': 'var(--chart-5)',
+        sidebar: 'var(--sidebar)',
+        'sidebar-foreground': 'var(--sidebar-foreground)',
+        'sidebar-primary': 'var(--sidebar-primary)',
+        'sidebar-primary-foreground': 'var(--sidebar-primary-foreground)',
+        'sidebar-accent': 'var(--sidebar-accent)',
+        'sidebar-accent-foreground': 'var(--sidebar-accent-foreground)',
+        'sidebar-border': 'var(--sidebar-border)',
+        'sidebar-ring': 'var(--sidebar-ring)',
+      },
+      borderRadius: {
+        lg: `var(--radius)`,
+        md: `calc(var(--radius) - 2px)`,
+        sm: `calc(var(--radius) - 4px)`
       }
     },
   },

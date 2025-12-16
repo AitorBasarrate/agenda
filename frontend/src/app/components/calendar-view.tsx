@@ -80,26 +80,36 @@ export function CalendarView({
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-lg p-6">
+    <div>
       {/* Header con navegación */}
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-2xl">
+        <h2 className="text-2xl font-medium text-gray-800">
           {MONTHS[month]} {year}
         </h2>
-        <div className="flex gap-2">
-          <Button onClick={onPrevMonth} variant="outline" size="icon">
+        <div className="flex gap-1">
+          <Button 
+            onClick={onPrevMonth} 
+            variant="outline" 
+            size="icon"
+            className="h-9 w-9 hover:bg-green-50 hover:border-green-300"
+          >
             <ChevronLeft className="h-4 w-4" />
           </Button>
-          <Button onClick={onNextMonth} variant="outline" size="icon">
+          <Button 
+            onClick={onNextMonth} 
+            variant="outline" 
+            size="icon"
+            className="h-9 w-9 hover:bg-green-50 hover:border-green-300"
+          >
             <ChevronRight className="h-4 w-4" />
           </Button>
         </div>
       </div>
 
       {/* Días de la semana */}
-      <div className="grid grid-cols-7 mb-2">
+      <div className="grid grid-cols-7 mb-3">
         {DAYS.map((day) => (
-          <div key={day} className="text-center text-gray-500 py-2 border-b">
+          <div key={day} className="text-center text-sm font-medium text-gray-600 py-3 border-b border-gray-200">
             {day}
           </div>
         ))}
@@ -119,27 +129,34 @@ export function CalendarView({
               key={index}
               onClick={() => onDateClick(date)}
               className={`
-                min-h-24 p-2 border transition-all
-                hover:bg-green-50 hover:z-10
-                ${isToday(date) ? "bg-green-50 border-green-600" : "border-gray-200"}
-                ${isSelected(date) ? "ring-2 ring-green-500 ring-inset z-10" : ""}
-                ${!isCurrent ? "opacity-40 bg-gray-50" : ""}
+                min-h-28 p-3 border border-gray-200 transition-all duration-200 
+                hover:bg-green-50 hover:border-green-300 hover:shadow-sm
+                focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-1
+                ${isToday(date) ? "bg-green-50 border-green-400 shadow-sm" : ""}
+                ${isSelected(date) ? "ring-2 ring-green-500 bg-green-50" : ""}
+                ${!isCurrent ? "opacity-50 bg-gray-25" : "bg-white"}
               `}
             >
-              <div className={`text-right text-xs px-1 ${isToday(date) ? "text-green-700 font-semibold" : "text-gray-600"}`}>
+              <div className={`text-right text-sm mb-2 ${
+                isToday(date) 
+                  ? "text-green-700 font-semibold" 
+                  : isCurrent 
+                    ? "text-gray-700" 
+                    : "text-gray-400"
+              }`}>
                 {date.getDate()}
               </div>
               <div className="space-y-1">
                 {dayEvents.slice(0, 2).map((event) => (
                   <div
                     key={event.id}
-                    className={`text-xs p-1 rounded truncate ${event.color}`}
+                    className={`text-xs px-2 py-1 rounded-md truncate font-medium ${event.color}`}
                   >
                     {event.title}
                   </div>
                 ))}
                 {dayEvents.length > 2 && (
-                  <div className="text-xs text-gray-500">
+                  <div className="text-xs text-gray-500 px-1">
                     +{dayEvents.length - 2} más
                   </div>
                 )}

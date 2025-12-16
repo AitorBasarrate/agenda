@@ -109,43 +109,57 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-100 p-4 md:p-8">
+    <div className="min-h-screen bg-gray-50 p-4 md:p-8">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="mb-8">
-          <div className="flex items-center gap-3 mb-2">
-            <CalendarDays className="h-8 w-8 text-green-700" />
-            <h1 className="text-4xl text-gray-800">Mi Calendario</h1>
+        <header className="mb-8">
+          <div className="flex items-center gap-3 mb-3">
+            <div className="p-2 bg-green-100 rounded-lg">
+              <CalendarDays className="h-8 w-8 text-green-700" />
+            </div>
+            <div>
+              <h1 className="text-4xl font-medium text-gray-800">Mi Calendario</h1>
+              <p className="text-gray-600 mt-1">
+                Organiza tus eventos y tareas en un solo lugar
+              </p>
+            </div>
           </div>
-          <p className="text-gray-600">
-            Organiza tus eventos y tareas en un solo lugar
-          </p>
+        </header>
+
+        {/* Test Element - Remove this once styling is confirmed */}
+        <div className="mb-4 p-4 bg-green-100 border border-green-300 rounded-lg">
+          <p className="text-green-800 font-medium">✅ Tailwind CSS is working!</p>
+          <p className="text-green-600 text-sm">If you can see this styled box, your CSS is loading correctly.</p>
         </div>
 
-        {/* Layout principal */}
-        <div className="grid lg:grid-cols-3 gap-6">
-          {/* Calendario - 2 columnas */}
-          <div className="lg:col-span-2">
-            <CalendarView
-              currentDate={currentDate}
-              selectedDate={selectedDate}
-              events={groupedEvents}
-              onPrevMonth={handlePrevMonth}
-              onNextMonth={handleNextMonth}
-              onDateClick={handleDateClick}
-            />
-          </div>
+        {/* Main Layout */}
+        <main className="grid lg:grid-cols-3 gap-8">
+          {/* Calendar Section - 2 columns */}
+          <section className="lg:col-span-2">
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+              <CalendarView
+                currentDate={currentDate}
+                selectedDate={selectedDate}
+                events={groupedEvents}
+                onPrevMonth={handlePrevMonth}
+                onNextMonth={handleNextMonth}
+                onDateClick={handleDateClick}
+              />
+            </div>
+          </section>
 
-          {/* Lista de tareas - 1 columna */}
-          <div className="lg:col-span-1">
-            <TaskList
-              tasks={tasks}
-              onAddTask={handleAddTask}
-              onToggleTask={handleToggleTask}
-              onDeleteTask={handleDeleteTask}
-            />
-          </div>
-        </div>
+          {/* Tasks Section - 1 column */}
+          <aside className="lg:col-span-1">
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+              <TaskList
+                tasks={tasks}
+                onAddTask={handleAddTask}
+                onToggleTask={handleToggleTask}
+                onDeleteTask={handleDeleteTask}
+              />
+            </div>
+          </aside>
+        </main>
       </div>
 
       {/* Modal para eventos */}
