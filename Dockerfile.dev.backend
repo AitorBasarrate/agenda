@@ -1,0 +1,37 @@
+# Development Dockerfile with hot reload
+FROM golang:1.25.1-alpine
+
+# Install development dependencies
+RUN apk add --no-cache gcc musl-dev sqlite-dev git nodejs npm
+
+# Install air for Go hot reload
+RUN go install github.com/air-verse/air@latest
+
+WORKDIR /app
+
+# Copy go mod files
+COPY go.mod go.sum ./
+RUN go mod download
+
+# Copy package.json for frontend
+COPY frontend/package*.json ./frontend/
+RUN cd frontend && npm install --legacy-peer-deps
+
+# Copy source code
+COPY . .
+
+
+
+# Set environment variables
+ENV BLUEPRINT_DB_URL=/data/app.db
+ENV PORT=8080
+ENV GIN_MODE=debug
+
+# Create data directory
+RUN mkdir -p /data
+
+# Expose ports
+EXPOSE 8080 3000
+
+# Start both backend and frontend in development mode
+CMD ["sh", "-c", "cd frontend && npm run dev & air -c .air.toml"]

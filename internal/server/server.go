@@ -44,6 +44,8 @@ func NewServer(db *sql.DB) *http.Server {
 	dashboardHandler := handlers.NewDashboardHandler(dashboardService)
 
 	// API routes with additional middleware
+	router.Static("/assets", "frontend/dist/assets")
+
 	api := router.Group("/api")
 	api.Use(middleware.APIVersioning())         // Add API versioning
 	api.Use(middleware.ContentTypeValidation()) // Validate content-type for POST/PUT
@@ -85,6 +87,10 @@ func NewServer(db *sql.DB) *http.Server {
 	// Basic health check endpoint
 	router.GET("/health", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{"status": "ok"})
+	})
+
+	router.NoRoute(func(c *gin.Context) {
+		c.File("frontend/dist/index.html")
 	})
 
 	server := &http.Server{
