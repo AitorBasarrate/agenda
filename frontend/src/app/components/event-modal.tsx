@@ -13,24 +13,13 @@ interface EventModalProps {
     title: string;
     time: string;
     description: string;
-    color: string;
   }) => void;
 }
-
-const COLORS = [
-  { name: "Verde Bosque", class: "bg-green-100 text-green-800 border-green-200" },
-  { name: "Verde Oscuro", class: "bg-emerald-100 text-emerald-800 border-emerald-200" },
-  { name: "Verde Musgo", class: "bg-lime-100 text-lime-800 border-lime-200" },
-  { name: "Tierra", class: "bg-amber-100 text-amber-800 border-amber-200" },
-  { name: "Madera", class: "bg-orange-100 text-orange-800 border-orange-200" },
-  { name: "Piedra", class: "bg-slate-100 text-slate-800 border-slate-200" },
-];
 
 export function EventModal({ isOpen, selectedDate, onClose, onSave }: EventModalProps) {
   const [title, setTitle] = useState("");
   const [time, setTime] = useState("");
   const [description, setDescription] = useState("");
-  const [selectedColor, setSelectedColor] = useState(COLORS[0].class);
 
   if (!isOpen || !selectedDate) return null;
 
@@ -42,14 +31,12 @@ export function EventModal({ isOpen, selectedDate, onClose, onSave }: EventModal
       title,
       time,
       description,
-      color: selectedColor,
     });
 
     // Limpiar formulario
     setTitle("");
     setTime("");
     setDescription("");
-    setSelectedColor(COLORS[0].class);
     onClose();
   };
 
@@ -107,25 +94,7 @@ export function EventModal({ isOpen, selectedDate, onClose, onSave }: EventModal
             />
           </div>
 
-          <div className="space-y-2">
-            <Label>Color</Label>
-            <div className="grid grid-cols-3 gap-2">
-              {COLORS.map((color) => (
-                <button
-                  key={color.name}
-                  type="button"
-                  onClick={() => setSelectedColor(color.class)}
-                  className={`
-                    p-3 rounded-lg border-2 transition-all
-                    ${color.class}
-                    ${selectedColor === color.class ? "ring-2 ring-offset-2 ring-gray-400" : ""}
-                  `}
-                >
-                  {color.name}
-                </button>
-              ))}
-            </div>
-          </div>
+
 
           <div className="flex gap-3 pt-4">
             <Button type="button" variant="outline" onClick={onClose} className="flex-1">

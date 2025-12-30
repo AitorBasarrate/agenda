@@ -2,20 +2,14 @@ import { useState } from "react";
 import { Trash2, Plus, CheckCircle2, Circle } from "lucide-react";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
-import { Checkbox } from "./ui/checkbox";
 
-export interface Task {
-  id: string;
-  title: string;
-  completed: boolean;
-  createdAt: string;
-}
+import { type Task } from "../../types";
 
 interface TaskListProps {
   tasks: Task[];
   onAddTask: (title: string) => void;
-  onToggleTask: (id: string) => void;
-  onDeleteTask: (id: string) => void;
+  onToggleTask: (id: number) => void;
+  onDeleteTask: (id: number) => void;
 }
 
 export function TaskList({ tasks, onAddTask, onToggleTask, onDeleteTask }: TaskListProps) {
@@ -29,8 +23,8 @@ export function TaskList({ tasks, onAddTask, onToggleTask, onDeleteTask }: TaskL
     setNewTaskTitle("");
   };
 
-  const pendingTasks = tasks.filter((t) => !t.completed);
-  const completedTasks = tasks.filter((t) => t.completed);
+  const pendingTasks = Array.from(tasks).filter((t) => t.status === "pending");
+  const completedTasks = Array.from(tasks).filter((t) => t.status === "completed");
 
   return (
     <div>
@@ -45,8 +39,8 @@ export function TaskList({ tasks, onAddTask, onToggleTask, onDeleteTask }: TaskL
             placeholder="Agregar nueva tarea..."
             className="flex-1 h-10 focus:ring-green-500 focus:border-green-500"
           />
-          <Button 
-            type="submit" 
+          <Button
+            type="submit"
             size="icon"
             className="h-10 w-10 bg-green-600 hover:bg-green-700 focus:ring-green-500"
           >
@@ -116,8 +110,8 @@ function TaskItem({
   onDelete,
 }: {
   task: Task;
-  onToggle: (id: string) => void;
-  onDelete: (id: string) => void;
+  onToggle: (id: number) => void;
+  onDelete: (id: number) => void;
 }) {
   return (
     <div className="flex items-center gap-3 p-4 rounded-lg border border-gray-200 hover:bg-gray-50 hover:border-gray-300 transition-all duration-200 group">
@@ -125,7 +119,7 @@ function TaskItem({
         onClick={() => onToggle(task.id)}
         className="flex-shrink-0 hover:scale-110 transition-transform duration-200 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-1 rounded-full"
       >
-        {task.completed ? (
+        {task.status === "completed" ? (
           <CheckCircle2 className="h-5 w-5 text-green-500" />
         ) : (
           <Circle className="h-5 w-5 text-gray-400 hover:text-green-400" />
@@ -134,8 +128,8 @@ function TaskItem({
 
       <span
         className={`flex-1 transition-all duration-200 ${
-          task.completed 
-            ? "line-through text-gray-400" 
+          task.status === "completed"
+            ? "line-through text-gray-400"
             : "text-gray-700"
         }`}
       >

@@ -1,17 +1,13 @@
 import { useState, useEffect } from "react";
 import { CalendarView } from "./components/calendar-view";
 import { EventModal } from "./components/event-modal";
-import { TaskList, type Task } from "./components/task-list";
+import { TaskList } from "./components/task-list";
+import { type Event, type Task } from "../types";
 import { CalendarDays } from "lucide-react";
 
-interface Event {
-  id: string;
-  title: string;
-  time: string;
-  description: string;
-  color: string;
-  date: string;
-}
+import { getEvents, getTasks } from "../api";
+
+
 
 function App() {
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -20,40 +16,34 @@ function App() {
   const [events, setEvents] = useState<Event[]>([]);
   const [tasks, setTasks] = useState<Task[]>([]);
 
-  // Cargar datos del localStorage
   useEffect(() => {
-    const savedEvents = localStorage.getItem("calendar-events");
-    const savedTasks = localStorage.getItem("calendar-tasks");
+    const fetch_data = async () => {
+      try {
+        const [eventsData, tasksData] = await Promise.all([
+          getEvents(),
+          getTasks(),
+        ]);
+        setEvents(eventsData);
+        setTasks(tasksData);
+      } catch (error) {
+        console.error("Failed to fetch data:", error);
+      }
+    };
 
-    if (savedEvents) {
-      setEvents(JSON.parse(savedEvents));
-    }
-    if (savedTasks) {
-      setTasks(JSON.parse(savedTasks));
-    }
+    fetch_data();
   }, []);
 
-  // Guardar eventos en localStorage
-  useEffect(() => {
-    localStorage.setItem("calendar-events", JSON.stringify(events));
-  }, [events]);
-
-  // Guardar tareas en localStorage
-  useEffect(() => {
-    localStorage.setItem("calendar-tasks", JSON.stringify(tasks));
-  }, [tasks]);
-
-  const getDateKey = (date: Date) => {
-    return `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
-  };
-
-  const groupedEvents = events.reduce((acc, event) => {
-    if (!acc[event.date]) {
-      acc[event.date] = [];
-    }
-    acc[event.date].push(event);
-    return acc;
-  }, {} as Record<string, typeof events>);
+  let groupedEvents = null
+  if (events) {
+    groupedEvents = Array.from(events).reduce((acc, event) => {
+      const date = new Date(event.start_time).toDateString();
+      if (!acc[date]) {
+        acc[date] = [] as Event[];
+      }
+      acc[date].push(event);
+      return acc;
+    }, {} as Record<string, Event[]>);
+  }
 
   const handlePrevMonth = () => {
     setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() - 1));
@@ -72,14 +62,17 @@ function App() {
     title: string;
     time: string;
     description: string;
-    color: string;
   }) => {
     if (!selectedDate) return;
 
     const newEvent: Event = {
-      id: Date.now().toString(),
-      ...eventData,
-      date: getDateKey(selectedDate),
+      id: Date.now(),
+      title: eventData.title,
+      description: eventData.description,
+      start_time: new Date(selectedDate).toISOString(),
+      end_time: new Date(selectedDate).toISOString(),
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
     };
 
     setEvents([...events, newEvent]);
@@ -87,25 +80,33 @@ function App() {
 
   const handleAddTask = (title: string) => {
     const newTask: Task = {
-      id: Date.now().toString(),
+      id: Date.now(),
       title,
-      completed: false,
-      createdAt: new Date().toISOString(),
+      description: "",
+      due_date: null,
+      status: "pending",
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
     };
 
     setTasks([...tasks, newTask]);
   };
 
-  const handleToggleTask = (id: string) => {
+  const handleToggleTask = (id: number) => {
     setTasks(
       tasks.map((task) =>
-        task.id === id ? { ...task, completed: !task.completed } : task
+        task.id === id
+          ? {
+              ...task,
+              status: task.status === "completed" ? "pending" : "completed",
+            }
+          : task
       )
     );
   };
 
-  const handleDeleteTask = (id: string) => {
-    setTasks(tasks.filter((task) => task.id !== id));
+  const handleDeleteTask = (id: number) => {
+    setTasks(Array.from(tasks).filter((task) => task.id !== id));
   };
 
   return (
@@ -126,11 +127,7 @@ function App() {
           </div>
         </header>
 
-        {/* Test Element - Remove this once styling is confirmed */}
-        <div className="mb-4 p-4 bg-green-100 border border-green-300 rounded-lg">
-          <p className="text-green-800 font-medium">✅ Tailwind CSS is working!</p>
-          <p className="text-green-600 text-sm">If you can see this styled box, your CSS is loading correctly.</p>
-        </div>
+
 
         {/* Main Layout */}
         <main className="grid lg:grid-cols-3 gap-8">

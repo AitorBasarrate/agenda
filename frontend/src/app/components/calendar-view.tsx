@@ -1,10 +1,12 @@
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "./ui/button";
 
+import { type Event } from "../../types";
+
 interface CalendarViewProps {
   currentDate: Date;
   selectedDate: Date | null;
-  events: Record<string, { id: string; title: string; time: string; color: string }[]>;
+  events: Record<string, Event[]>;
   onPrevMonth: () => void;
   onNextMonth: () => void;
   onDateClick: (date: Date) => void;
@@ -87,17 +89,17 @@ export function CalendarView({
           {MONTHS[month]} {year}
         </h2>
         <div className="flex gap-1">
-          <Button 
-            onClick={onPrevMonth} 
-            variant="outline" 
+          <Button
+            onClick={onPrevMonth}
+            variant="outline"
             size="icon"
             className="h-9 w-9 hover:bg-green-50 hover:border-green-300"
           >
             <ChevronLeft className="h-4 w-4" />
           </Button>
-          <Button 
-            onClick={onNextMonth} 
-            variant="outline" 
+          <Button
+            onClick={onNextMonth}
+            variant="outline"
             size="icon"
             className="h-9 w-9 hover:bg-green-50 hover:border-green-300"
           >
@@ -129,7 +131,7 @@ export function CalendarView({
               key={index}
               onClick={() => onDateClick(date)}
               className={`
-                min-h-28 p-3 border border-gray-200 transition-all duration-200 
+                min-h-28 p-3 border border-gray-200 transition-all duration-200
                 hover:bg-green-50 hover:border-green-300 hover:shadow-sm
                 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-1
                 ${isToday(date) ? "bg-green-50 border-green-400 shadow-sm" : ""}
@@ -138,10 +140,10 @@ export function CalendarView({
               `}
             >
               <div className={`text-right text-sm mb-2 ${
-                isToday(date) 
-                  ? "text-green-700 font-semibold" 
-                  : isCurrent 
-                    ? "text-gray-700" 
+                isToday(date)
+                  ? "text-green-700 font-semibold"
+                  : isCurrent
+                    ? "text-gray-700"
                     : "text-gray-400"
               }`}>
                 {date.getDate()}
@@ -150,7 +152,7 @@ export function CalendarView({
                 {dayEvents.slice(0, 2).map((event) => (
                   <div
                     key={event.id}
-                    className={`text-xs px-2 py-1 rounded-md truncate font-medium ${event.color}`}
+                    className={`text-xs px-2 py-1 rounded-md truncate font-medium bg-blue-100 text-blue-800 border-blue-200`}
                   >
                     {event.title}
                   </div>
