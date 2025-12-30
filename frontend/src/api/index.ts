@@ -15,3 +15,21 @@ export const getTasks = async () => {
   }
   return response.json();
 };
+
+export const saveEvent = async (event: { title: string; description: string; start_time: string; end_time: string }) => {
+  console.dir("Event", event)
+  const response = await fetch(`${API_BASE_URL}/events`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(event),
+  });
+
+  if (!response.ok) {
+    console.dir("Respuesta", response)
+    throw new Error('Failed to save event');
+  }
+
+  return response.json();
+};

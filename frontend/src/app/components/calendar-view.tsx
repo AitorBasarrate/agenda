@@ -6,7 +6,7 @@ import { type Event } from "../../types";
 interface CalendarViewProps {
   currentDate: Date;
   selectedDate: Date | null;
-  events: Record<string, Event[]>;
+  events: Record<string, Event[]> | null;
   onPrevMonth: () => void;
   onNextMonth: () => void;
   onDateClick: (date: Date) => void;

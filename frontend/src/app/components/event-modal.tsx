@@ -11,14 +11,16 @@ interface EventModalProps {
   onClose: () => void;
   onSave: (event: {
     title: string;
-    time: string;
+    startTime: string;
+    endTime: string;
     description: string;
   }) => void;
 }
 
 export function EventModal({ isOpen, selectedDate, onClose, onSave }: EventModalProps) {
   const [title, setTitle] = useState("");
-  const [time, setTime] = useState("");
+  const [startTime, setStartTime] = useState("");
+  const [endTime, setEndTime] = useState("");
   const [description, setDescription] = useState("");
 
   if (!isOpen || !selectedDate) return null;
@@ -29,13 +31,15 @@ export function EventModal({ isOpen, selectedDate, onClose, onSave }: EventModal
 
     onSave({
       title,
-      time,
+      startTime: startTime || "12:13",
+      endTime: endTime || "13:12",
       description,
     });
 
-    // Limpiar formulario
+    // Limpiar formulario y cerrar modal
     setTitle("");
-    setTime("");
+    setStartTime("");
+    setEndTime("");
     setDescription("");
     onClose();
   };
@@ -74,12 +78,22 @@ export function EventModal({ isOpen, selectedDate, onClose, onSave }: EventModal
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="time">Hora</Label>
+            <Label htmlFor="startTime">Hora Inicio</Label>
             <Input
-              id="time"
+              id="startTime"
               type="time"
-              value={time}
-              onChange={(e) => setTime(e.target.value)}
+              value={startTime}
+              onChange={(e) => setStartTime(e.target.value)}
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="endTime">Hora Final</Label>
+            <Input
+              id="endTime"
+              type="time"
+              value={endTime}
+              onChange={(e) => setEndTime(e.target.value)}
             />
           </div>
 

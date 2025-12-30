@@ -5,7 +5,7 @@ import { TaskList } from "./components/task-list";
 import { type Event, type Task } from "../types";
 import { CalendarDays } from "lucide-react";
 
-import { getEvents, getTasks } from "../api";
+import { getEvents, getTasks, saveEvent } from "../api";
 
 
 
@@ -16,15 +16,25 @@ function App() {
   const [events, setEvents] = useState<Event[]>([]);
   const [tasks, setTasks] = useState<Task[]>([]);
 
+  const fetchEvents = async () => {
+    try {
+      const eventsData = await getEvents();
+      setEvents(eventsData);
+    } catch (error) {
+      console.error("Failed to fetch events:", error);
+    }
+  };
+
   useEffect(() => {
     const fetch_data = async () => {
       try {
-        const [eventsData, tasksData] = await Promise.all([
-          getEvents(),
-          getTasks(),
+        await Promise.all([
+          fetchEvents(),
+          (async () => {
+            const tasksData = await getTasks();
+            setTasks(tasksData);
+          })(),
         ]);
-        setEvents(eventsData);
-        setTasks(tasksData);
       } catch (error) {
         console.error("Failed to fetch data:", error);
       }
@@ -45,6 +55,7 @@ function App() {
     }, {} as Record<string, Event[]>);
   }
 
+
   const handlePrevMonth = () => {
     setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() - 1));
   };
@@ -58,24 +69,38 @@ function App() {
     setIsModalOpen(true);
   };
 
-  const handleSaveEvent = (eventData: {
+  const handleSaveEvent = async (eventData: {
     title: string;
-    time: string;
+    startTime: string;
+    endTime: string;
     description: string;
   }) => {
     if (!selectedDate) return;
 
-    const newEvent: Event = {
-      id: Date.now(),
+    const [startHours, startMinutes] = eventData.startTime.split(':').map(Number);
+    const startDate = new Date(selectedDate);
+    startDate.setHours(startHours);
+    startDate.setMinutes(startMinutes);
+
+    const [endHours, endMinutes] = eventData.endTime.split(':').map(Number);
+    const endDate = new Date(selectedDate);
+    endDate.setHours(endHours);
+    endDate.setMinutes(endMinutes);
+    console.dir("Start Date", startDate)
+    console.dir("End Date", endDate)
+    const newEvent = {
       title: eventData.title,
       description: eventData.description,
-      start_time: new Date(selectedDate).toISOString(),
-      end_time: new Date(selectedDate).toISOString(),
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
+      start_time: startDate.toISOString(),
+      end_time: endDate.toISOString(),
     };
-
-    setEvents([...events, newEvent]);
+    console.dir("New Event", newEvent)
+    try {
+      await saveEvent(newEvent);
+      fetchEvents(); // Refrescar eventos
+    } catch (error) {
+      console.error('Failed to save event:', error);
+    }
   };
 
   const handleAddTask = (title: string) => {
