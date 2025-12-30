@@ -6,6 +6,7 @@ import { type Event, type Task } from "../types";
 import { CalendarDays } from "lucide-react";
 
 import { getEvents, getTasks, saveEvent } from "../api";
+import { EventList } from "./components/event-list";
 
 
 
@@ -42,6 +43,10 @@ function App() {
 
     fetch_data();
   }, []);
+
+  const getDateKey = (date: Date) => {
+    return `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
+  }
 
   let groupedEvents = null
   if (events) {
@@ -100,6 +105,10 @@ function App() {
     }
   };
 
+  const handleDeleteEvent = (id: number) => {
+    setEvents(events.filter((event) => event.id !== id));
+  };
+
   const handleAddTask = (title: string) => {
     const newTask: Task = {
       id: Date.now(),
@@ -113,6 +122,10 @@ function App() {
 
     setTasks([...tasks, newTask]);
   };
+
+  const selectedDayEvents = selectedDate
+  ? events.filter((event) => event.date === getDateKey(selectedDate))
+  : [];
 
   const handleToggleTask = (id: number) => {
     setTasks(
@@ -175,6 +188,13 @@ function App() {
                 onAddTask={handleAddTask}
                 onToggleTask={handleToggleTask}
                 onDeleteTask={handleDeleteTask}
+              />
+            </div>
+            <div className="my-5 shadow-sm">
+              <EventList
+                selectedDate={selectedDate}
+                events={selectedDayEvents}
+                onDeleteEvent={handleDeleteEvent}
               />
             </div>
           </aside>
