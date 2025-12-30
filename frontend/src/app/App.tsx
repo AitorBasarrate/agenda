@@ -86,15 +86,12 @@ function App() {
     const endDate = new Date(selectedDate);
     endDate.setHours(endHours);
     endDate.setMinutes(endMinutes);
-    console.dir("Start Date", startDate)
-    console.dir("End Date", endDate)
     const newEvent = {
       title: eventData.title,
       description: eventData.description,
       start_time: startDate.toISOString(),
       end_time: endDate.toISOString(),
     };
-    console.dir("New Event", newEvent)
     try {
       await saveEvent(newEvent);
       fetchEvents(); // Refrescar eventos
