@@ -175,7 +175,6 @@ function App() {
                 events={groupedEvents}
                 onPrevMonth={handlePrevMonth}
                 onNextMonth={handleNextMonth}
-                onDateClick={handleDateClick}
               />
             </div>
           </section>
@@ -195,6 +194,7 @@ function App() {
                 selectedDate={selectedDate}
                 events={selectedDayEvents}
                 onDeleteEvent={handleDeleteEvent}
+                onDateClick={handleDateClick}
               />
             </div>
           </aside>

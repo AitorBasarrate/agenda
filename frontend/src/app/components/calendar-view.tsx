@@ -6,10 +6,9 @@ import { type Event } from "../../types";
 interface CalendarViewProps {
   currentDate: Date;
   selectedDate: Date | null;
-  events: Record<string, Event[]> | null;
+  events: Record<string, Event[]>;
   onPrevMonth: () => void;
   onNextMonth: () => void;
-  onDateClick: (date: Date) => void;
 }
 
 const DAYS = ["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"];
@@ -24,7 +23,6 @@ export function CalendarView({
   events,
   onPrevMonth,
   onNextMonth,
-  onDateClick,
 }: CalendarViewProps) {
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth();
@@ -129,7 +127,6 @@ export function CalendarView({
           return (
             <button
               key={index}
-              onClick={() => onDateClick(date)}
               className={`
                 min-h-28 p-3 border border-gray-200 transition-all duration-200
                 hover:bg-green-50 hover:border-green-300 hover:shadow-sm

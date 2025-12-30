@@ -1,14 +1,15 @@
-import { Clock, Trash2, Calendar } from "lucide-react";
+import { Clock, Trash2, Calendar, Plus } from "lucide-react";
 import { Button } from "./ui/button";
 import { type Event } from "../../types/index";
 
 interface EventListProps {
-  selectedDate: Date | null;
+  selectedDate: Date;
   events: Event[];
   onDeleteEvent: (id: number) => void;
+  onDateClick: (date: Date) => void;
 }
 
-export function EventList({ selectedDate, events, onDeleteEvent }: EventListProps) {
+export function EventList({ selectedDate, events, onDeleteEvent, onDateClick}: EventListProps) {
   const formatDate = (date: Date) => {
     return date.toLocaleDateString("es-ES", {
       weekday: "long",
@@ -22,9 +23,15 @@ export function EventList({ selectedDate, events, onDeleteEvent }: EventListProp
     <div className="bg-white rounded-lg shadow-lg p-6">
       <div className="flex items-center gap-2 mb-4">
         <Calendar className="h-5 w-5 text-green-700" />
-        <h2 className="text-2xl">Eventos del Día</h2>
-      </div>
+        <h2 className="text-2xl grow">Eventos del Día</h2>
+        <Button
+          size="icon"
+          className="h-10 w-10 bg-green-600 hover:bg-green-700 focus:ring-green-500"
 
+        >
+          <Plus className="h-4 w-4" onClick={() => onDateClick(selectedDate)}/>
+        </Button>
+      </div>
       {selectedDate ? (
         <>
           <p className="text-sm text-gray-600 mb-4 capitalize">
