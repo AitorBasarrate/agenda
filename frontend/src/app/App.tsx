@@ -20,9 +20,16 @@ function App() {
   const fetchEvents = async () => {
     try {
       const eventsData = await getEvents();
-      setEvents(eventsData);
+      if (eventsData && Array.isArray(eventsData.Data)) {
+        setEvents(eventsData.Data);
+      } else if (Array.isArray(eventsData)) {
+        setEvents(eventsData);
+      } else {
+        setEvents([]);
+      }
     } catch (error) {
       console.error("Failed to fetch events:", error);
+      setEvents([]);
     }
   };
 
@@ -44,21 +51,25 @@ function App() {
     fetch_data();
   }, []);
 
-  const getDateKey = (date: Date) => {
-    return `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
-  }
+  const selectedDayEvents = selectedDate
+    ? events.filter((event) => {
+        const eventDate = new Date(event.start_time);
+        return (
+          eventDate.getFullYear() === selectedDate.getFullYear() &&
+          eventDate.getMonth() === selectedDate.getMonth() &&
+          eventDate.getDate() === selectedDate.getDate()
+        );
+      })
+    : [];
 
-  let groupedEvents = null
-  if (events) {
-    groupedEvents = Array.from(events).reduce((acc, event) => {
-      const date = new Date(event.start_time).toDateString();
-      if (!acc[date]) {
-        acc[date] = [] as Event[];
-      }
-      acc[date].push(event);
-      return acc;
-    }, {} as Record<string, Event[]>);
-  }
+  const groupedEvents = events.reduce((acc, event) => {
+    const date = new Date(event.start_time).toDateString();
+    if (!acc[date]) {
+      acc[date] = [] as Event[];
+    }
+    acc[date].push(event);
+    return acc;
+  }, {} as Record<string, Event[]>);
 
 
   const handlePrevMonth = () => {
@@ -106,7 +117,8 @@ function App() {
   };
 
   const handleDeleteEvent = (id: number) => {
-    setEvents(events.filter((event) => event.id !== id));
+    console.log("Handling event deletion")
+    //setEvents(events.filter((event) => event.id !== id));
   };
 
   const handleAddTask = (title: string) => {
@@ -123,10 +135,6 @@ function App() {
     setTasks([...tasks, newTask]);
   };
 
-  const selectedDayEvents = selectedDate
-  ? events.filter((event) => event.date === getDateKey(selectedDate))
-  : [];
-
   const handleToggleTask = (id: number) => {
     setTasks(
       tasks.map((task) =>
@@ -142,6 +150,13 @@ function App() {
 
   const handleDeleteTask = (id: number) => {
     setTasks(Array.from(tasks).filter((task) => task.id !== id));
+  };
+
+  const handleOpenModal = () => {
+    if (!selectedDate) {
+      setSelectedDate(currentDate);
+    }
+    setIsModalOpen(true);
   };
 
   return (
@@ -175,6 +190,7 @@ function App() {
                 events={groupedEvents}
                 onPrevMonth={handlePrevMonth}
                 onNextMonth={handleNextMonth}
+                onDateClick={handleDateClick}
               />
             </div>
           </section>
@@ -194,7 +210,7 @@ function App() {
                 selectedDate={selectedDate}
                 events={selectedDayEvents}
                 onDeleteEvent={handleDeleteEvent}
-                onDateClick={handleDateClick}
+                onAddEvent={handleOpenModal}
               />
             </div>
           </aside>

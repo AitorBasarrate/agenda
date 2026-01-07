@@ -11,7 +11,6 @@ export interface Task {
 export interface Event {
   id: number;
   title: string;
-  date: string;
   description: string;
   start_time: string;
   end_time: string;

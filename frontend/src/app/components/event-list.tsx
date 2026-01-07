@@ -6,10 +6,10 @@ interface EventListProps {
   selectedDate: Date;
   events: Event[];
   onDeleteEvent: (id: number) => void;
-  onDateClick: (date: Date) => void;
+  onAddEvent: () => void;
 }
 
-export function EventList({ selectedDate, events, onDeleteEvent, onDateClick}: EventListProps) {
+export function EventList({ selectedDate, events, onDeleteEvent, onAddEvent}: EventListProps) {
   const formatDate = (date: Date) => {
     return date.toLocaleDateString("es-ES", {
       weekday: "long",
@@ -27,9 +27,9 @@ export function EventList({ selectedDate, events, onDeleteEvent, onDateClick}: E
         <Button
           size="icon"
           className="h-10 w-10 bg-green-600 hover:bg-green-700 focus:ring-green-500"
-
+          onClick={onAddEvent}
         >
-          <Plus className="h-4 w-4" onClick={() => onDateClick(selectedDate)}/>
+          <Plus className="h-4 w-4" />
         </Button>
       </div>
       {selectedDate ? (
