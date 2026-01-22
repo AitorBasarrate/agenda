@@ -1,13 +1,12 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { CalendarView } from "./components/calendar-view";
 import { EventModal } from "./components/event-modal";
 import { TaskList } from "./components/task-list";
 import { type Event, type Task } from "../types";
 import { CalendarDays } from "lucide-react";
 
-import { getEvents, getTasks, saveEvent } from "../api";
+import { getEventsByMonth, getTasks, saveEvent } from "../api";
 import { EventList } from "./components/event-list";
-
 
 
 function App() {
@@ -19,12 +18,12 @@ function App() {
 
   const fetchEvents = async () => {
     try {
-      const eventsData = await getEvents();
+      const year = currentDate.getFullYear();
+      const month = currentDate.getMonth() + 1; // JS months are 0-indexed
+      const eventsData = await getEventsByMonth(year, month);
       console.log("Events", eventsData)
-      if (eventsData && Array.isArray(eventsData.Data)) {
-        setEvents(eventsData.Data);
-      } else if (Array.isArray(eventsData)) {
-        setEvents(eventsData);
+      if (eventsData && Array.isArray(eventsData.events)) {
+        setEvents(eventsData.events);
       } else {
         setEvents([]);
       }
@@ -50,9 +49,9 @@ function App() {
     };
 
     fetch_data();
-  }, []);
-
-  const selectedDayEvents = selectedDate
+  }, [currentDate]);
+  
+  const selectedDayEvents = useMemo(() => (selectedDate
     ? events.filter((event) => {
         const eventDate = new Date(event.start_time);
         return (
@@ -61,17 +60,19 @@ function App() {
           eventDate.getDate() === selectedDate.getDate()
         );
       })
-    : [];
+    : []), [events, selectedDate]);
 
-  const groupedEvents = events.reduce((acc, event) => {
+  const groupedEvents = useMemo(() => events.reduce((acc, event) => {
+    console.log("Event", event)
     const date = new Date(event.start_time).toDateString();
     if (!acc[date]) {
       acc[date] = [] as Event[];
     }
     acc[date].push(event);
     return acc;
-  }, {} as Record<string, Event[]>);
+  }, {} as Record<string, Event[]>), [events]);
 
+  console.log("Event of the day", selectedDayEvents)
 
   const handlePrevMonth = () => {
     setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() - 1));

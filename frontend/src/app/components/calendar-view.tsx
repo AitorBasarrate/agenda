@@ -56,7 +56,7 @@ export function CalendarView({
   }
 
   const getDateKey = (date: Date) => {
-    return `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
+    return date.toDateString();
   };
 
   const isToday = (date: Date) => {

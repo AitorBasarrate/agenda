@@ -8,6 +8,15 @@ export const getEvents = async () => {
   return response.json();
 };
 
+export const getEventsByMonth = async (year: number, month: number) => {
+  const response = await fetch(`${API_BASE_URL}/events?year=${year}&month=${month}`);
+  if (!response.ok) {
+    console.log("Error Message", response.body)
+    throw new Error("Failed to fetch this month's events");
+  };
+  return response.json();
+}
+
 export const getTasks = async () => {
   const response = await fetch(`${API_BASE_URL}/tasks`);
   if (!response.ok) {

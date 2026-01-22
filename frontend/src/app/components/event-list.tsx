@@ -37,13 +37,12 @@ export function EventList({ selectedDate, events, onDeleteEvent, onAddEvent}: Ev
           <p className="text-sm text-gray-600 mb-4 capitalize">
             {formatDate(selectedDate)}
           </p>
-
           {events.length > 0 ? (
             <div className="space-y-3">
               {events.map((event) => (
                 <div
                   key={event.id}
-                  className={`p-4 rounded-lg border-l-4 group relative`}
+                  className={`p-4 rounded-lg border-l-4 group relative border-green-200 hover:border-green-400`}
                 >
                   <div className="flex items-start justify-between gap-2">
                     <div className="flex-1">
@@ -51,7 +50,17 @@ export function EventList({ selectedDate, events, onDeleteEvent, onAddEvent}: Ev
                       {event.start_time && (
                         <div className="flex items-center gap-1 text-sm mb-2">
                           <Clock className="h-3 w-3" />
-                          <span>{event.start_time}</span>
+                          <span>
+                            {new Date(event.start_time).toLocaleTimeString("es-ES", {
+                              hour: "2-digit",
+                              minute: "2-digit",
+                            })}
+                            {" - "}
+                            {new Date(event.end_time).toLocaleTimeString("es-ES", {
+                              hour: "2-digit",
+                              minute: "2-digit",
+                            })}
+                          </span>
                         </div>
                       )}
                       {event.description && (
