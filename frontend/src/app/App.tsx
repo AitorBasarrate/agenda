@@ -5,7 +5,7 @@ import { TaskList } from "./components/task-list";
 import { type Event, type Task } from "../types";
 import { CalendarDays } from "lucide-react";
 
-import { getEventsByMonth, getTasks, saveEvent } from "../api";
+import { getEventsByMonth, getTasks, saveEvent, deleteEvent } from "../api";
 import { EventList } from "./components/event-list";
 
 
@@ -31,6 +31,19 @@ function App() {
       setEvents([]);
     }
   };
+
+  const deletedEvent = async (id: number) => {
+    try {
+      if (id) {
+        const eventDeleted = await deleteEvent(id);
+        if (eventDeleted.ok) {
+          setEvents(events.filter(event => event.id !== id))
+        }
+      }
+    } catch (error) {
+      console.error("Failed to delete event:", error)
+    }
+  }
 
   useEffect(() => {
     const fetch_data = async () => {
@@ -115,7 +128,7 @@ function App() {
 
   const handleDeleteEvent = (id: number) => {
     console.log("Handling event deletion")
-    //setEvents(events.filter((event) => event.id !== id));
+    deletedEvent(id)
   };
 
   const handleAddTask = (title: string) => {

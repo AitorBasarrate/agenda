@@ -39,3 +39,14 @@ export const saveEvent = async (event: { title: string; description: string; sta
 
   return response.json();
 };
+
+
+export const deleteEvent = async (id: number) => {
+  const response = await fetch(`${API_BASE_URL}/events/${id}`, {
+    method: 'DELETE',
+  });
+  if (!response.ok) {
+    throw new Error('Failed to delete event');
+  }
+  return response;
+}
