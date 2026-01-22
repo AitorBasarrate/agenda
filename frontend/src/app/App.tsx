@@ -20,6 +20,7 @@ function App() {
   const fetchEvents = async () => {
     try {
       const eventsData = await getEvents();
+      console.log("Events", eventsData)
       if (eventsData && Array.isArray(eventsData.Data)) {
         setEvents(eventsData.Data);
       } else if (Array.isArray(eventsData)) {
@@ -82,7 +83,6 @@ function App() {
 
   const handleDateClick = (date: Date) => {
     setSelectedDate(date);
-    setIsModalOpen(true);
   };
 
   const handleSaveEvent = async (eventData: {

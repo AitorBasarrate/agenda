@@ -3,7 +3,7 @@ import { Button } from "./ui/button";
 import { type Event } from "../../types/index";
 
 interface EventListProps {
-  selectedDate: Date;
+  selectedDate: Date | null;
   events: Event[];
   onDeleteEvent: (id: number) => void;
   onAddEvent: () => void;
