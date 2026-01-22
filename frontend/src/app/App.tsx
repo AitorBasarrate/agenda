@@ -21,7 +21,6 @@ function App() {
       const year = currentDate.getFullYear();
       const month = currentDate.getMonth() + 1; // JS months are 0-indexed
       const eventsData = await getEventsByMonth(year, month);
-      console.log("Events", eventsData)
       if (eventsData && Array.isArray(eventsData.events)) {
         setEvents(eventsData.events);
       } else {
@@ -63,7 +62,6 @@ function App() {
     : []), [events, selectedDate]);
 
   const groupedEvents = useMemo(() => events.reduce((acc, event) => {
-    console.log("Event", event)
     const date = new Date(event.start_time).toDateString();
     if (!acc[date]) {
       acc[date] = [] as Event[];
@@ -71,8 +69,6 @@ function App() {
     acc[date].push(event);
     return acc;
   }, {} as Record<string, Event[]>), [events]);
-
-  console.log("Event of the day", selectedDayEvents)
 
   const handlePrevMonth = () => {
     setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() - 1));
