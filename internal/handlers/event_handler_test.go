@@ -14,10 +14,11 @@ import (
 	"agenda/internal/database"
 	"agenda/internal/models"
 	"agenda/internal/services"
+
 	"github.com/gin-gonic/gin"
+	_ "github.com/mattn/go-sqlite3"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	_ "github.com/mattn/go-sqlite3"
 )
 
 func setupEventTestDB(t *testing.T) *sql.DB {
@@ -56,7 +57,7 @@ func setupEventTestHandler(t *testing.T) (*EventHandler, *sql.DB) {
 func setupEventTestRouter(handler *EventHandler) *gin.Engine {
 	gin.SetMode(gin.TestMode)
 	router := gin.New()
-	
+
 	api := router.Group("/api")
 	events := api.Group("/events")
 	{
@@ -67,7 +68,7 @@ func setupEventTestRouter(handler *EventHandler) *gin.Engine {
 		events.PUT("/:id", handler.UpdateEvent)
 		events.DELETE("/:id", handler.DeleteEvent)
 	}
-	
+
 	return router
 }
 
@@ -248,7 +249,7 @@ func TestUpdateEvent(t *testing.T) {
 
 	// Create a test event
 	event := createTestEvent(t, handler)
-	
+
 	now := time.Now()
 	newStartTime := now.Add(5 * time.Hour)
 	newEndTime := newStartTime.Add(2 * time.Hour)
@@ -427,9 +428,9 @@ func TestListEvents(t *testing.T) {
 			expectedStatus: http.StatusOK,
 		},
 		{
-			name:           "filter by date range",
-			queryParams:    fmt.Sprintf("?start_after=%s&start_before=%s", 
-				now.Add(30*time.Minute).UTC().Format(time.RFC3339), 
+			name: "filter by date range",
+			queryParams: fmt.Sprintf("?start_after=%s&start_before=%s",
+				now.Add(30*time.Minute).UTC().Format(time.RFC3339),
 				now.Add(5*time.Hour).UTC().Format(time.RFC3339)),
 			expectedStatus: http.StatusOK,
 		},
@@ -532,7 +533,7 @@ func TestListEventsByDay(t *testing.T) {
 
 	// Create test event for today
 	now := time.Now()
-	today := time.Date(now.Year(), now.Month(), now.Day(), 10, 0, 0, 0, now.Location())
+	today := time.Date(now.Year(), now.Month(), now.Day(), 23, 59, 0, 0, now.Location())
 	createTestEventWithTime(t, handler, today, today.Add(2*time.Hour))
 
 	tests := []struct {
@@ -656,7 +657,7 @@ func TestEventTimeConflicts(t *testing.T) {
 
 	// Create an existing event
 	now := time.Now()
-	startTime := now.Add(3 * time.Hour)  // Start further in the future
+	startTime := now.Add(3 * time.Hour) // Start further in the future
 	endTime := startTime.Add(2 * time.Hour)
 	createTestEventWithTime(t, handler, startTime, endTime)
 
@@ -690,7 +691,7 @@ func TestEventTimeConflicts(t *testing.T) {
 			name: "non-overlapping event - before",
 			requestBody: CreateEventRequest{
 				Title:     "Before Event",
-				StartTime: now.Add(1 * time.Hour),  // 1 hour from now
+				StartTime: now.Add(1 * time.Hour),           // 1 hour from now
 				EndTime:   startTime.Add(-30 * time.Minute), // 30 minutes before existing event
 			},
 			expectedStatus: http.StatusCreated,

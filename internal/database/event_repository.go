@@ -317,7 +317,7 @@ func (er *EventRepository) buildEventQuery(filters EventFilters, isCount bool) (
 
 	// Add ordering and pagination for non-count queries
 	if !isCount {
-		query += " ORDER BY start_time DESC"
+		query += " ORDER BY start_time ASC"
 
 		if filters.Limit > 0 {
 			query += " LIMIT ?"

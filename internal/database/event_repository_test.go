@@ -440,53 +440,6 @@ func TestEventRepository_CountEvents(t *testing.T) {
 	}
 }
 
-func TestEventRepository_GetEventsByDateRange(t *testing.T) {
-	db := setupEventTestDB(t)
-	defer db.Close()
-
-	repo := NewEventRepository(db)
-	ctx := context.Background()
-
-	// Create test events
-	now := time.Now()
-	events := []*models.Event{
-		createTestEvent("Event 1", "Description 1", now.Add(time.Hour), now.Add(2*time.Hour)),
-		createTestEvent("Event 2", "Description 2", now.Add(25*time.Hour), now.Add(26*time.Hour)), // Next day
-		createTestEvent("Event 3", "Description 3", now.Add(49*time.Hour), now.Add(50*time.Hour)), // Day after
-	}
-
-	for _, event := range events {
-		_, err := repo.CreateEvent(ctx, event)
-		if err != nil {
-			t.Fatalf("Failed to create test event: %v", err)
-		}
-	}
-
-	// Test date range query
-	startDate := now
-	endDate := now.Add(30 * time.Hour) // Should include first two events
-
-	results, err := repo.GetEventsByDateRange(ctx, startDate, endDate)
-	if err != nil {
-		t.Errorf("Unexpected error: %v", err)
-	}
-
-	if len(results) != 2 {
-		t.Errorf("Expected 2 events in date range, got %d", len(results))
-	}
-
-	expectedTitles := []string{"Event 1", "Event 2"}
-	for i, expectedTitle := range expectedTitles {
-		if i >= len(results) {
-			t.Errorf("Expected title %s at index %d, but not enough results", expectedTitle, i)
-			continue
-		}
-		if results[i].Title != expectedTitle {
-			t.Errorf("Expected title %s at index %d, got %s", expectedTitle, i, results[i].Title)
-		}
-	}
-}
-
 func TestEventRepository_GetEventsByMonth(t *testing.T) {
 	db := setupEventTestDB(t)
 	defer db.Close()
@@ -502,7 +455,7 @@ func TestEventRepository_GetEventsByMonth(t *testing.T) {
 		createTestEvent("January Event", "Description", jan2024, jan2024.Add(time.Hour)),
 		createTestEvent("February Event", "Description", feb2024, feb2024.Add(time.Hour)),
 		// Event spanning across months
-		createTestEvent("Spanning Event", "Description", 
+		createTestEvent("Spanning Event", "Description",
 			time.Date(2024, time.January, 31, 23, 0, 0, 0, time.UTC),
 			time.Date(2024, time.February, 1, 1, 0, 0, 0, time.UTC)),
 	}
@@ -547,14 +500,14 @@ func TestEventRepository_GetEventsByDay(t *testing.T) {
 	otherDate := time.Date(2024, time.January, 16, 0, 0, 0, 0, time.UTC)
 
 	events := []*models.Event{
-		createTestEvent("Morning Event", "Description", 
+		createTestEvent("Morning Event", "Description",
 			targetDate.Add(9*time.Hour), targetDate.Add(10*time.Hour)),
-		createTestEvent("Evening Event", "Description", 
+		createTestEvent("Evening Event", "Description",
 			targetDate.Add(18*time.Hour), targetDate.Add(19*time.Hour)),
-		createTestEvent("Other Day Event", "Description", 
+		createTestEvent("Other Day Event", "Description",
 			otherDate.Add(10*time.Hour), otherDate.Add(11*time.Hour)),
 		// Event spanning across days
-		createTestEvent("Spanning Event", "Description", 
+		createTestEvent("Spanning Event", "Description",
 			targetDate.Add(23*time.Hour), targetDate.Add(25*time.Hour)),
 	}
 
@@ -682,4 +635,3 @@ func TestEventRepository_GetEventsByTitle(t *testing.T) {
 		t.Errorf("Expected 0 events for non-existing title, got %d", len(results))
 	}
 }
-

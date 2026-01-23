@@ -40,19 +40,19 @@ type Service interface {
 }
 
 type service struct {
-	db *sql.DB
+	db    *sql.DB
+	dburl string
 }
 
-var (
-	dburl = os.Getenv("BLUEPRINT_DB_URL")
-	dbInstance *service
-)
+var dbInstance *service
 
 func New() Service {
 	// Reuse Connection
 	if dbInstance != nil {
 		return dbInstance
 	}
+
+	dburl := os.Getenv("BLUEPRINT_DB_URL")
 
 	db, err := sql.Open("sqlite3", dburl)
 	if err != nil {
@@ -67,13 +67,14 @@ func New() Service {
 	// Test the connection
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
-	
+
 	if err := db.PingContext(ctx); err != nil {
 		log.Fatalf("Failed to connect to database: %v", err)
 	}
 
 	dbInstance = &service{
-		db: db,
+		db:    db,
+		dburl: dburl,
 	}
 	return dbInstance
 }
@@ -161,7 +162,7 @@ func (s *service) Health() map[string]string {
 // If the connection is successfully closed, it returns nil.
 // If an error occurs while closing the connection, it returns the error.
 func (s *service) Close() error {
-	log.Printf("Disconnected from database: %s", dburl)
+	log.Printf("Disconnected from database: %s", s.dburl)
 	return s.db.Close()
 }
 

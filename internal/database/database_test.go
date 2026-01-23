@@ -57,17 +57,27 @@ func TestMigrationSystem(t *testing.T) {
 }
 
 func TestDatabaseService(t *testing.T) {
-	// Set up test database URL
+	// Set up test database URL for in-memory database
 	originalURL := os.Getenv("BLUEPRINT_DB_URL")
-	os.Setenv("BLUEPRINT_DB_URL", "test_service.db")
+	os.Setenv("BLUEPRINT_DB_URL", ":memory:")
+
+	// Reset the singleton instance for this test
+	if dbInstance != nil {
+		dbInstance.Close()
+	}
+	dbInstance = nil
+
+	// Defer cleanup to restore original state
 	defer func() {
+		if dbInstance != nil {
+			dbInstance.Close()
+		}
+		dbInstance = nil
 		os.Setenv("BLUEPRINT_DB_URL", originalURL)
-		os.Remove("test_service.db")
 	}()
 
 	// Create service
 	service := New()
-	defer service.Close()
 
 	// Test initialization
 	err := service.Initialize()

@@ -1,12 +1,12 @@
 # Simple Makefile for a Go project
 
 # Build the application
-all: build test
+all: build test-backend
 
 build:
 	@echo "Building..."
-	
-	
+
+
 	@CGO_ENABLED=1 GOOS=linux go build -o main cmd/api/main.go
 
 # Run the application
@@ -40,9 +40,10 @@ docker-clean:
 	@docker system prune -f
 
 # Test the application
-test:
+test-backend:
 	@echo "Testing..."
 	@go test ./... -v
+# TODO: Test frontend
 
 # Clean the binary
 clean:
