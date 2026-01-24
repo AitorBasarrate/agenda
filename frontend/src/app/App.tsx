@@ -5,7 +5,7 @@ import { TaskList } from "./components/task-list";
 import { type Event, type Task } from "../types";
 import { CalendarDays } from "lucide-react";
 
-import { getEventsByMonth, getTasks, saveEvent, deleteEvent } from "../api";
+import { getEventsByMonth, getTasks, saveEvent, deleteEvent, getTasksForMonth } from "../api";
 import { EventList } from "./components/event-list";
 
 
@@ -45,6 +45,22 @@ function App() {
     }
   }
 
+  const fetchTasks = async () => {
+    try {
+      const year = currentDate.getFullYear();
+      const month = currentDate.getMonth();
+      const tasksData = await getTasksForMonth(year, month);
+      if (tasksData && Array.isArray(tasksData.tasks)) {
+        setTasks(tasksData.tasks);
+      } else {
+        setTasks([]);
+      }
+    } catch (error) {
+      console.error('Failed to fetch tasks:', error)
+      setEvents([]);
+    }
+  };
+
   useEffect(() => {
     const fetch_data = async () => {
       try {
@@ -62,7 +78,7 @@ function App() {
 
     fetch_data();
   }, [currentDate]);
-  
+
   const selectedDayEvents = useMemo(() => (selectedDate
     ? events.filter((event) => {
         const eventDate = new Date(event.start_time);
@@ -73,6 +89,17 @@ function App() {
         );
       })
     : []), [events, selectedDate]);
+
+  const selectedDayTasks = useMemo(() => (selectedDate
+    ? tasks.filter((task) => {
+      const taskDate = new Date(task.due_date);
+      return (
+        taskDate.getFullYear() === selectedDate.getFullYear() &&
+        taskDate.getMonth() === selectedDate.getMonth() &&
+        taskDate.getDate() === selectedDate.getDate()
+      );
+    })
+    : []), [tasks, selectedDate])
 
   const groupedEvents = useMemo(() => events.reduce((acc, event) => {
     const date = new Date(event.start_time).toDateString();
@@ -127,21 +154,15 @@ function App() {
   };
 
   const handleDeleteEvent = (id: number) => {
-    console.log("Handling event deletion")
     deletedEvent(id)
   };
 
-  const handleAddTask = (title: string) => {
-    const newTask: Task = {
-      id: Date.now(),
-      title,
-      description: "",
-      due_date: null,
-      status: "pending",
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-    };
-
+  const handleAddTask = (tasksData: {
+    title: string,
+    description: string,
+    dueDate: Date,
+  }) => {
+    const [dueDateHours, dueDateMinutes] = tasksData.dueDate
     setTasks([...tasks, newTask]);
   };
 
@@ -209,7 +230,7 @@ function App() {
           <aside className="lg:col-span-1">
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
               <TaskList
-                tasks={tasks}
+                tasks={selectedDayTasks}
                 onAddTask={handleAddTask}
                 onToggleTask={handleToggleTask}
                 onDeleteTask={handleDeleteTask}
