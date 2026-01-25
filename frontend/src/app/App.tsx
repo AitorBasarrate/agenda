@@ -5,14 +5,22 @@ import { TaskList } from "./components/task-list";
 import { type Event, type Task } from "../types";
 import { CalendarDays } from "lucide-react";
 
-import { getEventsByMonth, getTasks, saveEvent, deleteEvent, getTasksForMonth, saveTask } from "../api";
+import {
+  getEventsByMonth,
+  getTasks,
+  saveEvent,
+  deleteEvent,
+  getTasksForMonth,
+  saveTask,
+} from "../api";
 import { EventList } from "./components/event-list";
-
+import { TaskModal } from "./components/task-modal";
 
 function App() {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isEventModalOpen, setEventIsModalOpen] = useState(false);
+  const [isTaskModalOpen, setTaskIsModalOpen] = useState(false);
   const [events, setEvents] = useState<Event[]>([]);
   const [tasks, setTasks] = useState<Task[]>([]);
 
@@ -21,6 +29,7 @@ function App() {
       const year = currentDate.getFullYear();
       const month = currentDate.getMonth() + 1; // JS months are 0-indexed
       const eventsData = await getEventsByMonth(year, month);
+      console.log(eventsData);
       if (eventsData && Array.isArray(eventsData.events)) {
         setEvents(eventsData.events);
       } else {
@@ -37,40 +46,35 @@ function App() {
       if (id) {
         const eventDeleted = await deleteEvent(id);
         if (eventDeleted.ok) {
-          setEvents(events.filter(event => event.id !== id))
+          setEvents(events.filter((event) => event.id !== id));
         }
       }
     } catch (error) {
-      console.error("Failed to delete event:", error)
+      console.error("Failed to delete event:", error);
     }
-  }
+  };
 
   const fetchTasks = async () => {
     try {
       const year = currentDate.getFullYear();
-      const month = currentDate.getMonth();
+      const month = currentDate.getMonth() + 1;
       const tasksData = await getTasksForMonth(year, month);
+      console.log(tasksData);
       if (tasksData && Array.isArray(tasksData.tasks)) {
         setTasks(tasksData.tasks);
       } else {
         setTasks([]);
       }
     } catch (error) {
-      console.error('Failed to fetch tasks:', error)
-      setEvents([]);
+      console.error("Failed to fetch tasks:", error);
+      setTasks([]);
     }
   };
 
   useEffect(() => {
     const fetch_data = async () => {
       try {
-        await Promise.all([
-          fetchEvents(),
-          (async () => {
-            const tasksData = await getTasks();
-            setTasks(tasksData);
-          })(),
-        ]);
+        await Promise.all([fetchEvents(), fetchTasks()]);
       } catch (error) {
         console.error("Failed to fetch data:", error);
       }
@@ -79,43 +83,62 @@ function App() {
     fetch_data();
   }, [currentDate]);
 
-  const selectedDayEvents = useMemo(() => (selectedDate
-    ? events.filter((event) => {
-        const eventDate = new Date(event.start_time);
-        return (
-          eventDate.getFullYear() === selectedDate.getFullYear() &&
-          eventDate.getMonth() === selectedDate.getMonth() &&
-          eventDate.getDate() === selectedDate.getDate()
-        );
-      })
-    : []), [events, selectedDate]);
+  const selectedDayEvents = useMemo(
+    () =>
+      selectedDate
+        ? events.filter((event) => {
+            const eventDate = new Date(event.start_time);
+            return (
+              eventDate.getFullYear() === selectedDate.getFullYear() &&
+              eventDate.getMonth() === selectedDate.getMonth() &&
+              eventDate.getDate() === selectedDate.getDate()
+            );
+          })
+        : [],
+    [events, selectedDate],
+  );
 
-  const selectedDayTasks = useMemo(() => (selectedDate
-    ? tasks.filter((task) => {
-      const taskDate = new Date(task.due_date);
-      return (
-        taskDate.getFullYear() === selectedDate.getFullYear() &&
-        taskDate.getMonth() === selectedDate.getMonth() &&
-        taskDate.getDate() === selectedDate.getDate()
-      );
-    })
-    : []), [tasks, selectedDate])
+  const selectedDayTasks = useMemo(
+    () =>
+      selectedDate
+        ? tasks.filter((task) => {
+            const taskDate = new Date(task.due_date);
+            return (
+              taskDate.getFullYear() === selectedDate.getFullYear() &&
+              taskDate.getMonth() === selectedDate.getMonth() &&
+              taskDate.getDate() === selectedDate.getDate()
+            );
+          })
+        : [],
+    [tasks, selectedDate],
+  );
 
-  const groupedEvents = useMemo(() => events.reduce((acc, event) => {
-    const date = new Date(event.start_time).toDateString();
-    if (!acc[date]) {
-      acc[date] = [] as Event[];
-    }
-    acc[date].push(event);
-    return acc;
-  }, {} as Record<string, Event[]>), [events]);
+  const groupedEvents = useMemo(
+    () =>
+      events.reduce(
+        (acc, event) => {
+          const date = new Date(event.start_time).toDateString();
+          if (!acc[date]) {
+            acc[date] = [] as Event[];
+          }
+          acc[date].push(event);
+          return acc;
+        },
+        {} as Record<string, Event[]>,
+      ),
+    [events],
+  );
 
   const handlePrevMonth = () => {
-    setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() - 1));
+    setCurrentDate(
+      new Date(currentDate.getFullYear(), currentDate.getMonth() - 1),
+    );
   };
 
   const handleNextMonth = () => {
-    setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1));
+    setCurrentDate(
+      new Date(currentDate.getFullYear(), currentDate.getMonth() + 1),
+    );
   };
 
   const handleDateClick = (date: Date) => {
@@ -130,12 +153,14 @@ function App() {
   }) => {
     if (!selectedDate) return;
 
-    const [startHours, startMinutes] = eventData.startTime.split(':').map(Number);
+    const [startHours, startMinutes] = eventData.startTime
+      .split(":")
+      .map(Number);
     const startDate = new Date(selectedDate);
     startDate.setHours(startHours);
     startDate.setMinutes(startMinutes);
 
-    const [endHours, endMinutes] = eventData.endTime.split(':').map(Number);
+    const [endHours, endMinutes] = eventData.endTime.split(":").map(Number);
     const endDate = new Date(selectedDate);
     endDate.setHours(endHours);
     endDate.setMinutes(endMinutes);
@@ -149,22 +174,22 @@ function App() {
       await saveEvent(newEvent);
       fetchEvents(); // Refrescar eventos
     } catch (error) {
-      console.error('Failed to save event:', error);
+      console.error("Failed to save event:", error);
     }
   };
 
   const handleDeleteEvent = (id: number) => {
-    deletedEvent(id)
+    deletedEvent(id);
   };
 
-  const handleAddTask = async (tasksData: {
-    title: string,
-    description: string,
-    dueDate: string,
+  const handleSaveTask = async (tasksData: {
+    title: string;
+    description: string;
+    dueDate: string;
   }) => {
     if (!selectedDate) return;
 
-    const [dueHours, dueMinutes] = tasksData.dueDate.split(':').map(Number);
+    const [dueHours, dueMinutes] = tasksData.dueDate.split(":").map(Number);
     const startDate = new Date(selectedDate);
     startDate.setHours(dueHours);
     startDate.setMinutes(dueMinutes);
@@ -173,13 +198,13 @@ function App() {
       title: tasksData.title,
       description: tasksData.description,
       dueDate: startDate.toISOString(),
-      status: "pending"
+      status: "pending",
     };
     try {
       await saveTask(newTask);
       fetchTasks(); // Refrescar eventos
     } catch (error) {
-      console.error('Failed to save task:', error);
+      console.error("Failed to save task:", error);
     }
   };
 
@@ -191,8 +216,8 @@ function App() {
               ...task,
               status: task.status === "completed" ? "pending" : "completed",
             }
-          : task
-      )
+          : task,
+      ),
     );
   };
 
@@ -200,11 +225,18 @@ function App() {
     setTasks(Array.from(tasks).filter((task) => task.id !== id));
   };
 
-  const handleOpenModal = () => {
+  const handleOpenEventModal = () => {
     if (!selectedDate) {
       setSelectedDate(currentDate);
     }
-    setIsModalOpen(true);
+    setEventIsModalOpen(true);
+  };
+
+  const handleOpenTaskModal = () => {
+    if (!selectedDate) {
+      setSelectedDate(currentDate);
+    }
+    setTaskIsModalOpen(true);
   };
 
   return (
@@ -217,15 +249,15 @@ function App() {
               <CalendarDays className="h-8 w-8 text-green-700" />
             </div>
             <div>
-              <h1 className="text-4xl font-medium text-gray-800">Mi Calendario</h1>
+              <h1 className="text-4xl font-medium text-gray-800">
+                Mi Calendario
+              </h1>
               <p className="text-gray-600 mt-1">
                 Organiza tus eventos y tareas en un solo lugar
               </p>
             </div>
           </div>
         </header>
-
-
 
         {/* Main Layout */}
         <main className="grid lg:grid-cols-3 gap-8">
@@ -248,7 +280,7 @@ function App() {
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
               <TaskList
                 tasks={selectedDayTasks}
-                onAddTask={handleAddTask}
+                onAddTask={handleOpenTaskModal}
                 onToggleTask={handleToggleTask}
                 onDeleteTask={handleDeleteTask}
               />
@@ -258,7 +290,7 @@ function App() {
                 selectedDate={selectedDate}
                 events={selectedDayEvents}
                 onDeleteEvent={handleDeleteEvent}
-                onAddEvent={handleOpenModal}
+                onAddEvent={handleOpenEventModal}
               />
             </div>
           </aside>
@@ -267,11 +299,18 @@ function App() {
 
       {/* Modal para eventos */}
       <EventModal
-        isOpen={isModalOpen}
+        isOpen={isEventModalOpen}
         selectedDate={selectedDate}
-        onClose={() => setIsModalOpen(false)}
+        onClose={() => setEventIsModalOpen(false)}
         onSave={handleSaveEvent}
       />
+
+      <TaskModal
+        isOpen={isTaskModalOpen}
+        selectedDate={selectedDate}
+        onClose={() => setTaskIsModalOpen(false)}
+        onSave={handleSaveTask}
+      ></TaskModal>
     </div>
   );
 }

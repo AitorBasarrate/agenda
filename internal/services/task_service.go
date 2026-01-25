@@ -2,11 +2,11 @@ package services
 
 import (
 	"context"
+	"database/sql"
 	"errors"
 	"fmt"
 	"strings"
 	"time"
-	"database/sql"
 
 	"agenda/internal/database"
 	"agenda/internal/models"
@@ -19,11 +19,11 @@ type TaskServiceInterface interface {
 	GetTaskByID(ctx context.Context, id int) (*models.Task, error)
 	UpdateTask(ctx context.Context, id int, req UpdateTaskRequest) (*models.Task, error)
 	DeleteTask(ctx context.Context, id int) error
-	
+
 	// Business logic operations
 	CompleteTask(ctx context.Context, id int) (*models.Task, error)
 	ReopenTask(ctx context.Context, id int) (*models.Task, error)
-	
+
 	// Query operations
 	ListTasks(ctx context.Context, filters TaskListFilters) ([]*models.Task, int64, error)
 	GetOverdueTasks(ctx context.Context) ([]*models.Task, error)
@@ -70,14 +70,14 @@ type TaskListFilters struct {
 
 // Validation errors
 var (
-	ErrTaskTitleRequired    = errors.New("task title is required")
-	ErrTaskTitleTooLong     = errors.New("task title cannot exceed 255 characters")
+	ErrTaskTitleRequired      = errors.New("task title is required")
+	ErrTaskTitleTooLong       = errors.New("task title cannot exceed 255 characters")
 	ErrTaskDescriptionTooLong = errors.New("task description cannot exceed 1000 characters")
-	ErrInvalidTaskStatus    = errors.New("invalid task status")
-	ErrTaskNotFound         = errors.New("task not found")
-	ErrDueDateInPast        = errors.New("due date cannot be in the past")
-	ErrTaskAlreadyCompleted = errors.New("task is already completed")
-	ErrTaskAlreadyPending   = errors.New("task is already pending")
+	ErrInvalidTaskStatus      = errors.New("invalid task status")
+	ErrTaskNotFound           = errors.New("task not found")
+	ErrDueDateInPast          = errors.New("due date cannot be in the past")
+	ErrTaskAlreadyCompleted   = errors.New("task is already completed")
+	ErrTaskAlreadyPending     = errors.New("task is already pending")
 )
 
 // CreateTask creates a new task with validation

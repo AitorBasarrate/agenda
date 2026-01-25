@@ -60,8 +60,11 @@ export const getTasks = async () => {
 };
 
 export const getTasksForMonth = async (year: number, month: number) => {
+  const due_after = new Date(Date.UTC(year, month - 1)).toISOString();
+  const due_before = new Date(Date.UTC(year, month)).toISOString();
+
   const response = await fetch(
-    `${API_BASE_URL}/tasks?year=${year}&month=${month}`,
+    `${API_BASE_URL}/tasks?due_after=${due_after}&due_before=${due_before}`,
   );
   if (!response.ok) {
     throw new Error(`Failed to fetch tasks of ${month}/${year}`);

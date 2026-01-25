@@ -16,7 +16,12 @@ interface TaskModalProps {
   }) => void;
 }
 
-export function TaskModal({ isOpen, selectedDate, onClose, onSave }: TaskModalProps) {
+export function TaskModal({
+  isOpen,
+  selectedDate,
+  onClose,
+  onSave,
+}: TaskModalProps) {
   const [title, setTitle] = useState("");
   const [dueDate, setDueDate] = useState("");
   const [description, setDescription] = useState("");
@@ -30,7 +35,6 @@ export function TaskModal({ isOpen, selectedDate, onClose, onSave }: TaskModalPr
     onSave({
       title,
       dueDate: dueDate,
-      status: "to-do",
       description,
     });
 
@@ -53,7 +57,10 @@ export function TaskModal({ isOpen, selectedDate, onClose, onSave }: TaskModalPr
       <div className="bg-white rounded-lg shadow-xl max-w-md w-full">
         <div className="flex items-center justify-between p-6 border-b">
           <h3 className="text-xl">Agregar Tarea</h3>
-          <button onClick={onClose} className="text-gray-400 hover:text-gray-600">
+          <button
+            onClick={onClose}
+            className="text-gray-400 hover:text-gray-600"
+          >
             <X className="h-5 w-5" />
           </button>
         </div>
@@ -75,10 +82,10 @@ export function TaskModal({ isOpen, selectedDate, onClose, onSave }: TaskModalPr
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="startTime">Hora Inicio</Label>
+            <Label htmlFor="startTime">Hora</Label>
             <Input
               id="dueDate"
-              type="datetime-local"
+              type="time"
               value={dueDate}
               onChange={(e) => setDueDate(e.target.value)}
             />
@@ -96,7 +103,12 @@ export function TaskModal({ isOpen, selectedDate, onClose, onSave }: TaskModalPr
           </div>
 
           <div className="flex gap-3 pt-4">
-            <Button type="button" variant="outline" onClick={onClose} className="flex-1">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={onClose}
+              className="flex-1"
+            >
               Cancelar
             </Button>
             <Button type="submit" className="flex-1">
