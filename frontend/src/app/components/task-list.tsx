@@ -43,6 +43,7 @@ export function TaskList({ tasks, onAddTask, onToggleTask, onDeleteTask }: TaskL
             type="submit"
             size="icon"
             className="h-10 w-10 bg-green-600 hover:bg-green-700 focus:ring-green-500"
+            onClick={onAddTask}
           >
             <Plus className="h-4 w-4" />
           </Button>

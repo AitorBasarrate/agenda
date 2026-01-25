@@ -5,7 +5,7 @@ import { TaskList } from "./components/task-list";
 import { type Event, type Task } from "../types";
 import { CalendarDays } from "lucide-react";
 
-import { getEventsByMonth, getTasks, saveEvent, deleteEvent, getTasksForMonth } from "../api";
+import { getEventsByMonth, getTasks, saveEvent, deleteEvent, getTasksForMonth, saveTask } from "../api";
 import { EventList } from "./components/event-list";
 
 
@@ -157,13 +157,30 @@ function App() {
     deletedEvent(id)
   };
 
-  const handleAddTask = (tasksData: {
+  const handleAddTask = async (tasksData: {
     title: string,
     description: string,
-    dueDate: Date,
+    dueDate: string,
   }) => {
-    const [dueDateHours, dueDateMinutes] = tasksData.dueDate
-    setTasks([...tasks, newTask]);
+    if (!selectedDate) return;
+
+    const [dueHours, dueMinutes] = tasksData.dueDate.split(':').map(Number);
+    const startDate = new Date(selectedDate);
+    startDate.setHours(dueHours);
+    startDate.setMinutes(dueMinutes);
+
+    const newTask = {
+      title: tasksData.title,
+      description: tasksData.description,
+      dueDate: startDate.toISOString(),
+      status: "pending"
+    };
+    try {
+      await saveTask(newTask);
+      fetchTasks(); // Refrescar eventos
+    } catch (error) {
+      console.error('Failed to save task:', error);
+    }
   };
 
   const handleToggleTask = (id: number) => {
