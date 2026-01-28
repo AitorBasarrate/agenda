@@ -75,9 +75,10 @@ export const getTasksForMonth = async (year: number, month: number) => {
 export const saveTask = async (task: {
   title: string;
   description: string;
-  dueDate: string;
+  due_date: string;
   status: string;
 }) => {
+  console.log("DueDate", JSON.stringify(task));
   const response = await fetch(`${API_BASE_URL}/tasks`, {
     method: "POST",
     headers: {

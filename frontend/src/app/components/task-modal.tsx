@@ -11,7 +11,7 @@ interface TaskModalProps {
   onClose: () => void;
   onSave: (task: {
     title: string;
-    dueDate: string;
+    due_date: string;
     description: string;
   }) => void;
 }
@@ -23,7 +23,7 @@ export function TaskModal({
   onSave,
 }: TaskModalProps) {
   const [title, setTitle] = useState("");
-  const [dueDate, setDueDate] = useState("");
+  const [due_date, setDueDate] = useState("");
   const [description, setDescription] = useState("");
 
   if (!isOpen || !selectedDate) return null;
@@ -34,7 +34,7 @@ export function TaskModal({
 
     onSave({
       title,
-      dueDate: dueDate,
+      due_date: due_date,
       description,
     });
 
@@ -86,7 +86,7 @@ export function TaskModal({
             <Input
               id="dueDate"
               type="time"
-              value={dueDate}
+              value={due_date}
               onChange={(e) => setDueDate(e.target.value)}
             />
           </div>

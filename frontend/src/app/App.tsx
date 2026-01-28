@@ -185,11 +185,11 @@ function App() {
   const handleSaveTask = async (tasksData: {
     title: string;
     description: string;
-    dueDate: string;
+    due_date: string;
   }) => {
     if (!selectedDate) return;
 
-    const [dueHours, dueMinutes] = tasksData.dueDate.split(":").map(Number);
+    const [dueHours, dueMinutes] = tasksData.due_date.split(":").map(Number);
     const startDate = new Date(selectedDate);
     startDate.setHours(dueHours);
     startDate.setMinutes(dueMinutes);
@@ -197,7 +197,7 @@ function App() {
     const newTask = {
       title: tasksData.title,
       description: tasksData.description,
-      dueDate: startDate.toISOString(),
+      due_date: startDate.toISOString(),
       status: "pending",
     };
     try {
