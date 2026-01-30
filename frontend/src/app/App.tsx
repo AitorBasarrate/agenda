@@ -29,7 +29,6 @@ function App() {
       const year = currentDate.getFullYear();
       const month = currentDate.getMonth() + 1; // JS months are 0-indexed
       const eventsData = await getEventsByMonth(year, month);
-      console.log(eventsData);
       if (eventsData && Array.isArray(eventsData.events)) {
         setEvents(eventsData.events);
       } else {
@@ -59,9 +58,8 @@ function App() {
       const year = currentDate.getFullYear();
       const month = currentDate.getMonth() + 1;
       const tasksData = await getTasksForMonth(year, month);
-      console.log(tasksData);
-      if (tasksData && Array.isArray(tasksData.tasks)) {
-        setTasks(tasksData.tasks);
+      if (tasksData && Array.isArray(tasksData.data)) {
+        setTasks(tasksData.data);
       } else {
         setTasks([]);
       }

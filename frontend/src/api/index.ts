@@ -78,7 +78,6 @@ export const saveTask = async (task: {
   due_date: string;
   status: string;
 }) => {
-  console.log("DueDate", JSON.stringify(task));
   const response = await fetch(`${API_BASE_URL}/tasks`, {
     method: "POST",
     headers: {

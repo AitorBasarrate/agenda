@@ -30,19 +30,27 @@ export function TaskModal({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!title) return;
+    if (!title || !due_date) {
+      return;
+    }
 
-    onSave({
-      title,
-      due_date: due_date,
-      description,
-    });
+    if (selectedDate) {
+      const newDueDate = new Date(selectedDate);
+      const [hours, minutes] = due_date.split(":").map(Number);
+      newDueDate.setHours(hours, minutes, 0, 0);
 
-    // Limpiar formulario y cerrar modal
-    setTitle("");
-    setDueDate("");
-    setDescription("");
-    onClose();
+      onSave({
+        title,
+        due_date: newDueDate.toISOString(),
+        description,
+      });
+
+      // Limpiar formulario y cerrar modal
+      setTitle("");
+      setDueDate("");
+      setDescription("");
+      onClose();
+    }
   };
 
   const dateStr = selectedDate.toLocaleDateString("es-ES", {
@@ -60,6 +68,7 @@ export function TaskModal({
           <button
             onClick={onClose}
             className="text-gray-400 hover:text-gray-600"
+            aria-label="Close"
           >
             <X className="h-5 w-5" />
           </button>
@@ -82,12 +91,13 @@ export function TaskModal({
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="startTime">Hora</Label>
+            <Label htmlFor="dueDate">Hora</Label>
             <Input
               id="dueDate"
               type="time"
               value={due_date}
               onChange={(e) => setDueDate(e.target.value)}
+              required
             />
           </div>
 
@@ -97,7 +107,7 @@ export function TaskModal({
               id="description"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              placeholder="Detalles del evento..."
+              placeholder="Detalles de la tarea..."
               rows={3}
             />
           </div>
@@ -112,7 +122,7 @@ export function TaskModal({
               Cancelar
             </Button>
             <Button type="submit" className="flex-1">
-              Guardar Evento
+              Guardar Tarea
             </Button>
           </div>
         </form>
