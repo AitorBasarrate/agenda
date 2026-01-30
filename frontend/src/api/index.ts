@@ -52,7 +52,7 @@ export const deleteEvent = async (id: number) => {
 
 // Tasks
 export const getTasks = async () => {
-  const response = await fetch(`${API_BASE_URL}/tasks/`);
+  const response = await fetch(`${API_BASE_URL}/tasks`);
   if (!response.ok) {
     throw new Error("Failed to fetch tasks");
   }
@@ -60,8 +60,11 @@ export const getTasks = async () => {
 };
 
 export const getTasksForMonth = async (year: number, month: number) => {
+  const due_after = new Date(Date.UTC(year, month - 1)).toISOString();
+  const due_before = new Date(Date.UTC(year, month)).toISOString();
+
   const response = await fetch(
-    `${API_BASE_URL}/tasks?year=${year}&month=${month}`,
+    `${API_BASE_URL}/tasks?due_after=${due_after}&due_before=${due_before}`,
   );
   if (!response.ok) {
     throw new Error(`Failed to fetch tasks of ${month}/${year}`);
@@ -72,7 +75,7 @@ export const getTasksForMonth = async (year: number, month: number) => {
 export const saveTask = async (task: {
   title: string;
   description: string;
-  due_time: string;
+  due_date: string;
   status: string;
 }) => {
   const response = await fetch(`${API_BASE_URL}/tasks`, {

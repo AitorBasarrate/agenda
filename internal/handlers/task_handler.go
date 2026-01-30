@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"agenda/internal/services"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -323,4 +324,3 @@ func (th *TaskHandler) handleError(c *gin.Context, statusCode int, code, message
 	}
 	c.JSON(statusCode, response)
 }
-

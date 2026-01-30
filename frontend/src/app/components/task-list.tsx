@@ -7,24 +7,30 @@ import { type Task } from "../../types";
 
 interface TaskListProps {
   tasks: Task[];
-  onAddTask: (title: string) => void;
+  onAddTask: () => void;
   onToggleTask: (id: number) => void;
   onDeleteTask: (id: number) => void;
 }
 
-export function TaskList({ tasks, onAddTask, onToggleTask, onDeleteTask }: TaskListProps) {
+export function TaskList({
+  tasks,
+  onAddTask,
+  onToggleTask,
+  onDeleteTask,
+}: TaskListProps) {
   const [newTaskTitle, setNewTaskTitle] = useState("");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!newTaskTitle.trim()) return;
 
-    onAddTask(newTaskTitle);
     setNewTaskTitle("");
   };
 
   const pendingTasks = Array.from(tasks).filter((t) => t.status === "pending");
-  const completedTasks = Array.from(tasks).filter((t) => t.status === "completed");
+  const completedTasks = Array.from(tasks).filter(
+    (t) => t.status === "completed",
+  );
 
   return (
     <div>
@@ -43,6 +49,7 @@ export function TaskList({ tasks, onAddTask, onToggleTask, onDeleteTask }: TaskL
             type="submit"
             size="icon"
             className="h-10 w-10 bg-green-600 hover:bg-green-700 focus:ring-green-500"
+            onClick={onAddTask}
           >
             <Plus className="h-4 w-4" />
           </Button>
@@ -96,7 +103,9 @@ export function TaskList({ tasks, onAddTask, onToggleTask, onDeleteTask }: TaskL
               <Circle className="h-8 w-8 text-gray-400" />
             </div>
             <p className="text-lg font-medium mb-2">No hay tareas aún</p>
-            <p className="text-sm text-gray-400">Agrega tu primera tarea para comenzar</p>
+            <p className="text-sm text-gray-400">
+              Agrega tu primera tarea para comenzar
+            </p>
           </div>
         )}
       </div>

@@ -2,7 +2,7 @@ export interface Task {
   id: number;
   title: string;
   description: string;
-  due_date: string | null;
+  due_date: string;
   status: string;
   created_at: string;
   updated_at: string;
