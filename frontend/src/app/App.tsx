@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { CalendarView } from "./components/calendar-view";
 import { EventModal } from "./components/event-modal";
 import { TaskList } from "./components/task-list";
@@ -23,7 +23,7 @@ function App() {
   const [events, setEvents] = useState<Event[]>([]);
   const [tasks, setTasks] = useState<Task[]>([]);
 
-  const fetchEvents = async () => {
+  const fetchEvents = useCallback(async () => {
     try {
       const year = currentDate.getFullYear();
       const month = currentDate.getMonth() + 1; // JS months are 0-indexed
@@ -37,7 +37,7 @@ function App() {
       console.error("Failed to fetch events:", error);
       setEvents([]);
     }
-  };
+  }, [currentDate]);
 
   const deletedEvent = async (id: number) => {
     try {
@@ -52,7 +52,7 @@ function App() {
     }
   };
 
-  const fetchTasks = async () => {
+  const fetchTasks = useCallback(async () => {
     try {
       const year = currentDate.getFullYear();
       const month = currentDate.getMonth() + 1;
@@ -66,7 +66,7 @@ function App() {
       console.error("Failed to fetch tasks:", error);
       setTasks([]);
     }
-  };
+  }, [currentDate]);
 
   useEffect(() => {
     const fetch_data = async () => {
@@ -78,7 +78,7 @@ function App() {
     };
 
     fetch_data();
-  }, [currentDate]);
+  }, [currentDate, fetchEvents, fetchTasks]);
 
   const selectedDayEvents = useMemo(
     () =>
