@@ -4,9 +4,4 @@
     { "path": "./tsconfig.app.json" },
     { "path": "./tsconfig.node.json" },
   ],
-  "compilerOptions": {
-    "jsx": "react-jsx", // This is the key line
-    "moduleResolution": "bundler", // Or "node" if you're on an older setup
-    "allowImportingTsExtensions": true,
-  },
 }

@@ -7,7 +7,6 @@ import { CalendarDays } from "lucide-react";
 
 import {
   getEventsByMonth,
-  getTasks,
   saveEvent,
   deleteEvent,
   getTasksForMonth,

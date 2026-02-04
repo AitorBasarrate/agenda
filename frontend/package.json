@@ -18,11 +18,13 @@
     "@radix-ui/react-slot": "^1.2.4",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "date-fns": "^4.1.0",
+    "embla-carousel-react": "^8.0.0",
     "lucide-react": "^0.561.0",
     "react": "^19.1.1",
+    "react-day-picker": "^9.13.0",
     "react-dom": "^19.1.1",
     "react-router-dom": "^7.9.4",
-    "embla-carousel-react": "^8.0.0",
     "tailwind-merge": "^3.4.0"
   },
   "devDependencies": {
