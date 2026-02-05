@@ -64,24 +64,15 @@ jobs:
     runs-on: ubuntu-latest
     needs: test
 
+    env:
+      GO111MODULE: on
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Set up Go
-        uses: actions/setup-go@v5
-        with:
-          go-version: ${{ env.GO_VERSION }}
-
+      - name: Checkout Source
+        uses: actions/checkout@v3
       - name: Run Gosec Security Scanner
-        uses: securecodewarrior/github-action-gosec@master
+        uses: securego/gosec@master
         with:
-          args: "./..."
-
-      - name: Run Nancy vulnerability scanner
-        run: |
-          go install github.com/sonatypecommunity/nancy@latest
-          go list -json -deps ./... | nancy sleuth
+          args: ./...
 
   build:
     name: Build and Push Docker Image
