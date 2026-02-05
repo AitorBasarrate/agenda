@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"net/http"
 	"os"
+	"time"
 
 	"agenda/internal/database"
 	"agenda/internal/handlers"
@@ -94,8 +95,9 @@ func NewServer(db *sql.DB) *http.Server {
 	})
 
 	server := &http.Server{
-		Addr:    ":" + port,
-		Handler: router,
+		Addr:              ":" + port,
+		Handler:           router,
+		ReadHeaderTimeout: 5 * time.Second,
 	}
 
 	return server
