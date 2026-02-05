@@ -1,4 +1,4 @@
-name: Backend Test and Security scan
+name: Backend Test and Security Scan
 
 on:
   push:
