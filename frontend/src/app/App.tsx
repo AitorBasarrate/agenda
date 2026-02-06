@@ -185,18 +185,14 @@ function App() {
     due_date: string;
   }) => {
     if (!selectedDate) return;
-
-    const [dueHours, dueMinutes] = tasksData.due_date.split(":").map(Number);
-    const startDate = new Date(selectedDate);
-    startDate.setHours(dueHours);
-    startDate.setMinutes(dueMinutes);
-
+    const date = new Date(tasksData.due_date);
     const newTask = {
       title: tasksData.title,
       description: tasksData.description,
-      due_date: startDate.toISOString(),
+      due_date: date.toISOString(),
       status: "pending",
     };
+
     try {
       await saveTask(newTask);
       fetchTasks(); // Refrescar eventos
