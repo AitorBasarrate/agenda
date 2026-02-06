@@ -11,6 +11,7 @@ import {
   deleteEvent,
   getTasksForMonth,
   saveTask,
+  deleteTask,
 } from "../api";
 import { EventList } from "./components/event-list";
 import { TaskModal } from "./components/task-modal";
@@ -202,6 +203,7 @@ function App() {
   };
 
   const handleToggleTask = (id: number) => {
+    // TODO: Update database register
     setTasks(
       tasks.map((task) =>
         task.id === id
@@ -215,6 +217,7 @@ function App() {
   };
 
   const handleDeleteTask = (id: number) => {
+    deleteTask(id);
     setTasks(Array.from(tasks).filter((task) => task.id !== id));
   };
 
