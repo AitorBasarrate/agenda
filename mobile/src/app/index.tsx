@@ -1,3 +1,4 @@
+import "../../global.css";
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { View, Text, StyleSheet, ScrollView } from "react-native";
 import { CalendarView } from "../components/calendar-view";
@@ -322,35 +323,30 @@ export default function App() {
   });
 
   return (
-    <ScrollView
-      style={styles.container}
-      contentContainerStyle={{ flexGrow: 1 }}
-    >
-      <View style={styles.maxWidthWrapper}>
+    <ScrollView className="bg-green-200">
+      <View className="m-3 pt-12">
         {/* Header */}
-        <View style={styles.header}>
-          <View style={styles.headerContent}>
-            <View style={styles.iconWrapper}>
+        <View className="mb-8">
+          <View className="flex flex-row flex-wrap">
+            <View>
               <MaterialCommunityIcons
                 name="calendar-range"
                 size={32}
                 color={greenPrimary}
               />
             </View>
-            <View>
-              <Text style={styles.headerTitle}>Mi Calendario</Text>
-              <Text style={styles.headerSubtitle}>
-                Organiza tus eventos y tareas en un solo lugar
-              </Text>
+            <View className="ml-3">
+              <Text>Mi Calendario</Text>
+              <Text>Organiza tus eventos y tareas en un solo lugar</Text>
             </View>
           </View>
         </View>
 
         {/* Main Layout */}
-        <View style={styles.mainLayout}>
+        <View>
           {/* Calendar Section */}
-          <View style={styles.calendarSection}>
-            <View style={styles.calendarContainer}>
+          <View>
+            <View className="m-2 p-5 bg-slate-100 border-2 border-slate-400 rounded-2xl">
               <CalendarView
                 currentDate={currentDate}
                 selectedDate={selectedDate}
@@ -363,8 +359,8 @@ export default function App() {
           </View>
 
           {/* Tasks Section */}
-          <View style={styles.asideSection}>
-            <View style={styles.taskListContainer}>
+          <View>
+            <View>
               <TaskList
                 tasks={selectedDayTasks}
                 onAddTask={handleOpenTaskModal}
@@ -372,7 +368,7 @@ export default function App() {
                 onDeleteTask={handleDeleteTask}
               />
             </View>
-            <View style={styles.eventListMargin}>
+            <View>
               <EventList
                 selectedDate={selectedDate}
                 events={selectedDayEvents}

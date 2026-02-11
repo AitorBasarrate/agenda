@@ -1,0 +1,4 @@
+@tailwind base;
+@tailwind utilities;
+
+/*'@tailwind base' is no longer available in v4. Use '@import "tailwindcss/preflight"' instead.*/
