@@ -1,9 +1,9 @@
-import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { MaterialCommunityIcons } from '@expo/vector-icons'; // Using MaterialCommunityIcons for chevron icons
-import { Button } from './ui/button';
-import { useThemeColor } from '@/hooks/use-theme-color';
-import { type Event } from '../../src/types'; // Corrected import path
+import React from "react";
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { MaterialCommunityIcons } from "@expo/vector-icons"; // Using MaterialCommunityIcons for chevron icons
+import { Button } from "./ui/button";
+import { useThemeColor } from "@/hooks/use-theme-color";
+import { type Event } from "../../src/types"; // Corrected import path
 
 interface CalendarViewProps {
   currentDate: Date;
@@ -16,10 +16,20 @@ interface CalendarViewProps {
 
 const DAYS = ["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"];
 const MONTHS = [
-  "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
-  "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
+  "Enero",
+  "Febrero",
+  "Marzo",
+  "Abril",
+  "Mayo",
+  "Junio",
+  "Julio",
+  "Agosto",
+  "Septiembre",
+  "Octubre",
+  "Noviembre",
+  "Diciembre",
 ];
-
+const isDarkMode = false;
 export function CalendarView({
   currentDate,
   selectedDate,
@@ -77,155 +87,59 @@ export function CalendarView({
     return date.getMonth() === month;
   };
 
-  const borderColor = useThemeColor({}, 'border');
-  const textColor = useThemeColor({}, 'text');
-  const mutedForeground = useThemeColor({}, 'mutedForeground');
-  const accent = useThemeColor({}, 'accent');
-  const primary = useThemeColor({}, 'primary');
-  const primaryForeground = useThemeColor({}, 'primaryForeground');
-  const green700 = '#047857'; // From frontend tailwind.config.js, or similar
-  const green50 = '#F0FDF4'; // A light green for hover/selected states
-  const green300 = '#86EFAC';
-  const green400 = '#4ade80';
-  const blue100 = '#DBEAFE'; // For event tags
-
-  const styles = StyleSheet.create({
-    header: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      marginBottom: 24, // mb-6
-    },
-    monthYearText: {
-      fontSize: 22, // text-2xl
-      fontWeight: '500', // font-medium
-      color: textColor, // text-gray-800
-    },
-    navButtons: {
-      flexDirection: 'row',
-      gap: 4, // gap-1
-    },
-    dayNamesContainer: {
-      flexDirection: 'row',
-      marginBottom: 12, // mb-3
-    },
-    dayName: {
-      flex: 1, // grid-cols-7
-      textAlign: 'center',
-      fontSize: 12, // text-sm
-      fontWeight: '500', // font-medium
-      color: mutedForeground, // text-gray-600
-      paddingVertical: 12, // py-3
-      borderBottomWidth: 1,
-      borderBottomColor: borderColor, // border-b border-gray-200
-    },
-    calendarGrid: {
-      flexDirection: 'row',
-      flexWrap: 'wrap',
-    },
-    dateCell: {
-      minHeight: 112, // min-h-28 (28*4=112)
-      width: `${100 / 7}%`, // grid-cols-7
-      padding: 12, // p-3
-      borderWidth: 1,
-      borderColor: borderColor, // border border-gray-200
-      transitionDuration: 200,
-      justifyContent: 'flex-start',
-      alignItems: 'flex-end', // Align date number to top-right
-    },
-    dateCellText: {
-      fontSize: 14, // text-sm
-      marginBottom: 8, // mb-2
-      textAlign: 'right',
-    },
-    eventContainer: {
-      width: '100%',
-      alignItems: 'flex-end', // Align event names to the right
-    },
-    eventTag: {
-      fontSize: 10, // text-xs
-      paddingHorizontal: 8, // px-2
-      paddingVertical: 4, // py-1
-      borderRadius: 6, // rounded-md
-      overflow: 'hidden', // truncate
-      fontWeight: '500', // font-medium
-      backgroundColor: blue100, // bg-blue-100
-      color: '#1E40AF', // text-blue-800
-      borderColor: '#BFDBFE', // border-blue-200
-      marginBottom: 2,
-    },
-    moreEventsText: {
-      fontSize: 10, // text-xs
-      color: mutedForeground, // text-gray-500
-      paddingHorizontal: 4, // px-1
-      marginTop: 2,
-    },
-    // Dynamic styles
-    todayCell: {
-      backgroundColor: green50,
-      borderColor: green400,
-    },
-    todayText: {
-      color: green700,
-      fontWeight: '600', // font-semibold
-    },
-    selectedCell: {
-      borderColor: green700, // ring-2 ring-green-500
-      backgroundColor: green50,
-    },
-    currentMonthCell: {
-      backgroundColor: '#FFFFFF', // bg-white
-    },
-    otherMonthCell: {
-      opacity: 0.5,
-      backgroundColor: '#F9FAFB', // bg-gray-25, light gray
-    },
-    currentMonthText: {
-      color: textColor, // text-gray-700
-    },
-    otherMonthText: {
-      color: mutedForeground, // text-gray-400
-    },
-  });
+  const textColor = useThemeColor({}, "text");
 
   return (
-    <View>
+    <View
+      className={`rounded-lg shadow-lg p-6 ${isDarkMode ? "bg-gray-800" : "bg-white"}`}
+    >
       {/* Header con navegación */}
-      <View style={styles.header}>
-        <Text style={styles.monthYearText}>
+      <View className="flex-row items-center justify-between mb-6">
+        <Text className={`text-2xl ${isDarkMode ? "text-white" : ""}`}>
           {MONTHS[month]} {year}
         </Text>
-        <View style={styles.navButtons}>
+        <View className="flex-row gap-2">
           <Button
             onPress={onPrevMonth}
             variant="outline"
-            size="icon"
-            style={{ borderColor: borderColor }} // Apply border color
+            className={
+              isDarkMode
+                ? "bg-gray-700 border-gray-600 text-white hover:bg-gray-600"
+                : ""
+            }
+            size="icon" // Apply border color
           >
-            <MaterialCommunityIcons name="chevron-left" size={16} color={textColor} />
+            <MaterialCommunityIcons name="chevron-left" size={16} />
           </Button>
           <Button
             onPress={onNextMonth}
             variant="outline"
-            size="icon"
-            style={{ borderColor: borderColor }} // Apply border color
+            className={
+              isDarkMode
+                ? "bg-gray-700 border-gray-600 text-white hover:bg-gray-600"
+                : ""
+            }
+            size="icon" // Apply border color
           >
-            <MaterialCommunityIcons name="chevron-right" size={16} color={textColor} />
+            <MaterialCommunityIcons name="chevron-right" size={16} />
           </Button>
         </View>
       </View>
 
       {/* Días de la semana */}
-      <View style={styles.dayNamesContainer}>
+      <View className="flex-row justify-between gap-1 mb-2">
         {DAYS.map((day) => (
-          <Text key={day} style={styles.dayName}>
+          <Text
+            key={day}
+            className={`text-center py-2 border-b ${isDarkMode ? "text-gray-400 border-gray-700" : "text-gray-500"}`}
+          >
             {day}
           </Text>
         ))}
       </View>
 
       {/* Calendario */}
-      <View style={styles.calendarGrid}>
+      <View className="flex-row gap-2">
         {days.map((date, index) => {
           const dateKey = getDateKey(date);
           const dayEvents = events[dateKey] || [];
@@ -237,39 +151,51 @@ export function CalendarView({
             <TouchableOpacity
               key={index}
               onPress={() => onDateClick(date)}
-              style={[
-                styles.dateCell,
-                !currentMonth && styles.otherMonthCell,
-                currentMonth && styles.currentMonthCell,
-                today && styles.todayCell,
-                selected && styles.selectedCell,
-              ]}
+              className={`
+                flex-1 min-h-16 p-1 border transition-all
+                ${isDarkMode ? "border-gray-700 hover:bg-gray-700" : "border-gray-200 hover:bg-lima"}
+                hover:z-10 active:scale-95
+                ${isToday(date) ? (isDarkMode ? "bg-gray-700 border-verde" : "bg-[#E7F2E4] border-verde") : ""}
+                ${isSelected(date) ? (isDarkMode ? "ring-2 ring-verde ring-inset z-10" : "ring-2 ring-verde ring-inset z-10") : ""}
+                ${!isToday ? (isDarkMode ? "opacity-30 bg-gray-900" : "opacity-40 bg-gray-50") : ""}
+              `}
             >
-              <Text style={[
-                styles.dateCellText,
-                !currentMonth && styles.otherMonthText,
-                currentMonth && styles.currentMonthText,
-                today && styles.todayText,
-                selected && styles.todayText, // Apply selected text style if selected
-              ]}>
+              <Text
+                className={`
+                  text-right "text-xs" px-1
+                  ${
+                    isToday(date)
+                      ? isDarkMode
+                        ? "text-verde font-semibold"
+                        : "text-verde font-semibold"
+                      : isDarkMode
+                        ? "text-gray-400"
+                        : "text-gray-600"
+                  }
+                `}
+              >
                 {date.getDate()}
               </Text>
-              <View style={styles.eventContainer}>
+              <View className="space-y-1">
                 {dayEvents.slice(0, 2).map((event) => (
                   <Text
                     key={event.id}
-                    style={styles.eventTag}
-                    numberOfLines={1}
+                    className={`text-xs p-1 rounded truncate`}
                   >
                     {event.title}
                   </Text>
                 ))}
                 {dayEvents.length > 2 && (
-                  <Text style={styles.moreEventsText}>
+                  <Text className="text-xs text-gray-500">
                     +{dayEvents.length - 2} más
                   </Text>
                 )}
               </View>
+              {dayEvents.length > 0 && (
+                <View className="flex justify-center mt-1">
+                  <View className="w-1 h-1 rounded-full bg-verde"></View>
+                </View>
+              )}
             </TouchableOpacity>
           );
         })}

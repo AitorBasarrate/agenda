@@ -1,6 +1,14 @@
 import "../../global.css";
 import { useState, useEffect, useMemo, useCallback } from "react";
-import { View, Text, StyleSheet, ScrollView } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  Button,
+  Pressable,
+  TouchableOpacity,
+} from "react-native";
 import { CalendarView } from "../components/calendar-view";
 import { EventModal } from "../components/event-modal";
 import { TaskList } from "../components/task-list";
@@ -25,7 +33,11 @@ export default function App() {
   const [isTaskModalOpen, setTaskIsModalOpen] = useState(false);
   const [events, setEvents] = useState<Event[]>([]);
   const [tasks, setTasks] = useState<Task[]>([]);
+  const [activeTab, setActiveTab] = useState<"calendar" | "tasks" | "events">(
+    "calendar",
+  );
 
+  const isDarkMode = false;
   const fetchEvents = useCallback(async () => {
     try {
       const year = currentDate.getFullYear();
@@ -244,140 +256,139 @@ export default function App() {
   const textSecondary = "#6B7280"; // Example color, adjust based on theme or constants
   const greenPrimary = "#22C55E"; // Example color, adjust based on theme or constants
 
-  const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      backgroundColor: background,
-      padding: 16, // p-4 md:p-8
-    },
-    maxWidthWrapper: {
-      maxWidth: 768, // max-w-7xl (80rem / 16 = 5 * 16 = 80rem, 16rem = 256px, 80rem = 1280px. For mobile, maybe smaller or dynamic)
-      width: "100%",
-      marginHorizontal: "auto", // mx-auto
-    },
-    header: {
-      marginBottom: 32, // mb-8
-    },
-    headerContent: {
-      flexDirection: "row",
-      alignItems: "center",
-      gap: 12, // gap-3
-      marginBottom: 12, // mb-3
-    },
-    iconWrapper: {
-      padding: 8, // p-2
-      backgroundColor: "#D1FAE5", // green-100
-      borderRadius: 8, // rounded-lg
-    },
-    headerTitle: {
-      fontSize: 30, // text-4xl (scaled down for mobile)
-      fontWeight: "600", // font-medium
-      color: textPrimary, // gray-800
-    },
-    headerSubtitle: {
-      color: textSecondary, // gray-600
-      marginTop: 4, // mt-1
-    },
-    mainLayout: {
-      flexDirection: "column", // grid lg:grid-cols-3 changed to column for mobile
-      gap: 32, // gap-8
-    },
-    calendarSection: {
-      // lg:col-span-2, full width for mobile
-    },
-    calendarContainer: {
-      backgroundColor: "#FFFFFF", // bg-white
-      borderRadius: 8, // rounded-lg
-      shadowColor: "#000", // shadow-sm
-      shadowOffset: { width: 0, height: 1 },
-      shadowOpacity: 0.2,
-      shadowRadius: 1.41,
-      elevation: 2,
-      borderWidth: 1,
-      borderColor: "#E2E8F0", // border border-gray-200
-      padding: 24, // p-6
-    },
-    asideSection: {
-      // lg:col-span-1, full width for mobile
-    },
-    taskListContainer: {
-      backgroundColor: "#FFFFFF", // bg-white
-      borderRadius: 8, // rounded-lg
-      shadowColor: "#000",
-      shadowOffset: { width: 0, height: 1 },
-      shadowOpacity: 0.2,
-      shadowRadius: 1.41,
-      elevation: 2,
-      borderWidth: 1,
-      borderColor: "#E2E8F0",
-      padding: 24, // p-6
-    },
-    eventListMargin: {
-      marginTop: 20, // my-5
-      shadowColor: "#000", // shadow-sm
-      shadowOffset: { width: 0, height: 1 },
-      shadowOpacity: 0.2,
-      shadowRadius: 1.41,
-      elevation: 2,
-    },
-  });
-
   return (
-    <ScrollView className="bg-green-200">
-      <View className="m-3 pt-12">
+    <ScrollView className="bg-white mt-14">
+      <View
+        className={`min-h-screen pb-20 ${isDarkMode ? "bg-gradient-to-br from-gray-900 to-gray-800" : "bg-gradient-to-br from-[#E7F2E4] to-[#F2F2F2]"}`}
+      >
         {/* Header */}
-        <View className="mb-8">
-          <View className="flex flex-row flex-wrap">
-            <View>
+        <View
+          className={`sticky top-0 z-40 ${isDarkMode ? "bg-gray-900/95" : "bg-white/95"} backdrop-blur-sm border-b ${isDarkMode ? "border-gray-800" : "border-gray-200"}`}
+        >
+          <View className="px-4 py-3">
+            <View className="flex items-start gap-2">
               <MaterialCommunityIcons
                 name="calendar-range"
                 size={32}
-                color={greenPrimary}
+                className={`${isDarkMode ? "text-verde" : "text-verde"}`}
               />
+              <Text
+                className={`text-xl ${isDarkMode ? "text-white" : "text-gray-800"}`}
+              >
+                {activeTab === "calendar" && "Calendario"}
+                {activeTab === "tasks" && "Tareas"}
+                {activeTab === "events" && "Eventos"}
+              </Text>
             </View>
-            <View className="ml-3">
-              <Text>Mi Calendario</Text>
-              <Text>Organiza tus eventos y tareas en un solo lugar</Text>
-            </View>
+            <View className="ml-3"></View>
+            {/* TODO: Boton de cambio de theme*/}
           </View>
         </View>
 
-        {/* Main Layout */}
-        <View>
-          {/* Calendar Section */}
-          <View>
-            <View className="m-2 p-5 bg-slate-100 border-2 border-slate-400 rounded-2xl">
-              <CalendarView
-                currentDate={currentDate}
-                selectedDate={selectedDate}
-                events={groupedEvents}
-                onPrevMonth={handlePrevMonth}
-                onNextMonth={handleNextMonth}
-                onDateClick={handleDateClick}
-              />
-            </View>
-          </View>
+        {/* Main Content */}
+        <View className="p-4">
+          {activeTab === "calendar" && (
+            <CalendarView
+              currentDate={currentDate}
+              selectedDate={selectedDate}
+              events={groupedEvents}
+              onPrevMonth={handlePrevMonth}
+              onNextMonth={handleNextMonth}
+              onDateClick={handleDateClick}
+            />
+          )}
 
-          {/* Tasks Section */}
-          <View>
-            <View>
-              <TaskList
-                tasks={selectedDayTasks}
-                onAddTask={handleOpenTaskModal}
-                onToggleTask={handleToggleTask}
-                onDeleteTask={handleDeleteTask}
-              />
-            </View>
-            <View>
-              <EventList
-                selectedDate={selectedDate}
-                events={selectedDayEvents}
-                onDeleteEvent={handleDeleteEvent}
-                onAddEvent={handleOpenEventModal}
-              />
-            </View>
+          {activeTab === "tasks" && (
+            <TaskList
+              tasks={selectedDayTasks}
+              onAddTask={handleOpenTaskModal}
+              onToggleTask={handleToggleTask}
+              onDeleteTask={handleDeleteTask}
+            />
+          )}
+
+          {activeTab === "events" && (
+            <EventList
+              selectedDate={selectedDate}
+              events={selectedDayEvents}
+              onDeleteEvent={handleDeleteEvent}
+              onAddEvent={handleOpenEventModal}
+            />
+          )}
+        </View>
+        <View
+          className={`fixed bottom-0 left-0 right-0 z-50 ${isDarkMode ? "bg-gray-900/95 border-gray-800" : "bg-white/95 border-gray-200"} backdrop-blur-sm border-t`}
+        >
+          <View className="flex-row items-center justify-between gap-1 px-2 py-2">
+            <TouchableOpacity
+              onPress={() => setActiveTab("calendar")}
+              className={`flex items-center justify-center py-2 px-3 rounded-lg transition-all
+                ${
+                  activeTab === "calendar"
+                    ? isDarkMode
+                      ? "bg-verde/20 text-verde"
+                      : "bg-verde/10"
+                    : isDarkMode
+                      ? "text-gray-500 hover:bg-gray-800"
+                      : "text-gray-600 hove:bg-gray-100"
+                } `}
+            >
+              <MaterialCommunityIcons name="calendar-range"></MaterialCommunityIcons>
+              <Text className="text-xs font-medium">Calendario</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => setActiveTab("tasks")}
+              className={`flex items-center justify-center py-2 px-3 rounded-lg transition-all
+                ${
+                  activeTab === "tasks"
+                    ? isDarkMode
+                      ? "bg-verde/20 text-verde"
+                      : "bg-verde/10"
+                    : isDarkMode
+                      ? "text-gray-500 hover:bg-gray-800"
+                      : "text-gray-600 hove:bg-gray-100"
+                } `}
+            >
+              <MaterialCommunityIcons name="check-all"></MaterialCommunityIcons>
+              <Text className="text-xs font-medium">Tareas</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => setActiveTab("events")}
+              className={`flex items-center justify-center py-2 px-3 rounded-lg transition-all
+                ${
+                  activeTab === "events"
+                    ? isDarkMode
+                      ? "bg-verde/20 text-verde"
+                      : "bg-verde/10"
+                    : isDarkMode
+                      ? "text-gray-500 hover:bg-gray-800"
+                      : "text-gray-600 hove:bg-gray-100"
+                } `}
+            >
+              <MaterialCommunityIcons name="clock-outline"></MaterialCommunityIcons>
+              <Text className="text-xs font-medium">Eventos</Text>
+            </TouchableOpacity>
           </View>
         </View>
+        {activeTab === "calendar" && (
+          <TouchableOpacity
+            onPress={() => {
+              setSelectedDate(selectedDate || new Date());
+              setEventIsModalOpen(true);
+            }}
+            className={`fixed bottom-24 right-4 z-40 h-14 w-14 rounded-full shadow-lg flex items-center justify-center transition-transform active:scale-95 ${
+              isDarkMode
+                ? "bg-verde hover:bg-pistacho"
+                : "bg-verde hover:bg-pistacho"
+            }`}
+          >
+            <MaterialCommunityIcons
+              name="plus"
+              size={36}
+              className="text-white"
+            ></MaterialCommunityIcons>
+          </TouchableOpacity>
+        )}
       </View>
 
       {/* Modal para eventos */}
