@@ -11,6 +11,8 @@ import {
   deleteEvent,
   getTasksForMonth,
   saveTask,
+  deleteTask,
+  updateTask,
 } from "../api";
 import { EventList } from "./components/event-list";
 import { TaskModal } from "./components/task-modal";
@@ -185,18 +187,14 @@ function App() {
     due_date: string;
   }) => {
     if (!selectedDate) return;
-
-    const [dueHours, dueMinutes] = tasksData.due_date.split(":").map(Number);
-    const startDate = new Date(selectedDate);
-    startDate.setHours(dueHours);
-    startDate.setMinutes(dueMinutes);
-
+    const date = new Date(tasksData.due_date);
     const newTask = {
       title: tasksData.title,
       description: tasksData.description,
-      due_date: startDate.toISOString(),
+      due_date: date.toISOString(),
       status: "pending",
     };
+
     try {
       await saveTask(newTask);
       fetchTasks(); // Refrescar eventos
@@ -205,21 +203,29 @@ function App() {
     }
   };
 
-  const handleToggleTask = (id: number) => {
-    setTasks(
-      tasks.map((task) =>
-        task.id === id
-          ? {
-              ...task,
-              status: task.status === "completed" ? "pending" : "completed",
-            }
-          : task,
-      ),
-    );
+  const handleToggleTask = async (id: number, checked: boolean) => {
+    const task = tasks.find(t => t.id === id);
+    if (!task) {
+      console.error(`Task ${id} not found`);
+      return;
+    }
+
+    try {
+      const updatedTask = { ...task, status: checked ? "completed" : "pending" };
+      const response = await updateTask(id, updatedTask);
+      setTasks(prev => prev.map(t => (t.id === id ? response : t)));
+    } catch (error) {
+      console.error("Failed to update task: ", error);
+    }
   };
 
-  const handleDeleteTask = (id: number) => {
-    setTasks(Array.from(tasks).filter((task) => task.id !== id));
+  const handleDeleteTask = async (id: number) => {
+    try {
+      await deleteTask(id);
+      setTasks((prev) => prev.filter((task) => task.id !== id));
+    } catch (error) {
+      console.error("Failed to delete task: ", error)
+    }
   };
 
   const handleOpenEventModal = () => {
