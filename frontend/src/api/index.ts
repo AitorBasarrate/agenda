@@ -1,3 +1,5 @@
+import type { Task } from "../types";
+
 const API_BASE_URL = "http://localhost:8080/api";
 
 // Events
@@ -80,6 +82,20 @@ export const saveTask = async (task: {
 
   if (!response.ok) {
     throw new Error("Failed to save task");
+  }
+
+  return response.json();
+};
+
+export const updateTask = async (id: number, task: Task) => {
+  const response = await fetch(`${API_BASE_URL}/tasks/${id}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(task),
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to update task");
   }
 
   return response.json();

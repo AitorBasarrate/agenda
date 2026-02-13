@@ -12,6 +12,7 @@ import {
   getTasksForMonth,
   saveTask,
   deleteTask,
+  updateTask,
 } from "../api";
 import { EventList } from "./components/event-list";
 import { TaskModal } from "./components/task-modal";
@@ -202,18 +203,20 @@ function App() {
     }
   };
 
-  const handleToggleTask = (id: number) => {
-    // TODO: Update database register
-    setTasks(
-      tasks.map((task) =>
-        task.id === id
-          ? {
-              ...task,
-              status: task.status === "completed" ? "pending" : "completed",
-            }
-          : task,
-      ),
-    );
+  const handleToggleTask = async (id: number, checked: boolean) => {
+    const task = tasks.find(t => t.id === id);
+    if (!task) {
+      console.error(`Task ${id} not found`);
+      return;
+    }
+
+    try {
+      const updatedTask = { ...task, status: checked ? "completed" : "pending" };
+      const response = await updateTask(id, updatedTask);
+      setTasks(prev => prev.map(t => (t.id === id ? response : t)));
+    } catch (error) {
+      console.error("Failed to update task: ", error);
+    }
   };
 
   const handleDeleteTask = (id: number) => {

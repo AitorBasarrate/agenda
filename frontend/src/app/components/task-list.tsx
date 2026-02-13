@@ -8,7 +8,7 @@ import { type Task } from "../../types";
 interface TaskListProps {
   tasks: Task[];
   onAddTask: () => void;
-  onToggleTask: (id: number) => void;
+  onToggleTask: (id: number, checked: boolean) => void;
   onDeleteTask: (id: number) => void;
 }
 
@@ -119,13 +119,13 @@ function TaskItem({
   onDelete,
 }: {
   task: Task;
-  onToggle: (id: number) => void;
+  onToggle: (id: number, checked: boolean) => void;
   onDelete: (id: number) => void;
 }) {
   return (
     <div className="flex items-center gap-3 p-4 rounded-lg border border-gray-200 hover:bg-gray-50 hover:border-gray-300 transition-all duration-200 group">
       <button
-        onClick={() => onToggle(task.id)}
+        onClick={() => onToggle(task.id, task.status !== "completed")}
         className="flex-shrink-0 hover:scale-110 transition-transform duration-200 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-1 rounded-full"
       >
         {task.status === "completed" ? (
