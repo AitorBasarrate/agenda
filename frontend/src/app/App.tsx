@@ -219,9 +219,13 @@ function App() {
     }
   };
 
-  const handleDeleteTask = (id: number) => {
-    deleteTask(id);
-    setTasks(Array.from(tasks).filter((task) => task.id !== id));
+  const handleDeleteTask = async (id: number) => {
+    try {
+      await deleteTask(id);
+      setTasks((prev) => prev.filter((task) => task.id !== id));
+    } catch (error) {
+      console.error("Failed to delete task: ", error)
+    }
   };
 
   const handleOpenEventModal = () => {

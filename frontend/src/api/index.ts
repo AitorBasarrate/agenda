@@ -108,5 +108,5 @@ export const deleteTask = async (id: number) => {
   if (!response.ok) {
     throw new Error("Failed to delete task");
   }
-  return response.json();
+  return response;
 };
