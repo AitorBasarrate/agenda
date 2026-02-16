@@ -1,7 +1,7 @@
 # Simple Makefile for a Go project
 
 # Build the application
-all: build test-backend
+all: build test-backend test-frontend
 
 build:
 	@echo "Building..."
@@ -41,9 +41,12 @@ docker-clean:
 
 # Test the application
 test-backend:
-	@echo "Testing..."
+	@echo "Testing backend..."
 	@go test ./... -v
-# TODO: Test frontend
+
+test-frontend:
+	@echo "Testing frontend..."
+	@pnpm -C frontend run test
 
 # Clean the binary
 clean:
