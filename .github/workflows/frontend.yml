@@ -18,6 +18,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
@@ -25,16 +30,14 @@ jobs:
           cache: "pnpm"
           cache-dependency-path: frontend/pnpm-lock.yaml
 
-      - name: Install pnpm
-        uses: pnpm/action-setup@v2
-        with:
-          version: 8
-
       - name: Install frontend dependencies
-        run: pnpm install --frozen-lockfile --prefix ./frontend
+        run: pnpm -C ./frontend install
 
       - name: Run frontend linting
-        run: pnpm run lint --prefix ./frontend
+        run: pnpm -C ./frontend run lint
 
       - name: Build frontend
-        run: pnpm run build --prefix ./frontend
+        run: pnpm -C ./frontend run build
+
+      - name: Run forntend tests
+        run: pnpm -C ./frontend run test
