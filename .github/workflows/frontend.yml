@@ -18,18 +18,26 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: "npm"
-          cache-dependency-path: frontend/package-lock.json
+          cache: "pnpm"
+          cache-dependency-path: frontend/pnpm-lock.yaml
 
       - name: Install frontend dependencies
-        run: npm ci --prefix ./frontend
+        run: pnpm -C ./frontend install
 
       - name: Run frontend linting
-        run: npm run lint --prefix ./frontend
+        run: pnpm -C ./frontend run lint
 
       - name: Build frontend
-        run: npm run build --prefix ./frontend
+        run: pnpm -C ./frontend run build
+
+      - name: Run forntend tests
+        run: pnpm -C ./frontend run test
