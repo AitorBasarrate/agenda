@@ -8,6 +8,7 @@ import {
   Button,
   Pressable,
   TouchableOpacity,
+  useColorScheme,
 } from "react-native";
 import { CalendarView } from "../components/calendar-view";
 import { EventModal } from "../components/event-modal";
@@ -37,7 +38,8 @@ export default function App() {
     "calendar",
   );
 
-  const isDarkMode = false;
+  const colorScheme = useColorScheme();
+  const isDarkMode = colorScheme === "dark";
   const fetchEvents = useCallback(async () => {
     try {
       const year = currentDate.getFullYear();

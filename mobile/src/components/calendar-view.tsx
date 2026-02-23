@@ -91,14 +91,14 @@ export function CalendarView({
 
   return (
     <View
-      className={`rounded-lg shadow-lg p-6 ${isDarkMode ? "bg-gray-800" : "bg-white"}`}
+      className={`rounded-lg shadow-lg p-4 ${isDarkMode ? "bg-gray-800" : "bg-white"}`}
     >
       {/* Header con navegación */}
-      <View className="flex-row items-center justify-between mb-6">
+      <View className="flex-row items-center justify-between mb-4">
         <Text className={`text-2xl ${isDarkMode ? "text-white" : ""}`}>
           {MONTHS[month]} {year}
         </Text>
-        <View className="flex-row gap-2">
+        <View className="flex-row space-x-2">
           <Button
             onPress={onPrevMonth}
             variant="outline"
@@ -127,19 +127,21 @@ export function CalendarView({
       </View>
 
       {/* Días de la semana */}
-      <View className="flex-row justify-between gap-1 mb-2">
+      <View className="flex-row mb-2">
         {DAYS.map((day) => (
-          <Text
-            key={day}
-            className={`text-center py-2 border-b ${isDarkMode ? "text-gray-400 border-gray-700" : "text-gray-500"}`}
-          >
-            {day}
-          </Text>
+          <View key={day} className="flex-1">
+            <Text
+              key={day}
+              className={`text-center py-2 border-b ${isDarkMode ? "text-gray-400 border-gray-700" : "text-gray-500"}`}
+            >
+              {day}
+            </Text>
+          </View>
         ))}
       </View>
 
       {/* Calendario */}
-      <View className="flex-row gap-2">
+      <View className="flex-row flex-wrap">
         {days.map((date, index) => {
           const dateKey = getDateKey(date);
           const dayEvents = events[dateKey] || [];
@@ -152,17 +154,16 @@ export function CalendarView({
               key={index}
               onPress={() => onDateClick(date)}
               className={`
-                flex-1 min-h-16 p-1 border transition-all
+                min-h-16 w-[14.28%] p-1 border transition-all
                 ${isDarkMode ? "border-gray-700 hover:bg-gray-700" : "border-gray-200 hover:bg-lima"}
                 hover:z-10 active:scale-95
-                ${isToday(date) ? (isDarkMode ? "bg-gray-700 border-verde" : "bg-[#E7F2E4] border-verde") : ""}
+                ${isToday(date) ? (isDarkMode ? "bg-gray-700 border-verde" : "bg-lima border-verde") : ""}
                 ${isSelected(date) ? (isDarkMode ? "ring-2 ring-verde ring-inset z-10" : "ring-2 ring-verde ring-inset z-10") : ""}
-                ${!isToday ? (isDarkMode ? "opacity-30 bg-gray-900" : "opacity-40 bg-gray-50") : ""}
               `}
             >
               <Text
                 className={`
-                  text-right "text-xs" px-1
+                  text-right text-xs px-1
                   ${
                     isToday(date)
                       ? isDarkMode
