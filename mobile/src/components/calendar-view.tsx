@@ -141,65 +141,69 @@ export function CalendarView({
       </View>
 
       {/* Calendario */}
-      <View className="flex-row flex-wrap">
-        {days.map((date, index) => {
-          const dateKey = getDateKey(date);
-          const dayEvents = events[dateKey] || [];
-          const currentMonth = isCurrentMonth(date);
-          const today = isToday(date);
-          const selected = isSelected(date);
+      <View>
+        {/* Render weeks in rows of 7 */}
+        {Array.from({ length: Math.ceil(days.length / 7) }).map((_, weekIndex) => (
+          <View key={weekIndex} className="flex-row">
+            {days.slice(weekIndex * 7, (weekIndex + 1) * 7).map((date, dayIndex) => {
+              const dateKey = getDateKey(date);
+              const dayEvents = events[dateKey] || [];
+              const currentMonth = isCurrentMonth(date);
+              const today = isToday(date);
+              const selected = isSelected(date);
 
-          return (
-            <TouchableOpacity
-              key={index}
-              onPress={() => onDateClick(date)}
-              className={`
-                min-h-16 w-[14.28%] p-1 border transition-all
-                ${isDarkMode ? "border-gray-700 hover:bg-gray-700" : "border-gray-200 hover:bg-lima"}
-                hover:z-10 active:scale-95
-                ${isToday(date) ? (isDarkMode ? "bg-gray-700 border-verde" : "bg-lima border-verde") : ""}
-                ${isSelected(date) ? (isDarkMode ? "ring-2 ring-verde ring-inset z-10" : "ring-2 ring-verde ring-inset z-10") : ""}
-              `}
-            >
-              <Text
-                className={`
-                  text-right text-xs px-1
-                  ${
-                    isToday(date)
-                      ? isDarkMode
-                        ? "text-verde font-semibold"
-                        : "text-verde font-semibold"
-                      : isDarkMode
-                        ? "text-gray-400"
-                        : "text-gray-600"
-                  }
-                `}
-              >
-                {date.getDate()}
-              </Text>
-              <View className="space-y-1">
-                {dayEvents.slice(0, 2).map((event) => (
+              return (
+                <TouchableOpacity
+                  key={`${weekIndex}-${dayIndex}`}
+                  onPress={() => onDateClick(date)}
+                  className={`
+                    flex-1 min-h-16 p-1 border
+                    ${isDarkMode ? "border-gray-700" : "border-gray-200"}
+                    ${isToday(date) ? (isDarkMode ? "bg-gray-700 border-verde" : "bg-lima border-verde") : ""}
+                    ${isSelected(date) ? (isDarkMode ? "ring-2 ring-verde" : "ring-2 ring-verde") : ""}
+                  `}
+                >
                   <Text
-                    key={event.id}
-                    className={`text-xs p-1 rounded truncate`}
+                    className={`
+                      text-right text-xs px-1
+                      ${
+                        isToday(date)
+                          ? isDarkMode
+                            ? "text-verde font-semibold"
+                            : "text-verde font-semibold"
+                          : isDarkMode
+                            ? "text-gray-400"
+                            : "text-gray-600"
+                      }
+                    `}
                   >
-                    {event.title}
+                    {date.getDate()}
                   </Text>
-                ))}
-                {dayEvents.length > 2 && (
-                  <Text className="text-xs text-gray-500">
-                    +{dayEvents.length - 2} más
-                  </Text>
-                )}
-              </View>
-              {dayEvents.length > 0 && (
-                <View className="flex justify-center mt-1">
-                  <View className="w-1 h-1 rounded-full bg-verde"></View>
-                </View>
-              )}
-            </TouchableOpacity>
-          );
-        })}
+                  <View className="space-y-1">
+                    {dayEvents.slice(0, 2).map((event) => (
+                      <Text
+                        key={event.id}
+                        className={`text-xs p-1 rounded truncate`}
+                      >
+                        {event.title}
+                      </Text>
+                    ))}
+                    {dayEvents.length > 2 && (
+                      <Text className="text-xs text-gray-500">
+                        +{dayEvents.length - 2} más
+                      </Text>
+                    )}
+                  </View>
+                  {dayEvents.length > 0 && (
+                    <View className="flex justify-center mt-1">
+                      <View className="w-1 h-1 rounded-full bg-verde"></View>
+                    </View>
+                  )}
+                </TouchableOpacity>
+              );
+            })}
+          </View>
+        ))}
       </View>
     </View>
   );
