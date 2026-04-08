@@ -43,36 +43,36 @@ export const Colors = {
     tabIconSelected: Palette.verde,
   },
   dark: {
-    // Primary brand colors
-    primary: Palette.pistacho,
-    secondary: Palette.verde,
-    accent: Palette.naranja,
+    // Primary brand colors (brightened for contrast on dark backgrounds)
+    primary: "#B1D923", // Brighter pistacho for better visibility
+    secondary: "#A3D975", // Brightened verde for balance
+    accent: "#FFA500", // Lighter naranja for better contrast
 
-    // Text colors
-    text: "#ECEDEE",
-    textSecondary: "#9CA3AF",
-    textMuted: "#6B7280",
+    // Text colors (light palette for dark backgrounds)
+    text: "#F3F4F6", // Bright off-white
+    textSecondary: "#D1D5DB", // Light gray
+    textMuted: "#9CA3AF", // Medium gray
 
-    // Background colors
-    background: "#151718",
-    backgroundAlt: "#1F2937",
-    surface: "#111827",
+    // Background colors (dark palette)
+    background: "#0F1419", // Very dark charcoal
+    backgroundAlt: "#1A1E27", // Dark blue-gray
+    surface: "#242B36", // Slightly lighter blue-gray for cards/containers
 
-    // Component colors
-    border: "#374151",
-    input: "#1F2937",
-    placeholder: "#9CA3AF",
+    // Component colors (optimized for dark mode)
+    border: "#3F4651", // Dark gray borders
+    input: "#1A1E27", // Dark input background
+    placeholder: "#9CA3AF", // Medium gray placeholder
 
-    // Status colors
-    success: Palette.pistacho,
-    warning: Palette.naranja,
-    error: "#F87171",
+    // Status colors (brightened for visibility)
+    success: "#86EFAC", // Bright green for success states
+    warning: "#FBBF24", // Bright amber for warnings
+    error: "#FCA5A5", // Bright red for errors
 
     // Legacy/compat
-    tint: "#fff",
-    icon: "#9BA1A6",
-    tabIconDefault: "#9BA1A6",
-    tabIconSelected: "#fff",
+    tint: "#B1D923", // Pistacho for consistency
+    icon: "#B1D923", // Match primary
+    tabIconDefault: "#9CA3AF", // Muted gray
+    tabIconSelected: "#B1D923", // Active pistacho
   },
 };
 
