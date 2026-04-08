@@ -1,6 +1,7 @@
 import React from 'react';
-import { TextInput, StyleSheet, TextInputProps } from 'react-native';
+import { TextInput, StyleSheet, TextInputProps, useColorScheme } from 'react-native';
 import { useThemeColor } from '@/hooks/use-theme-color';
+import { Colors } from '@/constants/theme';
 
 interface InputProps extends TextInputProps {
   // You can add custom props here if needed,
@@ -8,9 +9,11 @@ interface InputProps extends TextInputProps {
 }
 
 export function Input({ style, ...props }: InputProps) {
-  const textColor = useThemeColor({}, 'text');
-  const borderColor = useThemeColor({}, 'border'); // Assuming 'border' exists in your theme
-  const backgroundColor = useThemeColor({}, 'input'); // Assuming 'input' exists in your theme
+  const isDarkMode = useColorScheme() === 'dark';
+  const themeColors = isDarkMode ? Colors.dark : Colors.light;
+  const textColor = themeColors.text;
+  const borderColor = themeColors.border;
+  const backgroundColor = themeColors.input;
 
   const styles = StyleSheet.create({
     input: {
@@ -32,7 +35,7 @@ export function Input({ style, ...props }: InputProps) {
   return (
     <TextInput
       style={[styles.input, style]}
-      placeholderTextColor="#6B7280" // Placeholder for gray-500
+      placeholderTextColor={themeColors.placeholder}
       {...props}
     />
   );

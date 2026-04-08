@@ -1,15 +1,18 @@
 import React from 'react';
-import { TextInput, StyleSheet, TextInputProps } from 'react-native';
+import { TextInput, StyleSheet, TextInputProps, useColorScheme } from 'react-native';
 import { useThemeColor } from '@/hooks/use-theme-color';
+import { Colors } from '@/constants/theme';
 
 interface TextareaProps extends TextInputProps {
   // Add custom props if needed
 }
 
 export function Textarea({ style, ...props }: TextareaProps) {
-  const textColor = useThemeColor({}, 'text');
-  const borderColor = useThemeColor({}, 'border');
-  const backgroundColor = useThemeColor({}, 'input');
+  const isDarkMode = useColorScheme() === 'dark';
+  const themeColors = isDarkMode ? Colors.dark : Colors.light;
+  const textColor = themeColors.text;
+  const borderColor = themeColors.border;
+  const backgroundColor = themeColors.input;
 
   const styles = StyleSheet.create({
     textarea: {
@@ -31,7 +34,7 @@ export function Textarea({ style, ...props }: TextareaProps) {
     <TextInput
       multiline
       style={[styles.textarea, style]}
-      placeholderTextColor="#6B7280" // Placeholder for gray-500
+      placeholderTextColor={themeColors.placeholder}
       {...props}
     />
   );

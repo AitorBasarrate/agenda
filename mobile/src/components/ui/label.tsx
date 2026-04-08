@@ -1,13 +1,16 @@
 import React from 'react';
-import { Text, StyleSheet, TextProps } from 'react-native';
+import { Text, StyleSheet, TextProps, useColorScheme } from 'react-native';
 import { useThemeColor } from '@/hooks/use-theme-color';
+import { Colors } from '@/constants/theme';
 
 interface LabelProps extends TextProps {
   children: React.ReactNode;
 }
 
 export function Label({ children, style, ...props }: LabelProps) {
-  const textColor = useThemeColor({}, 'text'); // Use a suitable text color from your theme
+  const isDarkMode = useColorScheme() === 'dark';
+  const themeColors = isDarkMode ? Colors.dark : Colors.light;
+  const textColor = themeColors.text;
 
   const styles = StyleSheet.create({
     label: {

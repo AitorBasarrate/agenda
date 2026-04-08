@@ -1,9 +1,10 @@
 import React from "react";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
-import { MaterialCommunityIcons } from "@expo/vector-icons"; // Using MaterialCommunityIcons for chevron icons
+import { View, Text, StyleSheet, TouchableOpacity, useColorScheme } from "react-native";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Button } from "./ui/button";
 import { useThemeColor } from "@/hooks/use-theme-color";
-import { type Event } from "../../src/types"; // Corrected import path
+import { Colors } from "@/constants/theme";
+import { type Event } from "../../src/types";
 
 interface CalendarViewProps {
   currentDate: Date;
@@ -38,6 +39,9 @@ export function CalendarView({
   onNextMonth,
   onDateClick,
 }: CalendarViewProps) {
+  const colorScheme = useColorScheme();
+  const isDarkComp = colorScheme === 'dark';
+  const themeColors = isDarkComp ? Colors.dark : Colors.light;
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth();
 
@@ -91,11 +95,11 @@ export function CalendarView({
 
   return (
     <View
-      className={`rounded-lg shadow-lg p-4 ${isDarkMode ? "bg-gray-800" : "bg-white"}`}
+      className={`rounded-lg shadow-lg p-4 ${isDarkComp ? "bg-gray-800" : "bg-white"}`}
     >
       {/* Header con navegación */}
       <View className="flex-row items-center justify-between mb-4">
-        <Text className={`text-2xl ${isDarkMode ? "text-white" : ""}`}>
+        <Text className={`text-2xl ${isDarkComp ? "text-white" : ""}`}>
           {MONTHS[month]} {year}
         </Text>
         <View className="flex-row space-x-2">
@@ -103,7 +107,7 @@ export function CalendarView({
             onPress={onPrevMonth}
             variant="outline"
             className={
-              isDarkMode
+              isDarkComp
                 ? "bg-gray-700 border-gray-600 text-white hover:bg-gray-600"
                 : ""
             }
@@ -115,7 +119,7 @@ export function CalendarView({
             onPress={onNextMonth}
             variant="outline"
             className={
-              isDarkMode
+              isDarkComp
                 ? "bg-gray-700 border-gray-600 text-white hover:bg-gray-600"
                 : ""
             }
@@ -132,7 +136,7 @@ export function CalendarView({
           <View key={day} className="flex-1">
             <Text
               key={day}
-              className={`text-center py-2 border-b ${isDarkMode ? "text-gray-400 border-gray-700" : "text-gray-500"}`}
+              className={`text-center py-2 border-b ${isDarkComp ? "text-gray-400 border-gray-700" : "text-gray-500"}`}
             >
               {day}
             </Text>
@@ -158,9 +162,9 @@ export function CalendarView({
                   onPress={() => onDateClick(date)}
                   className={`
                     flex-1 min-h-16 p-1 border
-                    ${isDarkMode ? "border-gray-700" : "border-gray-200"}
-                    ${isToday(date) ? (isDarkMode ? "bg-gray-700 border-verde" : "bg-lima border-verde") : ""}
-                    ${isSelected(date) ? (isDarkMode ? "ring-2 ring-verde" : "ring-2 ring-verde") : ""}
+                    ${isDarkComp ? "border-gray-700" : "border-gray-200"}
+                    ${isToday(date) ? (isDarkComp ? "bg-gray-700 border-verde" : "bg-lima border-verde") : ""}
+                    ${isSelected(date) ? (isDarkComp ? "ring-2 ring-verde" : "ring-2 ring-verde") : ""}
                   `}
                 >
                   <Text

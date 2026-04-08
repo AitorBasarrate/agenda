@@ -1,6 +1,7 @@
 import React from 'react';
-import { TouchableOpacity, Text, StyleSheet, View } from 'react-native';
+import { TouchableOpacity, Text, StyleSheet, View, useColorScheme } from 'react-native';
 import { useThemeColor } from '@/hooks/use-theme-color';
+import { Colors } from '@/constants/theme';
 
 // Replicating some basic variants based on common patterns and guidelines
 type ButtonVariant = 'default' | 'outline' | 'ghost';
@@ -25,8 +26,12 @@ export function Button({
   disabled = false,
   ...props
 }: ButtonProps) {
-  const backgroundColor = useThemeColor({}, 'background');
-  const textColor = useThemeColor({}, 'text');
+  const isDarkMode = useColorScheme() === 'dark';
+  const themeColors = isDarkMode ? Colors.dark : Colors.light;
+  const backgroundColor = themeColors.background;
+  const textColor = themeColors.text;
+  const border = themeColors.border;
+  const primary = themeColors.primary;
 
   const getVariantStyles = (buttonVariant: ButtonVariant) => {
     switch (buttonVariant) {
@@ -34,7 +39,7 @@ export function Button({
         return {
           backgroundColor: 'transparent',
           borderWidth: 1,
-          borderColor: '#E2E8F0', // Assuming a light gray border
+          borderColor: border,
         };
       case 'ghost':
         return {
@@ -45,7 +50,7 @@ export function Button({
       case 'default':
       default:
         return {
-          backgroundColor: '#22C55E', // A green color, similar to green-600/700
+          backgroundColor: primary,
         };
     }
   };

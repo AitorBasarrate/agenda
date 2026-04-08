@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, useColorScheme } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { type Task } from '../../src/types';
 import { useThemeColor } from '@/hooks/use-theme-color';
+import { Colors } from '@/constants/theme';
 
 interface TaskListProps {
   tasks: Task[];
@@ -21,6 +22,10 @@ export function TaskList({
 }: TaskListProps) {
   const [newTaskTitle, setNewTaskTitle] = useState("");
 
+  const colorScheme = useColorScheme();
+  const isDarkMode = colorScheme === 'dark';
+  const themeColors = isDarkMode ? Colors.dark : Colors.light;
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!newTaskTitle.trim()) return;
@@ -33,16 +38,13 @@ export function TaskList({
     (t) => t.status === "completed",
   );
 
-  const textColor = useThemeColor({}, 'text');
-  const mutedForeground = useThemeColor({}, 'mutedForeground');
-  const gray500 = '#6B7280'; // text-gray-500
-  const gray400 = '#9CA3AF'; // text-gray-400
-  const greenPrimary = '#22C55E'; // bg-green-600
-  const blue500 = '#3B82F6'; // text-blue-500
-  const green500 = '#10B981'; // text-green-500
-  const borderColor = useThemeColor({}, 'border');
-  const gray50 = '#F9FAFB'; // hover:bg-gray-50
-  const red600 = '#DC2626'; // hover:text-red-600
+  const textColor = themeColors.text;
+  const textMuted = themeColors.textMuted;
+  const primary = themeColors.primary;
+  const error = themeColors.error;
+  const success = themeColors.success;
+  const border = themeColors.border;
+  const background = themeColors.background;
 
   const styles = StyleSheet.create({
     header: {
@@ -66,7 +68,7 @@ export function TaskList({
     addButton: {
       height: 40, // h-10 w-10
       width: 40,
-      backgroundColor: greenPrimary,
+      backgroundColor: primary,
       borderRadius: 6,
     },
     tasksContainer: {
@@ -78,32 +80,32 @@ export function TaskList({
     taskSectionHeader: {
       fontSize: 12, // text-sm
       fontWeight: '500', // font-medium
-      color: mutedForeground, // text-gray-600
+      color: textMuted, // text-gray-600
       marginBottom: 16, // mb-4
       flexDirection: 'row',
       alignItems: 'center',
       gap: 8, // gap-2
     },
     pendingIcon: {
-      color: blue500, // text-blue-500
+      color: primary, // text-blue-500
     },
     completedIcon: {
-      color: green500, // text-green-500
+      color: success, // text-green-500
     },
     completedSectionDivider: {
       paddingTop: 24, // pt-6
       borderTopWidth: 1,
-      borderTopColor: borderColor, // border-t border-gray-200
+      borderTopColor: border, // border-t border-gray-200
     },
     emptyState: {
       textAlign: 'center',
       paddingVertical: 64, // py-16
-      color: gray500, // text-gray-500
+      color: textMuted, // text-gray-500
       alignItems: 'center',
       justifyContent: 'center',
     },
     emptyStateIconCircle: {
-      backgroundColor: '#F3F4F6', // bg-gray-100
+      backgroundColor: themeColors.backgroundAlt, // bg-gray-100
       borderRadius: 9999, // rounded-full
       padding: 16, // p-4
       width: 64, // w-16 h-16
@@ -114,17 +116,17 @@ export function TaskList({
       justifyContent: 'center',
     },
     emptyStateIcon: {
-      color: gray400, // text-gray-400
+      color: textMuted, // text-gray-400
     },
     emptyStateTitle: {
       fontSize: 18, // text-lg
       fontWeight: '500', // font-medium
       marginBottom: 8, // mb-2
-      color: gray500,
+      color: textMuted,
     },
     emptyStateText: {
       fontSize: 14, // text-sm
-      color: gray400, // text-gray-400
+      color: textMuted, // text-gray-400
     },
   });
 
@@ -219,13 +221,14 @@ function TaskItem({
   onToggle,
   onDelete,
 }: TaskItemProps) {
-  const textColor = useThemeColor({}, 'text');
-  const gray400 = '#9CA3AF'; // text-gray-400
-  const green500 = '#10B981'; // text-green-500
-  const red50 = '#FEF2F2'; // hover:bg-red-50
-  const red600 = '#DC2626'; // hover:text-red-600
-  const borderColor = useThemeColor({}, 'border');
-  const gray50 = '#F9FAFB'; // hover:bg-gray-50
+  const colorScheme = useColorScheme();
+  const isDarkMode = colorScheme === 'dark';
+  const themeColors = isDarkMode ? Colors.dark : Colors.light;
+  const textColor = themeColors.text;
+  const textMuted = themeColors.textMuted;
+  const success = themeColors.success;
+  const error = themeColors.error;
+  const border = themeColors.border;
 
   const itemStyles = StyleSheet.create({
     taskItem: {
@@ -235,7 +238,7 @@ function TaskItem({
       padding: 16, // p-4
       borderRadius: 8, // rounded-lg
       borderWidth: 1,
-      borderColor: borderColor, // border border-gray-200
+      borderColor: border, // border border-gray-200
       marginBottom: 12, // For space-y-3 replication
     },
     toggleButton: {
@@ -244,10 +247,10 @@ function TaskItem({
       padding: 4, // Added padding for easier press
     },
     pendingCheckIcon: {
-      color: gray400, // text-gray-400
+      color: textMuted, // text-gray-400
     },
     completedCheckIcon: {
-      color: green500, // text-green-500
+      color: success, // text-green-500
     },
     taskTitle: {
       flex: 1, // flex-1
@@ -256,7 +259,7 @@ function TaskItem({
     },
     completedTaskTitle: {
       textDecorationLine: 'line-through',
-      color: gray400, // text-gray-400
+      color: textMuted, // text-gray-400
     },
     deleteButton: {
       // opacity-0 group-hover:opacity-100 transition-all duration-200
@@ -268,7 +271,7 @@ function TaskItem({
       // hover:bg-red-50 hover:text-red-600 handled by TouchableOpacity feedback
     },
     deleteIcon: {
-      color: gray400, // Default color, will change on hover/active in web
+      color: textMuted, // Default color, will change on hover/active in web
     },
   });
 

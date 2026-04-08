@@ -26,6 +26,7 @@ import {
   saveTask,
 } from "../api";
 import { type Event, type Task } from "../types";
+import { Colors } from "../constants/theme";
 
 export default function App() {
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -253,10 +254,11 @@ export default function App() {
     setTaskIsModalOpen(true);
   };
 
-  const background = useThemeColor({}, "background");
-  const textPrimary = "#11181C"; // Example color, adjust based on theme or constants
-  const textSecondary = "#6B7280"; // Example color, adjust based on theme or constants
-  const greenPrimary = "#22C55E"; // Example color, adjust based on theme or constants
+  const themeColors = isDarkMode ? Colors.dark : Colors.light;
+  const background = themeColors.background;
+  const primary = themeColors.primary;
+  const textColor = themeColors.text;
+  const textMuted = themeColors.textMuted;
 
   return (
     <View className={`flex-1 ${isDarkMode ? "bg-gray-900" : "bg-white"}`}>
@@ -286,7 +288,7 @@ export default function App() {
 
       {/* Scrollable Content */}
       <ScrollView
-        className={`flex-1 ${isDarkMode ? "bg-gradient-to-br from-gray-900 to-gray-800" : "bg-gradient-to-br from-[#E7F2E4] to-[#F2F2F2]"}`}
+        className={`flex-1 ${isDarkMode ? "bg-gray-900" : "bg-gradient-to-br from-lima to-blanco"}`}
       >
         <View className="p-4 pb-20">
           {activeTab === "calendar" && (
@@ -359,7 +361,7 @@ export default function App() {
           >
             <MaterialCommunityIcons
               name="calendar-range"
-              color={activeTab === "calendar" ? "#80BF41" : (isDarkMode ? "#9CA3AF" : "#6B7280")}
+              color={activeTab === "calendar" ? themeColors.primary : themeColors.textMuted}
             />
             <Text className={`text-xs font-medium ${
               activeTab === "calendar"
@@ -384,7 +386,7 @@ export default function App() {
           >
             <MaterialCommunityIcons
               name="check-all"
-              color={activeTab === "tasks" ? "#80BF41" : (isDarkMode ? "#9CA3AF" : "#6B7280")}
+              color={activeTab === "tasks" ? themeColors.primary : themeColors.textMuted}
             />
             <Text className={`text-xs font-medium ${
               activeTab === "tasks"
@@ -409,7 +411,7 @@ export default function App() {
           >
             <MaterialCommunityIcons
               name="clock-outline"
-              color={activeTab === "events" ? "#80BF41" : (isDarkMode ? "#9CA3AF" : "#6B7280")}
+              color={activeTab === "events" ? themeColors.primary : themeColors.textMuted}
             />
             <Text className={`text-xs font-medium ${
               activeTab === "events"

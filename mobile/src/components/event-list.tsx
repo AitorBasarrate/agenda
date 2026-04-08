@@ -1,9 +1,10 @@
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, useColorScheme } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Button } from './ui/button';
 import { type Event } from '../../src/types';
 import { useThemeColor } from '@/hooks/use-theme-color';
+import { Colors } from '@/constants/theme';
 
 interface EventListProps {
   selectedDate: Date | null;
@@ -13,6 +14,10 @@ interface EventListProps {
 }
 
 export function EventList({ selectedDate, events, onDeleteEvent, onAddEvent }: EventListProps) {
+  const colorScheme = useColorScheme();
+  const isDarkMode = colorScheme === 'dark';
+  const themeColors = isDarkMode ? Colors.dark : Colors.light;
+
   const formatDate = (date: Date) => {
     return date.toLocaleDateString("es-ES", {
       weekday: "long",
@@ -22,15 +27,11 @@ export function EventList({ selectedDate, events, onDeleteEvent, onAddEvent }: E
     });
   };
 
-  const backgroundColor = useThemeColor({}, 'background');
-  const textColor = useThemeColor({}, 'text');
-  const mutedForeground = useThemeColor({}, 'mutedForeground');
-  const greenPrimary = '#22C55E'; // bg-green-600
-  const green700 = '#047857'; // text-green-700
-  const green200 = '#9AE6B4'; // border-green-200
-  const green400 = '#4ade80'; // hover:border-green-400
-  const red500 = '#EF4444'; // text-red-500
-  const gray400 = '#9CA3AF'; // text-gray-400
+  const backgroundColor = themeColors.surface;
+  const textColor = themeColors.text;
+  const textMuted = themeColors.textMuted;
+  const primary = themeColors.primary;
+  const border = themeColors.border;
 
   const styles = StyleSheet.create({
     container: {
@@ -57,12 +58,12 @@ export function EventList({ selectedDate, events, onDeleteEvent, onAddEvent }: E
     addButton: {
       height: 40, // h-10 w-10
       width: 40,
-      backgroundColor: greenPrimary,
+      backgroundColor: primary,
       borderRadius: 6,
     },
     dateText: {
       fontSize: 14, // text-sm
-      color: mutedForeground, // text-gray-600
+      color: textMuted, // text-gray-600
       marginBottom: 16, // mb-4
       textTransform: 'capitalize',
     },
@@ -72,13 +73,13 @@ export function EventList({ selectedDate, events, onDeleteEvent, onAddEvent }: E
     eventItem: {
       padding: 16, // p-4
       borderLeftWidth: 4, // border-l-4
-      borderLeftColor: green200, // border-green-200
+      borderLeftColor: primary, // border-green-200
       borderRadius: 8, // rounded-lg
       position: 'relative',
       marginBottom: 12, // For space-y-3
     },
     eventItemHover: {
-      borderLeftColor: green400, // hover:border-green-400
+      borderLeftColor: primary, // hover:border-green-400
     },
     eventContent: {
       flexDirection: 'row',
@@ -100,11 +101,11 @@ export function EventList({ selectedDate, events, onDeleteEvent, onAddEvent }: E
       gap: 4, // gap-1
       fontSize: 12, // text-sm
       marginBottom: 8, // mb-2
-      color: mutedForeground,
+      color: textMuted,
     },
     eventDescription: {
       fontSize: 14, // text-sm
-      color: mutedForeground, // text-gray-600
+      color: textMuted, // text-gray-600
       marginTop: 8, // mt-2
     },
     deleteButton: {
@@ -114,33 +115,33 @@ export function EventList({ selectedDate, events, onDeleteEvent, onAddEvent }: E
       borderRadius: 20,
     },
     deleteButtonIcon: {
-      color: red500, // text-red-500
+      color: themeColors.error, // text-red-500
     },
     emptyState: {
       textAlign: 'center',
       paddingVertical: 64, // py-8
-      color: gray400,
+      color: textMuted,
       alignItems: 'center',
     },
     emptyStateIcon: {
       marginBottom: 8, // mb-2
       opacity: 0.5,
-      color: gray400,
+      color: textMuted,
     },
     emptyStateText: {
       fontSize: 16,
-      color: gray400,
+      color: textMuted,
     },
     emptyStateSmallText: {
       fontSize: 12, // text-sm
-      color: gray400,
+      color: textMuted,
     }
   });
 
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <MaterialCommunityIcons name="calendar-month" size={20} color={green700} />
+        <MaterialCommunityIcons name="calendar-month" size={20} color={primary} />
         <Text style={styles.headerTitle}>Eventos del Día</Text>
         <Button
           size="icon"
@@ -167,7 +168,7 @@ export function EventList({ selectedDate, events, onDeleteEvent, onAddEvent }: E
                       <Text style={styles.eventTitle}>{event.title}</Text>
                       {event.start_time && (
                         <View style={styles.eventTimeContainer}>
-                          <MaterialCommunityIcons name="clock-outline" size={12} color={mutedForeground} />
+                          <MaterialCommunityIcons name="clock-outline" size={12} color={textMuted} />
                           <Text style={styles.eventTimeContainer}>
                             {new Date(event.start_time).toLocaleTimeString("es-ES", {
                               hour: "2-digit",

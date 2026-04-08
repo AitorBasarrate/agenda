@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, StyleSheet, Modal, TouchableOpacity, ScrollView } from "react-native";
+import { View, Text, StyleSheet, Modal, TouchableOpacity, ScrollView, useColorScheme } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import { Textarea } from "./ui/textarea";
 import { useThemeColor } from '@/hooks/use-theme-color';
+import { Colors } from '@/constants/theme';
 
 interface TaskModalProps {
   isOpen: boolean;
@@ -77,12 +78,13 @@ export function TaskModal({
       })
     : "";
 
-  const backgroundColor = useThemeColor({}, 'background');
-  const textColor = useThemeColor({}, 'text');
-  const mutedForeground = useThemeColor({}, 'mutedForeground');
-  const gray400 = '#9CA3AF'; // text-gray-400
-  const greenPrimary = '#22C55E'; // Button background
-  const borderColor = useThemeColor({}, 'border');
+  const isDarkMode = useColorScheme() === 'dark';
+  const themeColors = isDarkMode ? Colors.dark : Colors.light;
+  const backgroundColor = themeColors.surface;
+  const textColor = themeColors.text;
+  const textMuted = themeColors.textMuted;
+  const borderColor = themeColors.border;
+  const primary = themeColors.primary;
 
   const styles = StyleSheet.create({
     centeredView: {
@@ -122,7 +124,7 @@ export function TaskModal({
       padding: 4, // for easier touch
     },
     closeButtonIcon: {
-      color: gray400, // text-gray-400
+      color: textMuted, // text-gray-400
     },
     formContent: {
       padding: 24, // p-6
@@ -130,7 +132,7 @@ export function TaskModal({
     },
     dateText: {
       fontSize: 14, // text-sm
-      color: mutedForeground, // text-gray-600
+      color: textMuted, // text-gray-600
       marginBottom: 16, // mb-4
       textTransform: 'capitalize',
     },
@@ -148,7 +150,7 @@ export function TaskModal({
     },
     saveButton: {
       flex: 1, // flex-1
-      backgroundColor: greenPrimary,
+      backgroundColor: primary,
     },
   });
 
