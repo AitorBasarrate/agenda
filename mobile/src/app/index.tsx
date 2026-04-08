@@ -259,36 +259,36 @@ export default function App() {
   const greenPrimary = "#22C55E"; // Example color, adjust based on theme or constants
 
   return (
-    <ScrollView className="bg-white mt-14">
+    <View className={`flex-1 ${isDarkMode ? "bg-gray-900" : "bg-white"}`}>
+      {/* Header */}
       <View
-        className={`min-h-screen pb-20 ${isDarkMode ? "bg-gradient-to-br from-gray-900 to-gray-800" : "bg-gradient-to-br from-[#E7F2E4] to-[#F2F2F2]"}`}
+        className={`${isDarkMode ? "bg-gray-900/95" : "bg-white/95"} border-b ${isDarkMode ? "border-gray-800" : "border-gray-200"}`}
       >
-        {/* Header */}
-        <View
-          className={`sticky top-0 z-40 ${isDarkMode ? "bg-gray-900/95" : "bg-white/95"} backdrop-blur-sm border-b ${isDarkMode ? "border-gray-800" : "border-gray-200"}`}
-        >
-          <View className="px-4 py-3">
-            <View className="flex items-start gap-2">
-              <MaterialCommunityIcons
-                name="calendar-range"
-                size={32}
-                className={`${isDarkMode ? "text-verde" : "text-verde"}`}
-              />
-              <Text
-                className={`text-xl ${isDarkMode ? "text-white" : "text-gray-800"}`}
-              >
-                {activeTab === "calendar" && "Calendario"}
-                {activeTab === "tasks" && "Tareas"}
-                {activeTab === "events" && "Eventos"}
-              </Text>
-            </View>
-            <View className="ml-3"></View>
-            {/* TODO: Boton de cambio de theme*/}
+        <View className="px-4 py-3">
+          <View className="flex items-start gap-2">
+            <MaterialCommunityIcons
+              name="calendar-range"
+              size={32}
+              className={`${isDarkMode ? "text-verde" : "text-verde"}`}
+            />
+            <Text
+              className={`text-xl ${isDarkMode ? "text-white" : "text-gray-800"}`}
+            >
+              {activeTab === "calendar" && "Calendario"}
+              {activeTab === "tasks" && "Tareas"}
+              {activeTab === "events" && "Eventos"}
+            </Text>
           </View>
+          <View className="ml-3"></View>
+          {/* TODO: Boton de cambio de theme*/}
         </View>
+      </View>
 
-        {/* Main Content */}
-        <View className="p-4">
+      {/* Scrollable Content */}
+      <ScrollView
+        className={`flex-1 ${isDarkMode ? "bg-gradient-to-br from-gray-900 to-gray-800" : "bg-gradient-to-br from-[#E7F2E4] to-[#F2F2F2]"}`}
+      >
+        <View className="p-4 pb-20">
           {activeTab === "calendar" && (
             <CalendarView
               currentDate={currentDate}
@@ -318,82 +318,113 @@ export default function App() {
             />
           )}
         </View>
-        <View
-          className={`fixed bottom-0 left-0 right-0 z-50 ${isDarkMode ? "bg-gray-900/95 border-gray-800" : "bg-white/95 border-gray-200"} backdrop-blur-sm border-t`}
+      </ScrollView>
+
+      {/* FAB Button */}
+      {activeTab === "calendar" && (
+        <TouchableOpacity
+          onPress={() => {
+            setSelectedDate(selectedDate || new Date());
+            setEventIsModalOpen(true);
+          }}
+          className={`absolute bottom-20 right-4 h-14 w-14 rounded-full shadow-lg flex items-center justify-center ${
+            isDarkMode
+              ? "bg-verde"
+              : "bg-verde"
+          }`}
         >
-          <View className="flex-row items-center justify-between gap-1 px-2 py-2">
-            <TouchableOpacity
-              onPress={() => setActiveTab("calendar")}
-              className={`flex items-center justify-center py-2 px-3 rounded-lg transition-all
-                ${
-                  activeTab === "calendar"
-                    ? isDarkMode
-                      ? "bg-verde/20 text-verde"
-                      : "bg-verde/10"
-                    : isDarkMode
-                      ? "text-gray-500 hover:bg-gray-800"
-                      : "text-gray-600 hove:bg-gray-100"
-                } `}
-            >
-              <MaterialCommunityIcons name="calendar-range"></MaterialCommunityIcons>
-              <Text className="text-xs font-medium">Calendario</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() => setActiveTab("tasks")}
-              className={`flex items-center justify-center py-2 px-3 rounded-lg transition-all
-                ${
-                  activeTab === "tasks"
-                    ? isDarkMode
-                      ? "bg-verde/20 text-verde"
-                      : "bg-verde/10"
-                    : isDarkMode
-                      ? "text-gray-500 hover:bg-gray-800"
-                      : "text-gray-600 hove:bg-gray-100"
-                } `}
-            >
-              <MaterialCommunityIcons name="check-all"></MaterialCommunityIcons>
-              <Text className="text-xs font-medium">Tareas</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() => setActiveTab("events")}
-              className={`flex items-center justify-center py-2 px-3 rounded-lg transition-all
-                ${
-                  activeTab === "events"
-                    ? isDarkMode
-                      ? "bg-verde/20 text-verde"
-                      : "bg-verde/10"
-                    : isDarkMode
-                      ? "text-gray-500 hover:bg-gray-800"
-                      : "text-gray-600 hove:bg-gray-100"
-                } `}
-            >
-              <MaterialCommunityIcons name="clock-outline"></MaterialCommunityIcons>
-              <Text className="text-xs font-medium">Eventos</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-        {activeTab === "calendar" && (
+          <MaterialCommunityIcons
+            name="plus"
+            size={36}
+            color="white"
+          ></MaterialCommunityIcons>
+        </TouchableOpacity>
+      )}
+
+      {/* Bottom Navigation Bar */}
+      <View
+        className={`${isDarkMode ? "bg-gray-900/95 border-gray-800" : "bg-white/95 border-gray-200"} border-t`}
+      >
+        <View className="flex-row items-center justify-between gap-1 px-2 py-2">
           <TouchableOpacity
-            onPress={() => {
-              setSelectedDate(selectedDate || new Date());
-              setEventIsModalOpen(true);
-            }}
-            className={`fixed bottom-24 right-4 z-40 h-14 w-14 rounded-full shadow-lg flex items-center justify-center transition-transform active:scale-95 ${
-              isDarkMode
-                ? "bg-verde hover:bg-pistacho"
-                : "bg-verde hover:bg-pistacho"
-            }`}
+            onPress={() => setActiveTab("calendar")}
+            className={`flex-1 flex items-center justify-center py-2 px-3 rounded-lg
+              ${
+                activeTab === "calendar"
+                  ? isDarkMode
+                    ? "bg-verde/20"
+                    : "bg-verde/10"
+                  : ""
+              }`}
           >
             <MaterialCommunityIcons
-              name="plus"
-              size={36}
-              className="text-white"
-            ></MaterialCommunityIcons>
+              name="calendar-range"
+              color={activeTab === "calendar" ? "#80BF41" : (isDarkMode ? "#9CA3AF" : "#6B7280")}
+            />
+            <Text className={`text-xs font-medium ${
+              activeTab === "calendar"
+                ? "text-verde"
+                : isDarkMode
+                  ? "text-gray-500"
+                  : "text-gray-600"
+            }`}>
+              Calendario
+            </Text>
           </TouchableOpacity>
-        )}
+          <TouchableOpacity
+            onPress={() => setActiveTab("tasks")}
+            className={`flex-1 flex items-center justify-center py-2 px-3 rounded-lg
+              ${
+                activeTab === "tasks"
+                  ? isDarkMode
+                    ? "bg-verde/20"
+                    : "bg-verde/10"
+                  : ""
+              }`}
+          >
+            <MaterialCommunityIcons
+              name="check-all"
+              color={activeTab === "tasks" ? "#80BF41" : (isDarkMode ? "#9CA3AF" : "#6B7280")}
+            />
+            <Text className={`text-xs font-medium ${
+              activeTab === "tasks"
+                ? "text-verde"
+                : isDarkMode
+                  ? "text-gray-500"
+                  : "text-gray-600"
+            }`}>
+              Tareas
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => setActiveTab("events")}
+            className={`flex-1 flex items-center justify-center py-2 px-3 rounded-lg
+              ${
+                activeTab === "events"
+                  ? isDarkMode
+                    ? "bg-verde/20"
+                    : "bg-verde/10"
+                  : ""
+              }`}
+          >
+            <MaterialCommunityIcons
+              name="clock-outline"
+              color={activeTab === "events" ? "#80BF41" : (isDarkMode ? "#9CA3AF" : "#6B7280")}
+            />
+            <Text className={`text-xs font-medium ${
+              activeTab === "events"
+                ? "text-verde"
+                : isDarkMode
+                  ? "text-gray-500"
+                  : "text-gray-600"
+            }`}>
+              Eventos
+            </Text>
+          </TouchableOpacity>
+        </View>
       </View>
 
-      {/* Modal para eventos */}
+      {/* Modals */}
       <EventModal
         isOpen={isEventModalOpen}
         selectedDate={selectedDate}
@@ -406,7 +437,7 @@ export default function App() {
         selectedDate={selectedDate}
         onClose={() => setTaskIsModalOpen(false)}
         onSave={handleSaveTask}
-      ></TaskModal>
-    </ScrollView>
+      />
+    </View>
   );
 }
