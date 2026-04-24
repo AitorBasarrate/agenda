@@ -75,3 +75,4 @@ __debug_bin
 
 # Local development
 .local/
+node_modules
