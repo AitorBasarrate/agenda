@@ -1,15 +1,17 @@
 # Build stage for frontend
 FROM node:20-alpine AS frontend-builder
 
+RUN corepack enable && corepack prepare pnpm@10.30.1 --activate
+
 WORKDIR /app/frontend
 
 # Copy package files first for better caching
-COPY frontend/package*.json ./
-RUN npm ci --silent
+COPY frontend/package.json frontend/pnpm-lock.yaml ./
+RUN pnpm install --frozen-lockfile
 
 # Copy frontend source and build
 COPY frontend/ ./
-RUN npm run build
+RUN pnpm run build
 
 # Build stage for backend
 FROM golang:1.25.1-alpine AS backend-builder
