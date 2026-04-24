@@ -8,14 +8,15 @@ import {
   Button,
   Pressable,
   TouchableOpacity,
-  useColorScheme,
 } from "react-native";
+import { useColorScheme } from "@/hooks/use-color-scheme";
 import { CalendarView } from "../components/calendar-view";
 import { EventModal } from "../components/event-modal";
 import { TaskList } from "../components/task-list";
 import { EventList } from "../components/event-list";
 import { TaskModal } from "../components/task-modal";
-import { MaterialCommunityIcons } from "@expo/vector-icons"; // Using MaterialCommunityIcons for CalendarDays
+import { SettingsModal } from "../components/settings-modal";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useThemeColor } from "@/hooks/use-theme-color";
 
 import {
@@ -27,6 +28,7 @@ import {
 } from "../api";
 import { type Event, type Task } from "../types";
 import { Colors } from "../constants/theme";
+import { useSettings } from "@/contexts/settings-context";
 
 export default function App() {
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -38,7 +40,9 @@ export default function App() {
   const [activeTab, setActiveTab] = useState<"calendar" | "tasks" | "events">(
     "calendar",
   );
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
+  const { settings, updateSettings } = useSettings();
   const colorScheme = useColorScheme();
   const isDarkMode = colorScheme === "dark";
   const fetchEvents = useCallback(async () => {
@@ -282,7 +286,18 @@ export default function App() {
             </Text>
           </View>
           <View className="ml-3"></View>
-          {/* TODO: Boton de cambio de theme*/}
+          <Pressable
+            onPress={() => setIsSettingsOpen(true)}
+            hitSlop={12}
+            accessibilityLabel="Abrir ajustes"
+            accessibilityRole="button"
+          >
+            <MaterialCommunityIcons
+              name="cog-outline"
+              size={24}
+              color={themeColors.text}
+            />
+          </Pressable>
         </View>
       </View>
 
@@ -439,6 +454,13 @@ export default function App() {
         selectedDate={selectedDate}
         onClose={() => setTaskIsModalOpen(false)}
         onSave={handleSaveTask}
+      />
+
+      <SettingsModal
+        isOpen={isSettingsOpen}
+        onClose={() => setIsSettingsOpen(false)}
+        settings={settings}
+        onUpdateSettings={updateSettings}
       />
     </View>
   );

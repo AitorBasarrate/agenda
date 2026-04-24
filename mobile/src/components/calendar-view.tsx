@@ -164,7 +164,7 @@ export function CalendarView({
                     flex-1 min-h-16 p-1 border
                     ${isDarkComp ? "border-gray-700" : "border-gray-200"}
                     ${isToday(date) ? (isDarkComp ? "bg-gray-700 border-verde" : "bg-lima border-verde") : ""}
-                    ${isSelected(date) ? (isDarkComp ? "ring-2 ring-verde" : "ring-2 ring-verde") : ""}
+                    ${isSelected(date) ? "border-2 border-verde" : ""}
                   `}
                 >
                   <Text
