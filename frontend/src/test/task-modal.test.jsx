@@ -91,9 +91,11 @@ describe("TaskModal Component", () => {
       />,
     );
 
-    fireEvent.submit(
-      screen.getByRole("button", { name: "Guardar Tarea" }).closest("form"),
-    );
+    const form = screen
+      .getByRole("button", { name: "Guardar Tarea" })
+      .closest("form");
+    expect(form).not.toBeNull();
+    fireEvent.submit(form);
     expect(onSave).not.toHaveBeenCalled();
   });
 

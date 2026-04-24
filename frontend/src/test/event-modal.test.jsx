@@ -93,7 +93,11 @@ describe("EventModal Component", () => {
     );
 
     // Submit the form directly to bypass HTML5 'required' validation in jsdom.
-    fireEvent.submit(screen.getByRole("button", { name: "Guardar Evento" }).closest("form"));
+    const form = screen
+      .getByRole("button", { name: "Guardar Evento" })
+      .closest("form");
+    expect(form).not.toBeNull();
+    fireEvent.submit(form);
     expect(onSave).not.toHaveBeenCalled();
   });
 
