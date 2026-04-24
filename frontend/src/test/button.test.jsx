@@ -9,12 +9,9 @@ describe("Button Component", () => {
   });
 
   it("applies the correct variant classes", () => {
-    // Testing the 'destructive' variant from your buttonVariants
     render(<Button variant="destructive">Delete</Button>);
     const button = screen.getByRole("button");
 
-    // Check for a specific class that 'destructive' should apply
-    // Adjust the class name to match what is in your variants.ts
     expect(button).toHaveClass("bg-destructive");
   });
 
@@ -22,12 +19,11 @@ describe("Button Component", () => {
     render(<Button size="sm">Small Button</Button>);
     const button = screen.getByRole("button");
 
-    // Check for a specific class that 'sm' should apply
     expect(button).toHaveClass("h-8");
   });
 
   it("calls onClick when clicked", () => {
-    const handleClick = vi.fn(); // Create a "spy" function
+    const handleClick = vi.fn();
     render(<Button onClick={handleClick}>Click Me</Button>);
 
     fireEvent.click(screen.getByRole("button"));
@@ -40,6 +36,6 @@ describe("Button Component", () => {
     const button = screen.getByRole("button");
 
     expect(button).toBeDisabled();
-    expect(button).toHaveClass("disabled:opacity-50"); // Common for shadcn buttons
+    expect(button).toHaveClass("disabled:opacity-50");
   });
 });
