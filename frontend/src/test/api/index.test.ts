@@ -16,7 +16,7 @@ describe("API Service", () => {
   describe("Events API", () => {
     it("getEvents should fetch events successfully", async () => {
       const mockEvents = [{ id: 1, title: "Event 1" }];
-      // @ts-ignore
+      // @ts-expect-error Mocking fetch
       global.fetch.mockResolvedValueOnce({
         ok: true,
         json: () => Promise.resolve(mockEvents),
@@ -28,7 +28,7 @@ describe("API Service", () => {
     });
 
     it("getEvents should throw an error if fetching fails", async () => {
-      // @ts-ignore
+      // @ts-expect-error Mocking fetch
       global.fetch.mockResolvedValueOnce({
         ok: false,
       });
@@ -40,7 +40,7 @@ describe("API Service", () => {
       const mockEvents = [{ id: 1, title: "Monthly Event" }];
       const year = 2026;
       const month = 4; // April
-      // @ts-ignore
+      // @ts-expect-error Mocking fetch
       global.fetch.mockResolvedValueOnce({
         ok: true,
         json: () => Promise.resolve(mockEvents),
@@ -56,7 +56,7 @@ describe("API Service", () => {
     it("getEventsByMonth should throw an error if fetching fails", async () => {
       const year = 2026;
       const month = 4;
-      // @ts-ignore
+      // @ts-expect-error Mocking fetch
       global.fetch.mockResolvedValueOnce({
         ok: false,
       });
@@ -74,7 +74,7 @@ describe("API Service", () => {
         end_time: "2026-04-25T11:00:00Z",
       };
       const savedEvent = { id: 2, ...newEvent };
-      // @ts-ignore
+      // @ts-expect-error Mocking fetch
       global.fetch.mockResolvedValueOnce({
         ok: true,
         json: () => Promise.resolve(savedEvent),
@@ -98,7 +98,7 @@ describe("API Service", () => {
         start_time: "2026-04-25T10:00:00Z",
         end_time: "2026-04-25T11:00:00Z",
       };
-      // @ts-ignore
+      // @ts-expect-error Mocking fetch
       global.fetch.mockResolvedValueOnce({
         ok: false,
       });
@@ -110,7 +110,7 @@ describe("API Service", () => {
 
     it("deleteEvent should delete an event successfully", async () => {
       const eventId = 1;
-      // @ts-ignore
+      // @ts-expect-error Mocking fetch
       global.fetch.mockResolvedValueOnce({
         ok: true,
         status: 204,
@@ -128,7 +128,7 @@ describe("API Service", () => {
 
     it("deleteEvent should throw an error if deleting fails", async () => {
       const eventId = 1;
-      // @ts-ignore
+      // @ts-expect-error Mocking fetch
       global.fetch.mockResolvedValueOnce({
         ok: false,
       });
@@ -148,7 +148,7 @@ describe("API Service", () => {
       const month = 4; // April
       const due_after = new Date(Date.UTC(year, month - 1)).toISOString();
       const due_before = new Date(Date.UTC(year, month)).toISOString();
-      // @ts-ignore
+      // @ts-expect-error Mocking fetch
       global.fetch.mockResolvedValueOnce({
         ok: true,
         json: () => Promise.resolve(mockTasks),
@@ -164,7 +164,7 @@ describe("API Service", () => {
     it("getTasksForMonth should throw an error if fetching fails", async () => {
       const year = 2026;
       const month = 4;
-      // @ts-ignore
+      // @ts-expect-error Mocking fetch
       global.fetch.mockResolvedValueOnce({
         ok: false,
       });
@@ -182,7 +182,7 @@ describe("API Service", () => {
         status: "pending",
       };
       const savedTask = { id: 1, ...newTask };
-      // @ts-ignore
+      // @ts-expect-error Mocking fetch
       global.fetch.mockResolvedValueOnce({
         ok: true,
         json: () => Promise.resolve(savedTask),
@@ -206,7 +206,7 @@ describe("API Service", () => {
         due_date: "2026-04-25T10:00:00Z",
         status: "pending",
       };
-      // @ts-ignore
+      // @ts-expect-error Mocking fetch
       global.fetch.mockResolvedValueOnce({
         ok: false,
       });
@@ -227,7 +227,7 @@ describe("API Service", () => {
         created_at: "2026-04-25T10:00:00Z",
         updated_at: "2026-04-25T11:00:00Z",
       };
-      // @ts-ignore
+      // @ts-expect-error Mocking fetch
       global.fetch.mockResolvedValueOnce({
         ok: true,
         json: () => Promise.resolve(updatedTask),
@@ -256,7 +256,7 @@ describe("API Service", () => {
         created_at: "2026-04-25T10:00:00Z",
         updated_at: "2026-04-25T11:00:00Z",
       };
-      // @ts-ignore
+      // @ts-expect-error Mocking fetch
       global.fetch.mockResolvedValueOnce({
         ok: false,
       });
@@ -268,7 +268,7 @@ describe("API Service", () => {
 
     it("deleteTask should delete a task successfully", async () => {
       const taskId = 1;
-      // @ts-ignore
+      // @ts-expect-error Mocking fetch
       global.fetch.mockResolvedValueOnce({
         ok: true,
         status: 204,
@@ -286,7 +286,7 @@ describe("API Service", () => {
 
     it("deleteTask should throw an error if deleting fails", async () => {
       const taskId = 1;
-      // @ts-ignore
+      // @ts-expect-error Mocking fetch
       global.fetch.mockResolvedValueOnce({
         ok: false,
       });
