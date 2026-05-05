@@ -4,13 +4,15 @@ import {
   View,
   Text,
   Pressable,
-  TouchableOpacity,
   StyleSheet,
   ScrollView,
+  Switch,
+  Platform,
 } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { type ThemePreference, type Settings } from "@/contexts/settings-context";
-import { useColorScheme } from "@/hooks/use-color-scheme";
+import {
+  type Settings,
+} from "@/contexts/settings-context";
 import { Colors } from "@/constants/theme";
 
 interface SettingsModalProps {
@@ -20,101 +22,103 @@ interface SettingsModalProps {
   onUpdateSettings: (patch: Partial<Settings>) => void;
 }
 
-// ─── Theme option row ─────────────────────────────────────────────────────────
-
-const THEME_OPTIONS: { value: ThemePreference; label: string; icon: string }[] =
-  [
-    { value: "system", label: "Sistema", icon: "theme-light-dark" },
-    { value: "light", label: "Claro", icon: "weather-sunny" },
-    { value: "dark", label: "Oscuro", icon: "weather-night" },
-  ];
-
-function SettingSection({ title, children }: { title: string; children: React.ReactNode }) {
-  const scheme = useColorScheme();
-  const colors = Colors[scheme];
-  return (
-    <View style={[styles.section, { borderBottomColor: colors.border }]}>
-      <Text style={[styles.sectionTitle, { color: colors.textSecondary }]}>
-        {title}
-      </Text>
-      {children}
-    </View>
-  );
-}
-
 // ─── Main component ───────────────────────────────────────────────────────────
 
-export function SettingsModal({ isOpen, onClose, settings, onUpdateSettings }: SettingsModalProps) {
-  const scheme = useColorScheme();
-  const colors = Colors[scheme];
+export function SettingsModal({
+  isOpen,
+  onClose,
+  settings,
+  onUpdateSettings,
+}: SettingsModalProps) {
+  const [theme, setTheme] = React.useState(settings.theme);
+
+  // Sync from prop only when the modal opens.
+  React.useEffect(() => {
+    if (isOpen) {
+      setTheme(settings.theme); // use the prop, not the stale local state
+    }
+  }, [isOpen]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const handleToggle = (isDark: boolean) => {
+    // Only update local state — no context call here.
+    // The Switch responds instantly; the rest of the app updates on close.
+    setTheme(isDark ? "dark" : "light");
+  };
+
+  // Flush to context + storage in the same React batch as closing the modal.
+  const handleClose = () => {
+    onUpdateSettings({ theme });
+    onClose();
+  };
+
+  const colors = Colors[theme];
 
   return (
     <Modal
       visible={isOpen}
       animationType="slide"
       presentationStyle="pageSheet"
-      onRequestClose={onClose}
+      onRequestClose={handleClose}
     >
-      <View style={[styles.container, { backgroundColor: colors.background }]}>
-        {/* Header */}
-        <View style={[styles.header, { borderBottomColor: colors.border }]}>
-          <Text style={[styles.headerTitle, { color: colors.text }]}>
-            Ajustes
-          </Text>
-          <Pressable onPress={onClose} hitSlop={12} style={styles.closeButton}>
-            <MaterialCommunityIcons name="close" size={22} color={colors.text} />
-          </Pressable>
-        </View>
+        <View style={[styles.container, { backgroundColor: colors.background }]}>
+          {/* Header */}
+          <View style={[styles.header, { borderBottomColor: colors.border }]}>
+            <Text style={[styles.headerTitle, { color: colors.text }]}>
+              Ajustes
+            </Text>
+            <Pressable
+              onPress={handleClose}
+              hitSlop={12}
+              style={styles.closeButton}
+            >
+              <MaterialCommunityIcons
+                name="close"
+                size={22}
+                color={colors.text}
+              />
+            </Pressable>
+          </View>
 
-        <ScrollView contentContainerStyle={styles.body}>
-          {/* ── Theme ── */}
-          <SettingSection title="Apariencia">
-            <View style={styles.optionGroup}>
-              {THEME_OPTIONS.map((opt) => {
-                const isActive = settings.theme === opt.value;
-                return (
-                  <TouchableOpacity
-                    key={opt.value}
-                    activeOpacity={0.7}
-                    onPress={() => onUpdateSettings({ theme: opt.value })}
-                    style={[
-                      styles.optionRow,
-                      { backgroundColor: colors.surface, borderColor: colors.border },
-                      isActive ? { borderColor: colors.primary } : null,
-                    ]}
-                    accessibilityRole="radio"
-                    accessibilityState={{ checked: isActive }}
-                    accessibilityLabel={opt.label}
-                  >
-                    <MaterialCommunityIcons
-                      name={opt.icon as any}
-                      size={22}
-                      color={isActive ? colors.primary : colors.textMuted}
-                    />
-                    <Text
-                      style={[
-                        styles.optionLabel,
-                        { color: isActive ? colors.primary : colors.text },
-                      ]}
-                    >
-                      {opt.label}
-                    </Text>
-                    {isActive && (
-                      <MaterialCommunityIcons
-                        name="check-circle"
-                        size={18}
-                        color={colors.primary}
-                      />
-                    )}
-                  </TouchableOpacity>
-                );
-              })}
+          <ScrollView
+            contentContainerStyle={styles.body}
+            keyboardShouldPersistTaps="handled"
+          >
+            {/* ── Appearance ── */}
+            <View
+              style={[styles.section, { borderBottomColor: colors.border }]}
+            >
+              <Text
+                style={[styles.sectionTitle, { color: colors.textSecondary }]}
+              >
+                Apariencia
+              </Text>
+
+              <View
+                style={[
+                  styles.toggleRow,
+                  { backgroundColor: colors.surface, borderColor: colors.border },
+                ]}
+              >
+                <MaterialCommunityIcons
+                  name={theme === "dark" ? "weather-night" : "weather-sunny"}
+                  size={22}
+                  color={colors.primary}
+                />
+                <Text style={[styles.toggleLabel, { color: colors.text }]}>
+                  {theme === "dark" ? "Oscuro" : "Claro"}
+                </Text>
+                <Switch
+                  value={theme === "dark"}
+                  onValueChange={handleToggle}
+                  trackColor={{ false: colors.border, true: colors.primary }}
+                  thumbColor="#FFFFFF"
+                />
+              </View>
             </View>
-          </SettingSection>
 
-          {/* Future settings sections go here */}
-        </ScrollView>
-      </View>
+            {/* Future settings sections go here */}
+          </ScrollView>
+        </View>
     </Modal>
   );
 }
@@ -156,20 +160,27 @@ const styles = StyleSheet.create({
     letterSpacing: 0.8,
     marginBottom: 12,
   },
-  optionGroup: {
-    gap: 8,
-  },
-  optionRow: {
+  toggleRow: {
     flexDirection: "row",
     alignItems: "center",
     gap: 12,
     paddingHorizontal: 14,
-    paddingVertical: 12,
-    borderRadius: 10,
+    paddingVertical: 14,
+    borderRadius: 12,
     borderWidth: 1,
+    minHeight: 56,
+    ...Platform.select({
+      ios: {
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.06,
+        shadowRadius: 2,
+      },
+      android: { elevation: 1 },
+    }),
   },
-  optionLabel: {
+  toggleLabel: {
     flex: 1,
     fontSize: 15,
+    fontWeight: "500",
   },
 });

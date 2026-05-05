@@ -44,7 +44,9 @@ export default function App() {
 
   const { settings, updateSettings } = useSettings();
   const colorScheme = useColorScheme();
-  const isDarkMode = colorScheme === "dark";
+  console.log("Color Scheme:", colorScheme)
+  console.log("theme", settings.theme);
+  const isDarkMode = settings.theme === "dark";
   const fetchEvents = useCallback(async () => {
     try {
       const year = currentDate.getFullYear();
@@ -345,9 +347,7 @@ export default function App() {
             setEventIsModalOpen(true);
           }}
           className={`absolute bottom-20 right-4 h-14 w-14 rounded-full shadow-lg flex items-center justify-center ${
-            isDarkMode
-              ? "bg-verde"
-              : "bg-verde"
+            isDarkMode ? "bg-verde" : "bg-verde"
           }`}
         >
           <MaterialCommunityIcons
@@ -376,15 +376,21 @@ export default function App() {
           >
             <MaterialCommunityIcons
               name="calendar-range"
-              color={activeTab === "calendar" ? themeColors.primary : themeColors.textMuted}
+              color={
+                activeTab === "calendar"
+                  ? themeColors.primary
+                  : themeColors.textMuted
+              }
             />
-            <Text className={`text-xs font-medium ${
-              activeTab === "calendar"
-                ? "text-verde"
-                : isDarkMode
-                  ? "text-gray-500"
-                  : "text-gray-600"
-            }`}>
+            <Text
+              className={`text-xs font-medium ${
+                activeTab === "calendar"
+                  ? "text-verde"
+                  : isDarkMode
+                    ? "text-gray-500"
+                    : "text-gray-600"
+              }`}
+            >
               Calendario
             </Text>
           </TouchableOpacity>
@@ -401,15 +407,21 @@ export default function App() {
           >
             <MaterialCommunityIcons
               name="check-all"
-              color={activeTab === "tasks" ? themeColors.primary : themeColors.textMuted}
+              color={
+                activeTab === "tasks"
+                  ? themeColors.primary
+                  : themeColors.textMuted
+              }
             />
-            <Text className={`text-xs font-medium ${
-              activeTab === "tasks"
-                ? "text-verde"
-                : isDarkMode
-                  ? "text-gray-500"
-                  : "text-gray-600"
-            }`}>
+            <Text
+              className={`text-xs font-medium ${
+                activeTab === "tasks"
+                  ? "text-verde"
+                  : isDarkMode
+                    ? "text-gray-500"
+                    : "text-gray-600"
+              }`}
+            >
               Tareas
             </Text>
           </TouchableOpacity>
@@ -426,15 +438,21 @@ export default function App() {
           >
             <MaterialCommunityIcons
               name="clock-outline"
-              color={activeTab === "events" ? themeColors.primary : themeColors.textMuted}
+              color={
+                activeTab === "events"
+                  ? themeColors.primary
+                  : themeColors.textMuted
+              }
             />
-            <Text className={`text-xs font-medium ${
-              activeTab === "events"
-                ? "text-verde"
-                : isDarkMode
-                  ? "text-gray-500"
-                  : "text-gray-600"
-            }`}>
+            <Text
+              className={`text-xs font-medium ${
+                activeTab === "events"
+                  ? "text-verde"
+                  : isDarkMode
+                    ? "text-gray-500"
+                    : "text-gray-600"
+              }`}
+            >
               Eventos
             </Text>
           </TouchableOpacity>

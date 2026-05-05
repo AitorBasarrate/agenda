@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, StyleSheet, Modal, TouchableOpacity, ScrollView, useColorScheme } from "react-native";
+import { View, Text, StyleSheet, Modal, TouchableOpacity, ScrollView } from "react-native";
+import { useColorScheme } from "@/hooks/use-color-scheme";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";

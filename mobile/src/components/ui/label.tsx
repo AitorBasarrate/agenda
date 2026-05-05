@@ -1,5 +1,6 @@
 import React from 'react';
-import { Text, StyleSheet, TextProps, useColorScheme } from 'react-native';
+import { Text, StyleSheet, TextProps } from 'react-native';
+import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useThemeColor } from '@/hooks/use-theme-color';
 import { Colors } from '@/constants/theme';
 

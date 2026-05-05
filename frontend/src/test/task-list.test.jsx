@@ -21,10 +21,12 @@ describe("TaskList Component", () => {
         onAddTask={vi.fn()}
         onToggleTask={vi.fn()}
         onDeleteTask={vi.fn()}
+        isDark={false}
+        isMobile={false}
       />,
     );
 
-    expect(screen.getByText("No hay tareas aún")).toBeInTheDocument();
+    expect(screen.getByText("No hay tareas para este día")).toBeInTheDocument();
   });
 
   it("renders pending and completed tasks in their sections", () => {
@@ -37,6 +39,8 @@ describe("TaskList Component", () => {
         onAddTask={vi.fn()}
         onToggleTask={vi.fn()}
         onDeleteTask={vi.fn()}
+        isDark={false}
+        isMobile={false}
       />,
     );
 
@@ -54,6 +58,8 @@ describe("TaskList Component", () => {
         onAddTask={onAddTask}
         onToggleTask={vi.fn()}
         onDeleteTask={vi.fn()}
+        isDark={false}
+        isMobile={false}
       />,
     );
 
@@ -69,6 +75,8 @@ describe("TaskList Component", () => {
         onAddTask={vi.fn()}
         onToggleTask={onToggleTask}
         onDeleteTask={vi.fn()}
+        isDark={false}
+        isMobile={false}
       />,
     );
 
@@ -87,6 +95,8 @@ describe("TaskList Component", () => {
         onAddTask={vi.fn()}
         onToggleTask={vi.fn()}
         onDeleteTask={onDeleteTask}
+        isDark={false}
+        isMobile={false}
       />,
     );
 
@@ -97,18 +107,22 @@ describe("TaskList Component", () => {
   });
 
   it("updates the input value when the user types", () => {
+    // The TaskList component no longer has an inline input.
+    // The add task flow is now triggered via the + button (onAddTask).
+    const onAddTask = vi.fn();
     render(
       <TaskList
         tasks={[]}
-        onAddTask={vi.fn()}
+        onAddTask={onAddTask}
         onToggleTask={vi.fn()}
         onDeleteTask={vi.fn()}
+        isDark={false}
+        isMobile={false}
       />,
     );
 
-    const input = screen.getByPlaceholderText("Agregar nueva tarea...");
-    fireEvent.change(input, { target: { value: "Nueva tarea" } });
-
-    expect(input).toHaveValue("Nueva tarea");
+    const addButton = screen.getAllByRole("button")[0];
+    fireEvent.click(addButton);
+    expect(onAddTask).toHaveBeenCalledTimes(1);
   });
 });
