@@ -12,6 +12,8 @@ describe("EventModal Component", () => {
         selectedDate={selectedDate}
         onClose={vi.fn()}
         onSave={vi.fn()}
+        isDark={false}
+        isMobile={false}
       />,
     );
     expect(container).toBeEmptyDOMElement();
@@ -24,6 +26,8 @@ describe("EventModal Component", () => {
         selectedDate={null}
         onClose={vi.fn()}
         onSave={vi.fn()}
+        isDark={false}
+        isMobile={false}
       />,
     );
     expect(container).toBeEmptyDOMElement();
@@ -36,41 +40,43 @@ describe("EventModal Component", () => {
         selectedDate={selectedDate}
         onClose={vi.fn()}
         onSave={vi.fn()}
+        isDark={false}
+        isMobile={false}
       />,
     );
 
-    expect(screen.getByText("Agregar Evento")).toBeInTheDocument();
-    expect(screen.getByLabelText("Título del evento")).toBeInTheDocument();
-    expect(screen.getByLabelText("Hora Inicio")).toBeInTheDocument();
-    expect(screen.getByLabelText("Hora Final")).toBeInTheDocument();
+    expect(screen.getByText("Nuevo Evento")).toBeInTheDocument();
+    expect(screen.getByText("Título *")).toBeInTheDocument();
+    expect(screen.getByText("Hora Inicio")).toBeInTheDocument();
+    expect(screen.getByText("Hora Final")).toBeInTheDocument();
   });
 
   it("calls onSave with form data and resets when submitted with a title", () => {
     const onSave = vi.fn();
     const onClose = vi.fn();
 
-    render(
+    const { container } = render(
       <EventModal
         isOpen={true}
         selectedDate={selectedDate}
         onClose={onClose}
         onSave={onSave}
+        isDark={false}
+        isMobile={false}
       />,
     );
 
-    const titleInput = screen.getByLabelText("Título del evento");
+    const titleInput = screen.getByPlaceholderText("Ej: Reunión de equipo");
     fireEvent.change(titleInput, { target: { value: "Reunión" } });
-    fireEvent.change(screen.getByLabelText("Hora Inicio"), {
-      target: { value: "09:00" },
-    });
-    fireEvent.change(screen.getByLabelText("Hora Final"), {
-      target: { value: "10:00" },
-    });
-    fireEvent.change(screen.getByLabelText("Descripción (opcional)"), {
-      target: { value: "Sync semanal" },
-    });
 
-    fireEvent.click(screen.getByRole("button", { name: "Guardar Evento" }));
+    const timeInputs = container.querySelectorAll('input[type="time"]');
+    fireEvent.change(timeInputs[0], { target: { value: "09:00" } });
+    fireEvent.change(timeInputs[1], { target: { value: "10:00" } });
+
+    const descInput = screen.getByPlaceholderText("Agrega detalles sobre el evento...");
+    fireEvent.change(descInput, { target: { value: "Sync semanal" } });
+
+    fireEvent.click(screen.getByRole("button", { name: "Guardar" }));
 
     expect(onSave).toHaveBeenCalledWith({
       title: "Reunión",
@@ -89,15 +95,13 @@ describe("EventModal Component", () => {
         selectedDate={selectedDate}
         onClose={vi.fn()}
         onSave={onSave}
+        isDark={false}
+        isMobile={false}
       />,
     );
 
-    // Submit the form directly to bypass HTML5 'required' validation in jsdom.
-    const form = screen
-      .getByRole("button", { name: "Guardar Evento" })
-      .closest("form");
-    expect(form).not.toBeNull();
-    fireEvent.submit(form);
+    // The Guardar button is disabled when title is empty, click it anyway
+    fireEvent.click(screen.getByRole("button", { name: "Guardar" }));
     expect(onSave).not.toHaveBeenCalled();
   });
 
@@ -109,6 +113,8 @@ describe("EventModal Component", () => {
         selectedDate={selectedDate}
         onClose={onClose}
         onSave={vi.fn()}
+        isDark={false}
+        isMobile={false}
       />,
     );
 

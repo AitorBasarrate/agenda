@@ -1,15 +1,19 @@
-import { useState } from "react";
-import { Trash2, Plus, CheckCircle2, Circle } from "lucide-react";
-import { Button } from "./ui/button";
-import { Input } from "./ui/input";
+import { Plus, Trash2, Check } from 'lucide-react';
+import { useState } from 'react';
 
-import { type Task } from "../../types";
+interface Task {
+  id: string;
+  text: string;
+  completed: boolean;
+}
 
 interface TaskListProps {
   tasks: Task[];
-  onAddTask: () => void;
-  onToggleTask: (id: number, checked: boolean) => void;
-  onDeleteTask: (id: number) => void;
+  onAddTask: (text: string) => void;
+  onToggleTask: (id: string) => void;
+  onDeleteTask: (id: string) => void;
+  isDark: boolean;
+  isMobile: boolean;
 }
 
 export function TaskList({
@@ -17,142 +21,135 @@ export function TaskList({
   onAddTask,
   onToggleTask,
   onDeleteTask,
+  isDark,
+  isMobile,
 }: TaskListProps) {
-  const [newTaskTitle, setNewTaskTitle] = useState("");
+  const [newTaskText, setNewTaskText] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newTaskTitle.trim()) return;
-
-    setNewTaskTitle("");
+    if (!newTaskText.trim()) return;
+    onAddTask(newTaskText.trim());
+    setNewTaskText('');
   };
 
-  const pendingTasks = Array.from(tasks).filter((t) => t.status === "pending");
-  const completedTasks = Array.from(tasks).filter(
-    (t) => t.status === "completed",
-  );
+  const pendingTasks = tasks.filter(task => !task.completed);
+  const completedTasks = tasks.filter(task => task.completed);
 
   return (
-    <div>
-      <h2 className="text-2xl font-medium text-gray-800 mb-6">Tareas</h2>
+    <div className={`${isDark ? 'bg-gray-900 text-white' : 'bg-white'} rounded-2xl ${isMobile ? 'p-4' : 'p-6'} shadow-lg h-full overflow-y-auto`}>
+      <h2 className={`${isMobile ? 'text-xl' : 'text-2xl'} font-bold mb-4 text-[#80BF41]`}>
+        Mis Tareas
+      </h2>
 
-      {/* Formulario para agregar tarea */}
+      {/* Add task form */}
       <form onSubmit={handleSubmit} className="mb-6">
-        <div className="flex gap-3">
-          <Input
-            value={newTaskTitle}
-            onChange={(e) => setNewTaskTitle(e.target.value)}
-            placeholder="Agregar nueva tarea..."
-            className="flex-1 h-10 focus:ring-green-500 focus:border-green-500"
+        <div className="flex gap-2">
+          <input
+            type="text"
+            value={newTaskText}
+            onChange={(e) => setNewTaskText(e.target.value)}
+            placeholder="Nueva tarea..."
+            className={`
+              flex-1 px-4 py-2 rounded-lg border
+              ${isDark ? 'bg-gray-800 border-gray-700 text-white placeholder-gray-400' : 'bg-white border-gray-300'}
+              focus:outline-none focus:ring-2 focus:ring-[#80BF41]
+            `}
           />
-          <Button
+          <button
             type="submit"
-            size="icon"
-            className="h-10 w-10 bg-green-600 hover:bg-green-700 focus:ring-green-500"
-            onClick={onAddTask}
+            disabled={!newTaskText.trim()}
+            className={`
+              p-2 bg-[#80BF41] text-white rounded-lg hover:bg-[#B1D923] transition-colors
+              disabled:opacity-50 disabled:cursor-not-allowed
+              ${isMobile ? 'px-4' : 'px-6'}
+            `}
           >
-            <Plus className="h-4 w-4" />
-          </Button>
+            <Plus className="w-5 h-5" />
+          </button>
         </div>
       </form>
 
-      {/* Tareas pendientes */}
-      <div className="space-y-4">
-        {pendingTasks.length > 0 && (
-          <div>
-            <h3 className="text-sm font-medium text-gray-600 mb-4 flex items-center gap-2">
-              <Circle className="h-4 w-4 text-blue-500" />
-              Pendientes ({pendingTasks.length})
-            </h3>
-            <div className="space-y-3">
-              {pendingTasks.map((task) => (
-                <TaskItem
-                  key={task.id}
-                  task={task}
-                  onToggle={onToggleTask}
-                  onDelete={onDeleteTask}
-                />
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Tareas completadas */}
-        {completedTasks.length > 0 && (
-          <div className="pt-6 border-t border-gray-200">
-            <h3 className="text-sm font-medium text-gray-600 mb-4 flex items-center gap-2">
-              <CheckCircle2 className="h-4 w-4 text-green-500" />
-              Completadas ({completedTasks.length})
-            </h3>
-            <div className="space-y-3">
-              {completedTasks.map((task) => (
-                <TaskItem
-                  key={task.id}
-                  task={task}
-                  onToggle={onToggleTask}
-                  onDelete={onDeleteTask}
-                />
-              ))}
-            </div>
-          </div>
-        )}
-
-        {tasks.length === 0 && (
-          <div className="text-center py-16 text-gray-500">
-            <div className="bg-gray-100 rounded-full p-4 w-16 h-16 mx-auto mb-4 flex items-center justify-center">
-              <Circle className="h-8 w-8 text-gray-400" />
-            </div>
-            <p className="text-lg font-medium mb-2">No hay tareas aún</p>
-            <p className="text-sm text-gray-400">
-              Agrega tu primera tarea para comenzar
+      {/* Pending tasks */}
+      <div className="mb-6">
+        <h3 className={`text-sm font-semibold mb-3 ${isDark ? 'text-gray-400' : 'text-gray-600'} uppercase tracking-wide`}>
+          Pendientes ({pendingTasks.length})
+        </h3>
+        <div className="space-y-2">
+          {pendingTasks.length === 0 ? (
+            <p className={`text-sm ${isDark ? 'text-gray-500' : 'text-gray-400'} italic`}>
+              No hay tareas pendientes
             </p>
-          </div>
-        )}
+          ) : (
+            pendingTasks.map((task) => (
+              <div
+                key={task.id}
+                className={`
+                  flex items-center gap-3 p-4 rounded-2xl
+                  ${isDark ? 'bg-gray-800/50' : 'bg-gray-50'}
+                  transition-all hover:shadow-md group
+                `}
+              >
+                <button
+                  onClick={() => onToggleTask(task.id)}
+                  className={`
+                    flex-shrink-0 w-5 h-5 rounded-md border-2 border-[#80BF41]
+                    hover:bg-[#80BF41] transition-colors flex items-center justify-center
+                  `}
+                >
+                  {task.completed && <Check className="w-4 h-4 text-white" />}
+                </button>
+                <p className={`flex-1 text-sm ${isDark ? 'text-white' : 'text-gray-800'}`}>
+                  {task.text}
+                </p>
+                <button
+                  onClick={() => onDeleteTask(task.id)}
+                  className="flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity p-1.5 hover:bg-red-100 rounded-lg"
+                >
+                  <Trash2 className="w-4 h-4 text-red-500" />
+                </button>
+              </div>
+            ))
+          )}
+        </div>
       </div>
-    </div>
-  );
-}
 
-function TaskItem({
-  task,
-  onToggle,
-  onDelete,
-}: {
-  task: Task;
-  onToggle: (id: number, checked: boolean) => void;
-  onDelete: (id: number) => void;
-}) {
-  return (
-    <div className="flex items-center gap-3 p-4 rounded-lg border border-gray-200 hover:bg-gray-50 hover:border-gray-300 transition-all duration-200 group">
-      <button
-        onClick={() => onToggle(task.id, task.status !== "completed")}
-        className="flex-shrink-0 hover:scale-110 transition-transform duration-200 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-1 rounded-full"
-      >
-        {task.status === "completed" ? (
-          <CheckCircle2 className="h-5 w-5 text-green-500" />
-        ) : (
-          <Circle className="h-5 w-5 text-gray-400 hover:text-green-400" />
-        )}
-      </button>
-
-      <span
-        className={`flex-1 transition-all duration-200 ${
-          task.status === "completed"
-            ? "line-through text-gray-400"
-            : "text-gray-700"
-        }`}
-      >
-        {task.title}
-      </span>
-
-      <Button
-        variant="ghost"
-        size="icon"
-        onClick={() => onDelete(task.id)}
-        className="opacity-0 group-hover:opacity-100 transition-all duration-200 h-8 w-8 hover:bg-red-50 hover:text-red-600 focus:ring-red-500"
-      >
-        <Trash2 className="h-4 w-4" />
-      </Button>
+      {/* Completed tasks */}
+      {completedTasks.length > 0 && (
+        <div>
+          <h3 className={`text-sm font-semibold mb-3 ${isDark ? 'text-gray-400' : 'text-gray-600'} uppercase tracking-wide`}>
+            Completadas ({completedTasks.length})
+          </h3>
+          <div className="space-y-2">
+            {completedTasks.map((task) => (
+              <div
+                key={task.id}
+                className={`
+                  flex items-center gap-3 p-4 rounded-2xl
+                  ${isDark ? 'bg-gray-800/30' : 'bg-gray-50'}
+                  transition-all hover:shadow-md group
+                `}
+              >
+                <button
+                  onClick={() => onToggleTask(task.id)}
+                  className="flex-shrink-0 w-5 h-5 rounded-md bg-[#80BF41] hover:bg-[#B1D923] transition-colors flex items-center justify-center"
+                >
+                  <Check className="w-3 h-3 text-white" />
+                </button>
+                <p className={`flex-1 text-sm line-through ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>
+                  {task.text}
+                </p>
+                <button
+                  onClick={() => onDeleteTask(task.id)}
+                  className="flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity p-1.5 hover:bg-red-100 rounded-lg"
+                >
+                  <Trash2 className="w-4 h-4 text-red-500" />
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

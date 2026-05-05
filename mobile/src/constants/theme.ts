@@ -3,7 +3,7 @@ import { Platform } from "react-native";
 // Primary color palette
 export const Palette = {
   lima: "#E7F2E4",
-  verde: "#80BF41",
+  verde: "#4A7C30",
   pistacho: "#B1D923",
   naranja: "#F27405",
   blanco: "#F2F2F2",

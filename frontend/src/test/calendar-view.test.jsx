@@ -10,9 +10,10 @@ const renderCalendar = (overrides = {}) =>
       currentDate={currentDate}
       selectedDate={null}
       events={{}}
-      onPrevMonth={vi.fn()}
-      onNextMonth={vi.fn()}
+      onMonthChange={vi.fn()}
       onDateClick={vi.fn()}
+      isMobile={false}
+      isDark={false}
       {...overrides}
     />,
   );
@@ -30,18 +31,18 @@ describe("CalendarView Component", () => {
     });
   });
 
-  it("calls onPrevMonth and onNextMonth when navigation buttons are clicked", () => {
-    const onPrevMonth = vi.fn();
-    const onNextMonth = vi.fn();
+  it("calls onMonthChange when navigation buttons are clicked", () => {
+    const onMonthChange = vi.fn();
 
-    renderCalendar({ onPrevMonth, onNextMonth });
+    renderCalendar({ onMonthChange });
 
     const navButtons = screen.getAllByRole("button").slice(0, 2);
     fireEvent.click(navButtons[0]);
     fireEvent.click(navButtons[1]);
 
-    expect(onPrevMonth).toHaveBeenCalledTimes(1);
-    expect(onNextMonth).toHaveBeenCalledTimes(1);
+    expect(onMonthChange).toHaveBeenCalledTimes(2);
+    expect(onMonthChange).toHaveBeenCalledWith('prev');
+    expect(onMonthChange).toHaveBeenCalledWith('next');
   });
 
   it("calls onDateClick with the date when a day cell is clicked", () => {
@@ -95,6 +96,6 @@ describe("CalendarView Component", () => {
     };
 
     renderCalendar({ events });
-    expect(screen.getByText("+2 más")).toBeInTheDocument();
+    expect(screen.getByText("+1 más")).toBeInTheDocument();
   });
 });

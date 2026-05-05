@@ -5,16 +5,14 @@ import React, {
   useEffect,
   useState,
 } from "react";
-import { useColorScheme as useSystemColorScheme } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
-export type ThemePreference = "system" | "light" | "dark";
+export type ThemePreference = "light" | "dark";
 export type ResolvedTheme = "light" | "dark";
 
 export interface Settings {
-  /** User-selected theme override. "system" follows the device setting. */
   theme: ThemePreference;
 }
 
@@ -29,21 +27,20 @@ export interface SettingsContextValue {
 const STORAGE_KEY = "@agenda/settings";
 
 const DEFAULT_SETTINGS: Settings = {
-  theme: "system",
+  theme: "dark",
 };
 
 // ─── Context ──────────────────────────────────────────────────────────────────
 
 export const SettingsContext = createContext<SettingsContextValue>({
   settings: DEFAULT_SETTINGS,
-  resolvedTheme: "light",
+  resolvedTheme: "dark",
   updateSettings: () => {},
 });
 
 // ─── Provider ─────────────────────────────────────────────────────────────────
 
 export function SettingsProvider({ children }: { children: React.ReactNode }) {
-  const systemColorScheme = useSystemColorScheme();
   const [settings, setSettings] = useState<Settings>(DEFAULT_SETTINGS);
 
   // Hydrate from storage on mount; render with defaults in the meantime.
@@ -52,6 +49,10 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
       .then((raw) => {
         if (raw) {
           const parsed = JSON.parse(raw) as Partial<Settings>;
+          // Migrate legacy "system" value to the new default.
+          if (parsed.theme === ("system" as string)) {
+            parsed.theme = "dark";
+          }
           setSettings((prev) => ({ ...prev, ...parsed }));
         }
       })
@@ -68,13 +69,10 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
     });
   }, []);
 
-  const resolvedTheme: ResolvedTheme =
-    settings.theme === "system"
-      ? ((systemColorScheme ?? "light") as ResolvedTheme)
-      : settings.theme;
-
   return (
-    <SettingsContext.Provider value={{ settings, resolvedTheme, updateSettings }}>
+    <SettingsContext.Provider
+      value={{ settings, resolvedTheme: settings.theme, updateSettings }}
+    >
       {children}
     </SettingsContext.Provider>
   );
