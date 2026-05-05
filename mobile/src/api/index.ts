@@ -140,3 +140,22 @@ export const deleteTask = async (id: number) => {
   }
   return response;
 };
+
+export const updateTask = async (
+  id: number,
+  task: Partial<{ title: string; description: string; due_date: string; status: string }>
+) => {
+  const response = await fetch(`${API_BASE_URL}/tasks/${id}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(task),
+  });
+
+  if (!response.ok) {
+    await buildFetchError(response, "Failed to update task");
+  }
+
+  return response.json();
+};

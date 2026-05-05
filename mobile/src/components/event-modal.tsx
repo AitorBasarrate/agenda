@@ -1,13 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, StyleSheet, Modal, TouchableOpacity, ScrollView } from "react-native";
-import { useColorScheme } from "@/hooks/use-color-scheme";
+import { View, Text, Modal, TouchableOpacity, ScrollView, TextInput } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { Button } from "./ui/button";
-import { Input } from "./ui/input";
-import { Label } from "./ui/label";
-import { Textarea } from "./ui/textarea";
-import { useThemeColor } from '@/hooks/use-theme-color';
-import { Colors } from '@/constants/theme';
+import { Colors } from "@/constants/theme";
+import { useSettings } from "@/contexts/settings-context";
 
 interface EventModalProps {
   isOpen: boolean;
@@ -27,12 +22,14 @@ export function EventModal({ isOpen, selectedDate, onClose, onSave }: EventModal
   const [endTime, setEndTime] = useState("");
   const [description, setDescription] = useState("");
 
+  const { settings } = useSettings();
+  const isDark = settings.theme === "dark";
+  const themeColors = isDark ? Colors.dark : Colors.light;
+
   useEffect(() => {
     if (isOpen) {
-      // Reset form when modal opens
       setTitle("");
       setDescription("");
-      // Set default time if selectedDate is available
       if (selectedDate) {
         const defaultTime = selectedDate.toTimeString().slice(0, 5);
         setStartTime(defaultTime);
@@ -49,8 +46,8 @@ export function EventModal({ isOpen, selectedDate, onClose, onSave }: EventModal
 
     onSave({
       title,
-      startTime: startTime || "09:00", // Default if not set
-      endTime: endTime || "10:00",    // Default if not set
+      startTime: startTime || "09:00",
+      endTime: endTime || "10:00",
       description,
     });
     onClose();
@@ -65,152 +62,171 @@ export function EventModal({ isOpen, selectedDate, onClose, onSave }: EventModal
       })
     : "";
 
-  const isDarkMode = useColorScheme() === 'dark';
-  const themeColors = isDarkMode ? Colors.dark : Colors.light;
-  const backgroundColor = themeColors.surface;
-  const textColor = themeColors.text;
-  const textMuted = themeColors.textMuted;
-  const borderColor = themeColors.border;
-  const primary = themeColors.primary;
-
-  const styles = StyleSheet.create({
-    centeredView: {
-      flex: 1,
-      justifyContent: "center",
-      alignItems: "center",
-      backgroundColor: 'rgba(0,0,0,0.5)', // bg-black bg-opacity-50
-      padding: 16, // p-4
-    },
-    modalView: {
-      backgroundColor: backgroundColor, // bg-white
-      borderRadius: 8, // rounded-lg
-      shadowColor: "#000", // shadow-xl
-      shadowOffset: {
-        width: 0,
-        height: 4,
-      },
-      shadowOpacity: 0.30,
-      shadowRadius: 4.65,
-      elevation: 8,
-      maxWidth: 400, // max-w-md
-      width: "100%",
-    },
-    modalHeader: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-      padding: 24, // p-6
-      borderBottomWidth: 1,
-      borderBottomColor: borderColor, // border-b
-    },
-    modalTitle: {
-      fontSize: 20, // text-xl
-      color: textColor,
-    },
-    closeButton: {
-      padding: 4, // for easier touch
-    },
-    closeButtonIcon: {
-      color: textMuted, // text-gray-400
-    },
-    formContent: {
-      padding: 24, // p-6
-      gap: 16, // space-y-4
-    },
-    dateText: {
-      fontSize: 14, // text-sm
-      color: textMuted, // text-gray-600
-      marginBottom: 16, // mb-4
-      textTransform: 'capitalize',
-    },
-    formField: {
-      gap: 8, // space-y-2
-    },
-    buttonContainer: {
-      flexDirection: 'row',
-      gap: 12, // gap-3
-      paddingTop: 16, // pt-4
-    },
-    cancelButton: {
-      flex: 1, // flex-1
-      borderColor: borderColor, // Assuming outline variant
-    },
-    saveButton: {
-      flex: 1, // flex-1
-      backgroundColor: primary,
-    },
-  });
-
   return (
     <Modal
-      animationType="fade"
+      animationType="slide"
       transparent={true}
       visible={isOpen}
       onRequestClose={onClose}
     >
-      <View style={styles.centeredView}>
-        <View style={styles.modalView}>
-          <View style={styles.modalHeader}>
-            <Text style={styles.modalTitle}>Agregar Evento</Text>
-            <TouchableOpacity onPress={onClose} style={styles.closeButton}>
-              <MaterialCommunityIcons name="close" size={24} style={styles.closeButtonIcon} />
+      <View className="flex-1 justify-end bg-black/50">
+        <View
+          className={`rounded-t-3xl ${
+            isDark ? "bg-gray-900" : "bg-white"
+          }`}
+          style={{ maxHeight: "85%" }}
+        >
+          {/* Header */}
+          <View
+            className={`flex-row items-center justify-between px-6 py-4 border-b ${
+              isDark ? "border-gray-800" : "border-gray-200"
+            }`}
+          >
+            <Text
+              className={`text-xl font-semibold ${
+                isDark ? "text-white" : "text-gray-800"
+              }`}
+            >
+              Agregar Evento
+            </Text>
+            <TouchableOpacity
+              onPress={onClose}
+              className={`h-8 w-8 rounded-full items-center justify-center ${
+                isDark ? "bg-gray-800" : "bg-gray-100"
+              }`}
+            >
+              <MaterialCommunityIcons
+                name="close"
+                size={18}
+                color={isDark ? "#9CA3AF" : "#6B7280"}
+              />
             </TouchableOpacity>
           </View>
 
-          <ScrollView contentContainerStyle={styles.formContent}>
-            <View>
-              <Text style={styles.dateText}>{dateStr}</Text>
-            </View>
+          {/* Form Content */}
+          <ScrollView className="px-6 py-4">
+            {/* Date */}
+            <Text
+              className={`text-sm mb-4 capitalize ${
+                isDark ? "text-gray-400" : "text-gray-600"
+              }`}
+            >
+              {dateStr}
+            </Text>
 
-            <View style={styles.formField}>
-              <Label htmlFor="title">Título del evento</Label>
-              <Input
-                id="title"
+            {/* Title */}
+            <View className="mb-4">
+              <Text
+                className={`text-sm font-medium mb-2 ${
+                  isDark ? "text-gray-300" : "text-gray-700"
+                }`}
+              >
+                Título del evento
+              </Text>
+              <TextInput
                 value={title}
                 onChangeText={setTitle}
                 placeholder="Ej: Reunión con el equipo"
-                required
+                placeholderTextColor={isDark ? "#6B7280" : "#9CA3AF"}
+                className={`px-4 py-3 rounded-xl border ${
+                  isDark
+                    ? "bg-gray-800 border-gray-700 text-white"
+                    : "bg-gray-50 border-gray-200 text-gray-800"
+                }`}
               />
             </View>
 
-            <View style={styles.formField}>
-              <Label htmlFor="startTime">Hora Inicio</Label>
-              <Input
-                id="startTime"
-                value={startTime}
-                onChangeText={setStartTime}
-                placeholder="HH:mm"
-              />
+            {/* Time row */}
+            <View className="flex-row gap-3 mb-4">
+              <View className="flex-1">
+                <Text
+                  className={`text-sm font-medium mb-2 ${
+                    isDark ? "text-gray-300" : "text-gray-700"
+                  }`}
+                >
+                  Hora Inicio
+                </Text>
+                <TextInput
+                  value={startTime}
+                  onChangeText={setStartTime}
+                  placeholder="HH:mm"
+                  placeholderTextColor={isDark ? "#6B7280" : "#9CA3AF"}
+                  className={`px-4 py-3 rounded-xl border ${
+                    isDark
+                      ? "bg-gray-800 border-gray-700 text-white"
+                      : "bg-gray-50 border-gray-200 text-gray-800"
+                  }`}
+                />
+              </View>
+              <View className="flex-1">
+                <Text
+                  className={`text-sm font-medium mb-2 ${
+                    isDark ? "text-gray-300" : "text-gray-700"
+                  }`}
+                >
+                  Hora Final
+                </Text>
+                <TextInput
+                  value={endTime}
+                  onChangeText={setEndTime}
+                  placeholder="HH:mm"
+                  placeholderTextColor={isDark ? "#6B7280" : "#9CA3AF"}
+                  className={`px-4 py-3 rounded-xl border ${
+                    isDark
+                      ? "bg-gray-800 border-gray-700 text-white"
+                      : "bg-gray-50 border-gray-200 text-gray-800"
+                  }`}
+                />
+              </View>
             </View>
 
-            <View style={styles.formField}>
-              <Label htmlFor="endTime">Hora Final</Label>
-              <Input
-                id="endTime"
-                value={endTime}
-                onChangeText={setEndTime}
-                placeholder="HH:mm"
-              />
-            </View>
-
-            <View style={styles.formField}>
-              <Label htmlFor="description">Descripción (opcional)</Label>
-              <Textarea
-                id="description"
+            {/* Description */}
+            <View className="mb-6">
+              <Text
+                className={`text-sm font-medium mb-2 ${
+                  isDark ? "text-gray-300" : "text-gray-700"
+                }`}
+              >
+                Descripción (opcional)
+              </Text>
+              <TextInput
                 value={description}
                 onChangeText={setDescription}
                 placeholder="Detalles del evento..."
-                rows={3}
+                placeholderTextColor={isDark ? "#6B7280" : "#9CA3AF"}
+                multiline
+                numberOfLines={3}
+                textAlignVertical="top"
+                className={`px-4 py-3 rounded-xl border min-h-[80px] ${
+                  isDark
+                    ? "bg-gray-800 border-gray-700 text-white"
+                    : "bg-gray-50 border-gray-200 text-gray-800"
+                }`}
               />
             </View>
 
-            <View style={styles.buttonContainer}>
-              <Button type="button" variant="outline" onPress={onClose} style={styles.cancelButton}>
-                Cancelar
-              </Button>
-              <Button type="submit" onPress={handleSubmit} style={styles.saveButton}>
-                Guardar Evento
-              </Button>
+            {/* Buttons */}
+            <View className="flex-row gap-3 mb-6">
+              <TouchableOpacity
+                onPress={onClose}
+                className={`flex-1 py-3 rounded-xl border items-center ${
+                  isDark ? "border-gray-700" : "border-gray-300"
+                }`}
+              >
+                <Text
+                  className={`font-medium ${
+                    isDark ? "text-gray-300" : "text-gray-700"
+                  }`}
+                >
+                  Cancelar
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={handleSubmit}
+                className="flex-1 py-3 rounded-xl bg-verde items-center"
+              >
+                <Text className="font-medium text-white">Guardar Evento</Text>
+              </TouchableOpacity>
             </View>
           </ScrollView>
         </View>
