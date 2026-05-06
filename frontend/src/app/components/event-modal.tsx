@@ -31,8 +31,8 @@ export function EventModal({ isOpen, selectedDate, onClose, onSave }: EventModal
 
     onSave({
       title,
-      startTime: startTime || "12:13",
-      endTime: endTime || "13:12",
+      startTime: startTime || "12:00",
+      endTime: endTime || "13:00",
       description,
     });
 
@@ -55,46 +55,47 @@ export function EventModal({ isOpen, selectedDate, onClose, onSave }: EventModal
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-lg shadow-xl max-w-md w-full">
         <div className="flex items-center justify-between p-6 border-b">
-          <h3 className="text-xl">Agregar Evento</h3>
+          <div>
+            <h3 className="text-xl font-semibold">Agregar Evento</h3>
+            <p className="text-sm text-gray-500 capitalize">{dateStr}</p>
+          </div>
           <button onClick={onClose} className="text-gray-400 hover:text-gray-600">
             <X className="h-5 w-5" />
           </button>
         </div>
 
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
-          <div>
-            <p className="text-sm text-gray-600 mb-4 capitalize">{dateStr}</p>
-          </div>
-
           <div className="space-y-2">
             <Label htmlFor="title">Título del evento</Label>
             <Input
               id="title"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              placeholder="Ej: Reunión con el equipo"
+              placeholder="Ej: Reunión de trabajo"
               required
             />
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="startTime">Hora Inicio</Label>
-            <Input
-              id="startTime"
-              type="time"
-              value={startTime}
-              onChange={(e) => setStartTime(e.target.value)}
-            />
-          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="startTime">Hora Inicio</Label>
+              <Input
+                id="startTime"
+                type="time"
+                value={startTime}
+                onChange={(e) => setStartTime(e.target.value)}
+              />
+            </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="endTime">Hora Final</Label>
-            <Input
-              id="endTime"
-              type="time"
-              value={endTime}
-              onChange={(e) => setEndTime(e.target.value)}
-            />
+            <div className="space-y-2">
+              <Label htmlFor="endTime">Hora Final</Label>
+              <Input
+                id="endTime"
+                type="time"
+                value={endTime}
+                onChange={(e) => setEndTime(e.target.value)}
+              />
+            </div>
           </div>
 
           <div className="space-y-2">
@@ -108,13 +109,11 @@ export function EventModal({ isOpen, selectedDate, onClose, onSave }: EventModal
             />
           </div>
 
-
-
           <div className="flex gap-3 pt-4">
             <Button type="button" variant="outline" onClick={onClose} className="flex-1">
               Cancelar
             </Button>
-            <Button type="submit" className="flex-1">
+            <Button type="submit" className="flex-1 bg-green-600 hover:bg-green-700">
               Guardar Evento
             </Button>
           </div>

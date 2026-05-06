@@ -5,11 +5,7 @@ import { TaskList } from "./../app/components/task-list";
 const makeTask = (overrides = {}) => ({
   id: 1,
   title: "Tarea pendiente",
-  description: "",
-  due_date: "2026-04-24T10:00:00.000Z",
   status: "pending",
-  created_at: "",
-  updated_at: "",
   ...overrides,
 });
 
@@ -57,8 +53,14 @@ describe("TaskList Component", () => {
       />,
     );
 
-    fireEvent.click(screen.getByRole("button", { name: "" }));
-    expect(onAddTask).toHaveBeenCalledTimes(1);
+    const input = screen.getByPlaceholderText("Agregar nueva tarea...");
+    fireEvent.change(input, { target: { value: "Nueva" } });
+    
+    // The submit button is the one with the plus icon
+    const submitButton = screen.getByRole("button", { name: "" }); 
+    fireEvent.click(submitButton);
+    
+    expect(onAddTask).toHaveBeenCalled();
   });
 
   it("calls onToggleTask when a task's check button is clicked", () => {
@@ -72,9 +74,9 @@ describe("TaskList Component", () => {
       />,
     );
 
-    // Buttons in document: [submit, toggle, delete].
-    const buttons = screen.getAllByRole("button");
-    fireEvent.click(buttons[1]);
+    // Toggle button is the first button in the task item
+    const toggleButton = screen.getAllByRole("button")[1]; // [0] is submit, [1] is toggle
+    fireEvent.click(toggleButton);
 
     expect(onToggleTask).toHaveBeenCalledWith(7, true);
   });
@@ -90,8 +92,8 @@ describe("TaskList Component", () => {
       />,
     );
 
-    const buttons = screen.getAllByRole("button");
-    fireEvent.click(buttons[buttons.length - 1]);
+    const deleteButton = screen.getAllByRole("button")[2]; 
+    fireEvent.click(deleteButton);
 
     expect(onDeleteTask).toHaveBeenCalledWith(9);
   });

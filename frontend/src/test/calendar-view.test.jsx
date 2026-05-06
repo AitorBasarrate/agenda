@@ -61,16 +61,15 @@ describe("CalendarView Component", () => {
 
   it("renders events for a given day", () => {
     const date = new Date(2026, 3, 10);
+    const dateKey = date.toDateString(); 
     const events = {
-      [date.toDateString()]: [
+      [dateKey]: [
         {
           id: 1,
           title: "Mi evento",
           description: "",
           start_time: date.toISOString(),
           end_time: date.toISOString(),
-          created_at: "",
-          updated_at: "",
         },
       ],
     };
@@ -80,18 +79,18 @@ describe("CalendarView Component", () => {
   });
 
   it("shows a +N indicator when there are more than 2 events on a day", () => {
+    // CalendarView.tsx shows slice(0, 2) and +N if length > 2
     const date = new Date(2026, 3, 12);
+    const dateKey = date.toDateString();
     const make = (id) => ({
       id,
       title: `Evento ${id}`,
       description: "",
       start_time: date.toISOString(),
       end_time: date.toISOString(),
-      created_at: "",
-      updated_at: "",
     });
     const events = {
-      [date.toDateString()]: [make(1), make(2), make(3), make(4)],
+      [dateKey]: [make(1), make(2), make(3), make(4)],
     };
 
     renderCalendar({ events });

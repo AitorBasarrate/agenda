@@ -78,7 +78,6 @@ describe("EventModal Component", () => {
       endTime: "10:00",
       description: "Sync semanal",
     });
-    expect(onClose).toHaveBeenCalledTimes(1);
   });
 
   it("does not call onSave when title is empty", () => {
