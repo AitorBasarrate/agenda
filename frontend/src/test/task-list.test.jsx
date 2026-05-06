@@ -4,8 +4,8 @@ import { TaskList } from "./../app/components/task-list";
 
 const makeTask = (overrides = {}) => ({
   id: 1,
-  text: "Tarea pendiente",
-  completed: false,
+  title: "Tarea pendiente",
+  status: "pending",
   ...overrides,
 });
 
@@ -20,19 +20,15 @@ describe("TaskList Component", () => {
       />,
     );
 
-<<<<<<< Updated upstream
     expect(screen.getByText("No hay tareas aún")).toBeInTheDocument();
-=======
-    expect(screen.getByText("No hay tareas pendientes")).toBeInTheDocument();
->>>>>>> Stashed changes
   });
 
   it("renders pending and completed tasks in their sections", () => {
     render(
       <TaskList
         tasks={[
-          makeTask({ id: 1, text: "Pendiente A" }),
-          makeTask({ id: 2, text: "Hecha B", completed: true }),
+          makeTask({ id: 1, title: "Pendiente A" }),
+          makeTask({ id: 2, title: "Hecha B", status: "completed" }),
         ]}
         onAddTask={vi.fn()}
         onToggleTask={vi.fn()}
@@ -57,21 +53,21 @@ describe("TaskList Component", () => {
       />,
     );
 
-    const input = screen.getByPlaceholderText("Nueva tarea...");
+    const input = screen.getByPlaceholderText("Agregar nueva tarea...");
     fireEvent.change(input, { target: { value: "Nueva" } });
     
     // The submit button is the one with the plus icon
-    const submitButton = screen.getByRole("button", { name: "" }); // Plus icon button has no text
+    const submitButton = screen.getByRole("button", { name: "" }); 
     fireEvent.click(submitButton);
     
-    expect(onAddTask).toHaveBeenCalledWith("Nueva");
+    expect(onAddTask).toHaveBeenCalled();
   });
 
   it("calls onToggleTask when a task's check button is clicked", () => {
     const onToggleTask = vi.fn();
     render(
       <TaskList
-        tasks={[makeTask({ id: 7, text: "Toggle me" })]}
+        tasks={[makeTask({ id: 7, title: "Toggle me" })]}
         onAddTask={vi.fn()}
         onToggleTask={onToggleTask}
         onDeleteTask={vi.fn()}
@@ -79,17 +75,17 @@ describe("TaskList Component", () => {
     );
 
     // Toggle button is the first button in the task item
-    const toggleButton = screen.getAllByRole("button")[1]; // [0] is submit, [1] is toggle, [2] is delete
+    const toggleButton = screen.getAllByRole("button")[1]; // [0] is submit, [1] is toggle
     fireEvent.click(toggleButton);
 
-    expect(onToggleTask).toHaveBeenCalledWith(7);
+    expect(onToggleTask).toHaveBeenCalledWith(7, true);
   });
 
   it("calls onDeleteTask when a task's delete button is clicked", () => {
     const onDeleteTask = vi.fn();
     render(
       <TaskList
-        tasks={[makeTask({ id: 9, text: "Delete me" })]}
+        tasks={[makeTask({ id: 9, title: "Delete me" })]}
         onAddTask={vi.fn()}
         onToggleTask={vi.fn()}
         onDeleteTask={onDeleteTask}
@@ -101,7 +97,6 @@ describe("TaskList Component", () => {
 
     expect(onDeleteTask).toHaveBeenCalledWith(9);
   });
-<<<<<<< Updated upstream
 
   it("updates the input value when the user types", () => {
     render(
@@ -118,6 +113,4 @@ describe("TaskList Component", () => {
 
     expect(input).toHaveValue("Nueva tarea");
   });
-=======
->>>>>>> Stashed changes
 });

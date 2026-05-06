@@ -1,19 +1,6 @@
-<<<<<<< Updated upstream
 import { Clock, Trash2, Calendar, Plus } from "lucide-react";
 import { Button } from "./ui/button";
 import { type Event } from "../../types/index";
-=======
-import { Clock, Calendar } from 'lucide-react';
-
-interface Event {
-  id: number;
-  title: string;
-  time: string;
-  description: string;
-  color: string;
-  date: string;
-}
->>>>>>> Stashed changes
 
 interface EventListProps {
   selectedDate: Date | null;
