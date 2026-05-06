@@ -1,13 +1,28 @@
+<<<<<<< Updated upstream
 import { useState } from "react";
 import { X } from "lucide-react";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import { Textarea } from "./ui/textarea";
+=======
+import { X } from 'lucide-react';
+import { useState, useEffect } from 'react';
+
+interface Event {
+  id: number;
+  title: string;
+  time: string;
+  description: string;
+  color: string;
+  date: string;
+}
+>>>>>>> Stashed changes
 
 interface EventModalProps {
   isOpen: boolean;
   selectedDate: Date | null;
+<<<<<<< Updated upstream
   onClose: () => void;
   onSave: (event: {
     title: string;
@@ -15,6 +30,12 @@ interface EventModalProps {
     endTime: string;
     description: string;
   }) => void;
+=======
+  isDark: boolean;
+  isMobile: boolean;
+  viewEvent?: Event | null;
+  onDelete?: (eventId: number) => void;
+>>>>>>> Stashed changes
 }
 
 export function EventModal({ isOpen, selectedDate, onClose, onSave }: EventModalProps) {
@@ -63,6 +84,7 @@ export function EventModal({ isOpen, selectedDate, onClose, onSave }: EventModal
 
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
           <div>
+<<<<<<< Updated upstream
             <p className="text-sm text-gray-600 mb-4 capitalize">{dateStr}</p>
           </div>
 
@@ -70,6 +92,17 @@ export function EventModal({ isOpen, selectedDate, onClose, onSave }: EventModal
             <Label htmlFor="title">Título del evento</Label>
             <Input
               id="title"
+=======
+            <label 
+              htmlFor="event-title"
+              className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}
+            >
+              Título *
+            </label>
+            <input
+              id="event-title"
+              type="text"
+>>>>>>> Stashed changes
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="Ej: Reunión con el equipo"
@@ -77,10 +110,23 @@ export function EventModal({ isOpen, selectedDate, onClose, onSave }: EventModal
             />
           </div>
 
+<<<<<<< Updated upstream
           <div className="space-y-2">
             <Label htmlFor="startTime">Hora Inicio</Label>
             <Input
               id="startTime"
+=======
+          {/* Time */}
+          <div>
+            <label 
+              htmlFor="event-time"
+              className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}
+            >
+              Hora
+            </label>
+            <input
+              id="event-time"
+>>>>>>> Stashed changes
               type="time"
               value={startTime}
               onChange={(e) => setStartTime(e.target.value)}

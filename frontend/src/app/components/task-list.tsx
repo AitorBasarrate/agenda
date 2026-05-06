@@ -3,6 +3,7 @@ import { Trash2, Plus, CheckCircle2, Circle } from "lucide-react";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 
+<<<<<<< Updated upstream
 import { type Task } from "../../types";
 
 interface TaskListProps {
@@ -10,6 +11,21 @@ interface TaskListProps {
   onAddTask: () => void;
   onToggleTask: (id: number, checked: boolean) => void;
   onDeleteTask: (id: number) => void;
+=======
+interface Task {
+  id: number;
+  text: string;
+  completed: boolean;
+}
+
+interface TaskListProps {
+  tasks: Task[];
+  onAddTask: (text: string) => void;
+  onToggleTask: (id: number) => void;
+  onDeleteTask: (id: number) => void;
+  isDark: boolean;
+  isMobile: boolean;
+>>>>>>> Stashed changes
 }
 
 export function TaskList({

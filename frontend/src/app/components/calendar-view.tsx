@@ -1,7 +1,18 @@
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "./ui/button";
 
+<<<<<<< Updated upstream
 import { type Event } from "../../types";
+=======
+interface Event {
+  id: number;
+  title: string;
+  time: string;
+  description: string;
+  color: string;
+  date: string;
+}
+>>>>>>> Stashed changes
 
 interface CalendarViewProps {
   currentDate: Date;

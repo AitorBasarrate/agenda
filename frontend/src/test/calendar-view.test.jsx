@@ -61,16 +61,17 @@ describe("CalendarView Component", () => {
 
   it("renders events for a given day", () => {
     const date = new Date(2026, 3, 10);
+    // getDateKey in CalendarView uses date.getMonth() + 1
+    const dateKey = `2026-4-10`; 
     const events = {
-      [date.toDateString()]: [
+      [dateKey]: [
         {
           id: 1,
           title: "Mi evento",
           description: "",
-          start_time: date.toISOString(),
-          end_time: date.toISOString(),
-          created_at: "",
-          updated_at: "",
+          time: "10:00",
+          color: "bg-[#80BF41]",
+          date: dateKey
         },
       ],
     };
@@ -79,19 +80,19 @@ describe("CalendarView Component", () => {
     expect(screen.getByText("Mi evento")).toBeInTheDocument();
   });
 
-  it("shows a +N indicator when there are more than 2 events on a day", () => {
+  it("shows a +N indicator when there are more than 3 events on a day", () => {
     const date = new Date(2026, 3, 12);
+    const dateKey = `2026-4-12`;
     const make = (id) => ({
       id,
       title: `Evento ${id}`,
       description: "",
-      start_time: date.toISOString(),
-      end_time: date.toISOString(),
-      created_at: "",
-      updated_at: "",
+      time: "10:00",
+      color: "bg-[#80BF41]",
+      date: dateKey
     });
     const events = {
-      [date.toDateString()]: [make(1), make(2), make(3), make(4)],
+      [dateKey]: [make(1), make(2), make(3), make(4)],
     };
 
     renderCalendar({ events });

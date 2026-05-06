@@ -39,10 +39,16 @@ describe("EventModal Component", () => {
       />,
     );
 
+<<<<<<< Updated upstream
     expect(screen.getByText("Agregar Evento")).toBeInTheDocument();
     expect(screen.getByLabelText("Título del evento")).toBeInTheDocument();
     expect(screen.getByLabelText("Hora Inicio")).toBeInTheDocument();
     expect(screen.getByLabelText("Hora Final")).toBeInTheDocument();
+=======
+    expect(screen.getByText("Nuevo Evento")).toBeInTheDocument();
+    expect(screen.getByText("Título *")).toBeInTheDocument();
+    expect(screen.getByText("Hora")).toBeInTheDocument();
+>>>>>>> Stashed changes
   });
 
   it("calls onSave with form data and resets when submitted with a title", () => {
@@ -70,15 +76,25 @@ describe("EventModal Component", () => {
       target: { value: "Sync semanal" },
     });
 
+<<<<<<< Updated upstream
     fireEvent.click(screen.getByRole("button", { name: "Guardar Evento" }));
+=======
+    const timeInput = screen.getByLabelText("Hora");
+    fireEvent.change(timeInput, { target: { value: "09:00" } });
+
+    const descInput = screen.getByPlaceholderText("Agrega detalles sobre el evento...");
+    fireEvent.change(descInput, { target: { value: "Sync semanal" } });
+
+    fireEvent.click(screen.getByRole("button", { name: "Guardar" }));
+>>>>>>> Stashed changes
 
     expect(onSave).toHaveBeenCalledWith({
       title: "Reunión",
-      startTime: "09:00",
-      endTime: "10:00",
+      time: "09:00",
       description: "Sync semanal",
+      color: "bg-[#80BF41]",
+      date: "2026-4-24",
     });
-    expect(onClose).toHaveBeenCalledTimes(1);
   });
 
   it("does not call onSave when title is empty", () => {
@@ -92,12 +108,16 @@ describe("EventModal Component", () => {
       />,
     );
 
+<<<<<<< Updated upstream
     // Submit the form directly to bypass HTML5 'required' validation in jsdom.
     const form = screen
       .getByRole("button", { name: "Guardar Evento" })
       .closest("form");
     expect(form).not.toBeNull();
     fireEvent.submit(form);
+=======
+    fireEvent.click(screen.getByRole("button", { name: "Guardar" }));
+>>>>>>> Stashed changes
     expect(onSave).not.toHaveBeenCalled();
   });
 
